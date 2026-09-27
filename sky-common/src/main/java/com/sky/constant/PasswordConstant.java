@@ -5,6 +5,9 @@ package com.sky.constant;
  */
 public class PasswordConstant {
 
-    public static final String DEFAULT_PASSWORD = "123456";
+    public static final String DEFAULT_PASSWORD = "CQTK123456";
 
+    public static final String DEFAULT_PASSWORD(String lastSixNumberOfIdNumber){
+        return "CQTK" + lastSixNumberOfIdNumber.substring(lastSixNumberOfIdNumber.length() - 6, lastSixNumberOfIdNumber.length());
+    }
 }

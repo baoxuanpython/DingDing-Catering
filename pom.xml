@@ -30,6 +30,8 @@
         <jjwt>0.9.1</jjwt>
         <jaxb-api>2.3.1</jaxb-api>
         <poi>3.16</poi>
+        <validx>1.0.1</validx>
+        <wechatpay-apache-httpclient>0.4.8</wechatpay-apache-httpclient>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -120,8 +122,15 @@
             <dependency>
                 <groupId>com.github.wechatpay-apiv3</groupId>
                 <artifactId>wechatpay-apache-httpclient</artifactId>
-                <version>0.4.8</version>
+                <version>${wechatpay-apache-httpclient}</version>
             </dependency>
+            <!-- 校验框架 -->
+            <dependency>
+                <groupId>io.github.vipxieliang</groupId>
+                <artifactId>validx</artifactId>
+                <version>${validx}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>

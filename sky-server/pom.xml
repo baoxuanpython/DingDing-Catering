@@ -115,6 +115,11 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
         </dependency>
+        <!-- 校验框架 -->
+        <dependency>
+            <groupId>io.github.vipxieliang</groupId>
+            <artifactId>validx</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
