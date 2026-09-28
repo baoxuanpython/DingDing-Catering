@@ -1,16 +1,20 @@
 package com.sky.entity;
 
+import com.sky.annotation.AutoFill;
+import com.sky.enumeration.OperationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.io.Serializable;
+import java.lang.annotation.ElementType;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@AutoFill
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;

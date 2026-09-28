@@ -1,5 +1,7 @@
 package com.sky.entity;
 
+import com.sky.annotation.AutoFill;
+import com.sky.enumeration.OperationType;
 import io.github.vipxieliang.validx.annotations.ChineseIdCard;
 import io.github.vipxieliang.validx.annotations.ChinesePhone;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@AutoFill
 public class Employee implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -27,5 +27,11 @@
             <groupId>io.github.vipxieliang</groupId>
             <artifactId>validx</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sky</groupId>
+            <artifactId>sky-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>
