@@ -7,7 +7,7 @@ import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.result.PageResult;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 public interface EmployeeService {
 

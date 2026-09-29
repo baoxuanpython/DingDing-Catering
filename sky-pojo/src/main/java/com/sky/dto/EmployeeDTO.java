@@ -4,7 +4,7 @@ import io.github.vipxieliang.validx.annotations.ChineseIdCard;
 import io.github.vipxieliang.validx.annotations.ChinesePhone;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data

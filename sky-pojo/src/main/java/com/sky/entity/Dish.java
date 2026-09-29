@@ -1,5 +1,6 @@
 package com.sky.entity;
 
+import com.sky.annotation.AutoFill;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Builder
+@AutoFill
 @NoArgsConstructor
 @AllArgsConstructor
 public class Dish implements Serializable {

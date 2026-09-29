@@ -1,68 +1,97 @@
 package com.sky.utils;
 
-import com.aliyun.oss.ClientException;
-import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSClientBuilder;
-import com.aliyun.oss.OSSException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.aliyun.sdk.service.oss2.OSSClient;
+import com.aliyun.sdk.service.oss2.OSSClientBuilder;
+import com.aliyun.sdk.service.oss2.credentials.CredentialsProvider;
+import com.aliyun.sdk.service.oss2.credentials.StaticCredentialsProvider;
+import com.aliyun.sdk.service.oss2.models.DeleteObjectRequest;
+import com.aliyun.sdk.service.oss2.models.PutObjectRequest;
+import com.sky.properties.AliOssProperties;
 import lombok.extern.slf4j.Slf4j;
-import java.io.ByteArrayInputStream;
+import org.apache.commons.io.FilenameUtils;
 
-@Data
-@AllArgsConstructor
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
+import com.aliyun.sdk.service.oss2.transport.BinaryData;
+
+/**
+ * 阿里云 OSS 文件操作工具类
+ * 负责将文件上传至指定 Bucket，并返回可访问的文件 URL
+ */
+
 @Slf4j
 public class AliOssUtil {
-
-    private String endpoint;
-    private String accessKeyId;
-    private String accessKeySecret;
-    private String bucketName;
+    private final String bucketName;
+    private final String region;
+    private final CredentialsProvider credentialsProvider;
 
     /**
-     * 文件上传
+     * 构造器注入 OSS 配置信息
      *
-     * @param bytes
-     * @param objectName
-     * @return
+     * @param aliyunOSSProperties 阿里云 OSS 配置对象（含 bucketName、region、accessKeyId、accessKeySecret）
      */
-    public String upload(byte[] bytes, String objectName) {
+    public AliOssUtil(AliOssProperties aliyunOSSProperties) {
+        this.bucketName = aliyunOSSProperties.getBucketName();
+        this.region = aliyunOSSProperties.getRegion();
+        this.credentialsProvider = new StaticCredentialsProvider(
+                aliyunOSSProperties.getAccessKeyId(),
+                aliyunOSSProperties.getAccessKeySecret()
+        );
+    }
 
-        // 创建OSSClient实例。
-        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+    /**
+     * 上传文件到阿里云 OSS
+     * 存储路径格式：yyyy/MM/UUID.后缀名，避免文件名冲突
+     *
+     * @param content          文件二进制内容
+     * @param originalFilename 原始文件名（用于提取后缀名）
+     * @return 文件访问 URL（格式：https://{bucket}.oss-{region}.aliyuncs.com/{objectName}）
+     * @throws Exception 客户端创建或上传过程中发生异常时抛出
+     */
+    public String upload(byte[] content, String originalFilename) throws Exception {
+        String dir = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM"));
+        // 提取后缀名
+        String ext = FilenameUtils.getExtension(originalFilename);
+        String newFileName = UUID.randomUUID() + "." + ext;
+        String objectName = dir + "/" + newFileName;
 
-        try {
-            // 创建PutObject请求。
-            ossClient.putObject(bucketName, objectName, new ByteArrayInputStream(bytes));
-        } catch (OSSException oe) {
-            System.out.println("Caught an OSSException, which means your request made it to OSS, "
-                    + "but was rejected with an error response for some reason.");
-            System.out.println("Error Message:" + oe.getErrorMessage());
-            System.out.println("Error Code:" + oe.getErrorCode());
-            System.out.println("Request ID:" + oe.getRequestId());
-            System.out.println("Host ID:" + oe.getHostId());
-        } catch (ClientException ce) {
-            System.out.println("Caught an ClientException, which means the client encountered "
-                    + "a serious internal problem while trying to communicate with OSS, "
-                    + "such as not being able to access the network.");
-            System.out.println("Error Message:" + ce.getMessage());
-        } finally {
-            if (ossClient != null) {
-                ossClient.shutdown();
-            }
+        OSSClientBuilder clientBuilder = OSSClient.newBuilder()
+                .credentialsProvider(credentialsProvider)
+                .region(region);
+        try (OSSClient client = clientBuilder.build()) {
+            client.putObject(PutObjectRequest.newBuilder()
+                    .bucket(bucketName)
+                    .key(objectName)
+                    .body(BinaryData.fromBytes(content))
+                    .build());
         }
+        log.info("图片网址：{}", "https://" + bucketName + ".oss-" + region + ".aliyuncs.com/" + objectName);
+        return "https://" + bucketName + ".oss-" + region + ".aliyuncs.com/" + objectName;
+    }
 
-        //文件访问路径规则 https://BucketName.Endpoint/ObjectName
-        StringBuilder stringBuilder = new StringBuilder("https://");
-        stringBuilder
-                .append(bucketName)
-                .append(".")
-                .append(endpoint)
-                .append("/")
-                .append(objectName);
-
-        log.info("文件上传到:{}", stringBuilder.toString());
-
-        return stringBuilder.toString();
+    /**
+     * 从阿里云 OSS 删除指定文件
+     *
+     * @param fileUrl 文件完整访问 URL（含 bucket 域名和 objectName）
+     */
+    public void deleteFileFromOSS(String fileUrl) {
+        String prefix = "https://" + bucketName + ".oss-" + region + ".aliyuncs.com/";
+        if (fileUrl == null || !fileUrl.startsWith(prefix)) {
+            return;
+        }
+        String objectName = fileUrl.substring(prefix.length());
+        OSSClientBuilder clientBuilder = OSSClient.newBuilder()
+                .credentialsProvider(credentialsProvider)
+                .region(region);
+        try (OSSClient client = clientBuilder.build()) {
+            client.deleteObject(DeleteObjectRequest.newBuilder()
+                    .bucket(bucketName)
+                    .key(objectName)
+                    .build());
+        } catch (Exception e) {
+            throw new RuntimeException("OSS 文件删除失败：" + fileUrl, e);
+        }
     }
 }

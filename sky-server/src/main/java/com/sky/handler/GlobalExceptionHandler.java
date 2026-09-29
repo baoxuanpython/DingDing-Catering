@@ -2,6 +2,7 @@ package com.sky.handler;
 
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.BaseException;
+import com.sky.exception.UploadFileFailException;
 import com.sky.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -31,7 +32,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public Result alreadyExistExceptionHandler(SQLIntegrityConstraintViolationException ex) {
-        log.error("数据已存在");
         log.error(ex.getMessage());
         return Result.error("数据已存在");
     }
@@ -46,12 +46,18 @@ public class GlobalExceptionHandler {
     public Result handleValidationException(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldError().getDefaultMessage();
         log.error("参数校验失败：{}", message);
-        return Result.error(message);
+        return Result.error("参数校验失败");
     }
+
     @ExceptionHandler
-    public Result handleValidationException(AccountNotFoundException ex) {
-        log.error("账号不存在");
+    public Result handleAccountNotFoundException(AccountNotFoundException ex) {
         log.error(ex.getMessage());
-        return Result.error(ex.getMessage());
+        return Result.error("账号不存在");
+    }
+
+    @ExceptionHandler
+    public Result handleUploadFileFailException(UploadFileFailException ex) {
+        log.error("上传文件异常信息：{}", ex.getMessage());
+        return Result.error("上传文件失败");
     }
 }
