@@ -28,12 +28,10 @@ public class AutoFillAspect {
      */
     @Pointcut("execution(* com.sky.mapper.*.*(..)) && @annotation( com.sky.annotation.AutoFill)")
     public void autoFillPointCut() {
-
-
     }
 
     @Before("autoFillPointCut()")
-    public void autoFill(JoinPoint joinPoint) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void autoFillBefore(JoinPoint joinPoint) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();//获取方法签名
         AutoFill autoFill = signature.getMethod().getAnnotation(AutoFill.class);//获取注解
         OperationType operationType = autoFill.value();//获取操作类型

@@ -1,9 +1,9 @@
 package com.sky.controller;
 
+import com.sky.annotation.AutoLogDTO;
 import com.sky.exception.UploadFileFailException;
 import com.sky.result.Result;
 import com.sky.utils.AliOssUtil;
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +22,10 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    @Operation(summary = "上传文件")
+    @AutoLogDTO("上传文件")
     public Result<String> upload(MultipartFile file) {
         // 上传文件到OSS
         try {
-            log.info("上传文件，文件名：{}", file.getOriginalFilename());
             String fileName = aliOssUtil.upload(file.getBytes(), file.getOriginalFilename());
             return Result.success(fileName);
         } catch (Exception e) {

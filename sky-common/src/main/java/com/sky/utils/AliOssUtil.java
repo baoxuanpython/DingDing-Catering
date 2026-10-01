@@ -50,6 +50,7 @@ public class AliOssUtil {
      * @return 文件访问 URL（格式：https://{bucket}.oss-{region}.aliyuncs.com/{objectName}）
      * @throws Exception 客户端创建或上传过程中发生异常时抛出
      */
+    //TODO 前端先显示在页面上，用户确认后，再上传到OSS
     public String upload(byte[] content, String originalFilename) throws Exception {
         String dir = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM"));
         // 提取后缀名
@@ -76,6 +77,7 @@ public class AliOssUtil {
      *
      * @param fileUrl 文件完整访问 URL（含 bucket 域名和 objectName）
      */
+    //TODO 需要配合前端删除文件，修改菜品的接口，如果图片文件改变了，就将OSS中对应的文件删除
     public void deleteFileFromOSS(String fileUrl) {
         String prefix = "https://" + bucketName + ".oss-" + region + ".aliyuncs.com/";
         if (fileUrl == null || !fileUrl.startsWith(prefix)) {

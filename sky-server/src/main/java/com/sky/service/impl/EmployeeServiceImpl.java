@@ -73,22 +73,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
         employee.setStatus(StatusConstant.ENABLE);
-        log.info("默认密码：{}", PasswordConstant.DEFAULT_PASSWORD(employeeDTO.getIdNumber()));
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD(employeeDTO.getIdNumber()).getBytes()));
         employeeMapper.addEmployee(employee);
     }
 
     @Override
     public PageResult<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
-        log.info("员工分页查询：{}", employeePageQueryDTO);
 
         try (Page<Employee> employeePage = PageHelper.startPage(
                 employeePageQueryDTO.getPage(),
                 employeePageQueryDTO.getPageSize())) {
 
             List<Employee> list = employeeMapper.list(employeePageQueryDTO);
-
-            log.info("总记录数：{}，当前页记录数：{}", employeePage.getTotal(), list.size());
 
             return new PageResult<>(employeePage.getTotal(), list);
         }

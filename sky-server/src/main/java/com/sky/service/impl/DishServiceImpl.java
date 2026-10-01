@@ -13,33 +13,106 @@ import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class DishServiceImpl implements DishService {
     private final DishMapper dishMapper;
+
     public DishServiceImpl(DishMapper dishMapper) {
         this.dishMapper = dishMapper;
     }
 
     @Override
     public PageResult<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO) {
-        try (Page<DishVO> page = PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize())){
+        try (Page<DishVO> page = PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize())) {
             List<DishVO> list = dishMapper.pageQuery(dishPageQueryDTO);
             return new PageResult<>(page.getTotal(), list);
         }
     }
 
     @Override
+    public DishVO getById(Long id) {
+        List<DishVO> list = dishMapper.getById(id);
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    @Override
+    public List<DishVO> getList(Long categoryId) {
+        return dishMapper.getListByCategoryId(categoryId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addDish(DishDTO dishDTO) {
         Dish dish = new Dish();
-        List<DishFlavor> flavorList = new ArrayList<>();
+
         BeanUtils.copyProperties(dishDTO, dish);
-        BeanUtils.copyProperties(dishDTO.getFlavors(), flavorList);
+
         dishMapper.addDish(dish);
-        dishMapper.addDishFlavor(flavorList);
+
+        Long dishId = dish.getId();
+
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+
+        if (flavors != null && !flavors.isEmpty()) {
+            flavors.forEach(flavor -> flavor.setDishId(dishId));
+
+            dishMapper.addDishFlavor(flavors);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteDish(String ids) {
+
+        List<Long> idList = Arrays.stream(ids.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+
+        if (idList.isEmpty()) {
+            return;
+        }
+
+        dishMapper.deleteFlavorByDishIds(idList);
+
+        dishMapper.deleteByIds(idList);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateDish(DishDTO dishDTO) {
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+
+        dishMapper.updateDish(dish);
+
+        Long dishId = dish.getId();
+
+        dishMapper.deleteFlavorByDishIds(Collections.singletonList(dishId));
+
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+
+        if (flavors != null && !flavors.isEmpty()) {
+            flavors.forEach(flavor -> flavor.setDishId(dishId));
+            dishMapper.addDishFlavor(flavors);
+        }
+    }
+
+    @Override
+    public void updateStatus(Integer status,Long id) {
+        dishMapper.updateStatus(status,id);
     }
 }

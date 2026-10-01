@@ -1,5 +1,6 @@
 package com.sky.controller;
 
+import com.sky.annotation.AutoLogDTO;
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
@@ -22,35 +23,37 @@ public class CategoryController {
     }
 
     @GetMapping("/page")
+    @AutoLogDTO("分页查询分类")
     public Result<PageResult<Category>> pageQuery(CategoryPageQueryDTO categoryPageQueryDTO) {
         return Result.success(categoryService.pageQuery(categoryPageQueryDTO));
     }
     @PostMapping
-    public Result<String> addCategory(@RequestBody CategoryDTO categoryDTO) {
+    @AutoLogDTO("新增分类")
+    public Result<Void> addCategory(@RequestBody CategoryDTO categoryDTO) {
         categoryService.addCategory(categoryDTO);
-        log.info("添加{}成功", categoryDTO.getName());
-        return Result.success(String.format("添加%s成功", categoryDTO.getName()));
+        return Result.success();
     }
     @DeleteMapping
-    public Result<String> deleteCategory(@RequestParam Long id) {
+    @AutoLogDTO("删除分类")
+    public Result<Void> deleteCategory(@RequestParam Long id) {
         categoryService.deleteCategory(id);
-        log.info("删除{}成功", id);
-        return Result.success(String.format("删除%s成功", id));
+        return Result.success();
     }
     @GetMapping("/list")
+    @AutoLogDTO("查询分类列表")
     public Result<List<Category>> listCategory(@RequestParam Integer type) {
         return Result.success(categoryService.listQuery(type));
     }
     @PostMapping("/status/{status}")
-    public Result<String> updateStatus(@PathVariable Integer status, @RequestParam Long id) {
-        log.info("更新分类状态：id={}, status={}", id, status == 1 ? "启用" : "停用");
+    @AutoLogDTO("更新分类状态")
+    public Result<Void> updateStatus(@PathVariable Integer status, @RequestParam Long id) {
         categoryService.updateStatus(status, id);
-        return Result.success(status == 1 ? "启用成功" : "停用成功");
+        return Result.success();
     }
     @PutMapping
-    public Result<String> updateCategory(@RequestBody CategoryDTO categoryDTO) {
+    @AutoLogDTO("编辑分类")
+    public Result<Void> updateCategory(@RequestBody CategoryDTO categoryDTO) {
         categoryService.updateCategory(categoryDTO);
-        log.info("更新{}成功", categoryDTO.getName());
-        return Result.success(String.format("更新%s成功", categoryDTO.getName()));
+        return Result.success();
     }
 }

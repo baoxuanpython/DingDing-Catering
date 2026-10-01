@@ -36,7 +36,14 @@ spring:
         url-pattern: /druid/*
         reset-enable: false
         login-username: admin
-        login-password: 123456
+        login-password: 12345678
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
 
 mybatis:
   #mapper配置文件

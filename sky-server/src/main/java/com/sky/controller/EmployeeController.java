@@ -1,5 +1,6 @@
 package com.sky.controller;
 
+import com.sky.annotation.AutoLogDTO;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
@@ -45,23 +46,20 @@ public class EmployeeController {
      * @return 登录成功后的员工信息
      */
     @PostMapping("/login")
+    @AutoLogDTO("员工登录")
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
-        log.info("员工登录：{}", employeeLoginDTO);
 
         Employee employee = employeeService.login(employeeLoginDTO);
         //登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
-        log.info("员工登录成功：{}", employee);
         claims.put(JwtClaimsConstant.EMP_ID, employee.getId());
         claims.put(JwtClaimsConstant.USERNAME, employee.getUsername());
         claims.put(JwtClaimsConstant.NAME, employee.getName());
         claims.put(JwtClaimsConstant.PHONE, employee.getPhone());
-        log.info("登录密钥:{}", jwtProperties.getAdminSecretKey());
         String token = JwtUtil.createJWT(
                 jwtProperties.getAdminSecretKey(),
                 jwtProperties.getAdminTtl(),
                 claims);
-        log.info("登录令牌:{}", token);
 
         EmployeeLoginVO employeeLoginVO = EmployeeLoginVO.builder()
                 .id(employee.getId())
@@ -79,41 +77,48 @@ public class EmployeeController {
      * @return 退出成功后的员工信息
      */
     @PostMapping("/logout")
+    @AutoLogDTO("员工退出")
     public Result<String> logout() {
         return Result.success("退出登录");
     }
 
     @PostMapping
+    @AutoLogDTO("新增员工")
     public Result<String> addEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) {
         employeeService.addEmployee(employeeDTO);
         return Result.success("添加成功");
     }
 
     @GetMapping("/page")
+    @AutoLogDTO("分页查询员工")
     public Result<PageResult<Employee>> pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
         return Result.success(employeeService.pageQuery(employeePageQueryDTO));
     }
 
     @PostMapping("/status/{status}")
-    public Result<String> updateStatus(@PathVariable Integer status, @RequestParam Long id) {
+    @AutoLogDTO("更新员工状态")
+    public Result<Void> updateStatus(@PathVariable Integer status, @RequestParam Long id) {
         employeeService.updateStatus(status, id);
-        return Result.success(status == 1 ? "启用成功" : "停用成功");
+        return Result.success();
     }
 
     @PutMapping
-    public Result<String> updateEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) {
+    @AutoLogDTO("编辑员工信息")
+    public Result<Void> updateEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) {
         employeeService.updateEmployee(employeeDTO);
-        return Result.success("更新成功");
+        return Result.success();
     }
 
     @GetMapping("/{id}")
+    @AutoLogDTO("查询员工详情")
     public Result<EmployeeDTO> getEmployee(@PathVariable Long id) {
         return Result.success(employeeService.getEmployeeDTO(id));
     }
 
     @PutMapping("editPassword")
-    public Result<String> editPassword(@RequestBody PasswordEditDTO passwordEditDTO) {
+    @AutoLogDTO("修改密码")
+    public Result<Void> editPassword(@RequestBody PasswordEditDTO passwordEditDTO) {
         employeeService.editPassword(passwordEditDTO);
-        return Result.success("密码更新成功");
+        return Result.success();
     }
 }
