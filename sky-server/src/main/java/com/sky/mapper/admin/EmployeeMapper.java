@@ -1,4 +1,4 @@
-package com.sky.mapper;
+package com.sky.mapper.admin;
 
 import com.sky.annotation.AutoFill;
 import com.sky.dto.EmployeePageQueryDTO;

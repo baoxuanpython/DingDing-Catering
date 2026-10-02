@@ -34,6 +34,9 @@
         <validx>1.0.1</validx>
         <wechatpay-apache-httpclient>0.4.8</wechatpay-apache-httpclient>
         <common-io>2.18.0</common-io>
+        <jackson>2.17.2</jackson>
+        <httpclient5>5.2.1</httpclient5>
+        <spring.data.redis>3.2.5</spring.data.redis>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -143,6 +146,34 @@
                 <artifactId>commons-io</artifactId>
                 <version>${common-io}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>${httpclient5}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${spring.data.redis}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

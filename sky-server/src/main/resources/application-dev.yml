@@ -10,3 +10,6 @@ sky:
     bucket-name: cangqiong-take-out-ioe44
     access-key-id: LTAI5t9x4s5rg2aEfRKfpqbD
     access-key-secret: l5p5wvcj1nVlt3wWDv68NO9mQ8JGxe
+  redis:
+    host: localhost
+    port: 6379
