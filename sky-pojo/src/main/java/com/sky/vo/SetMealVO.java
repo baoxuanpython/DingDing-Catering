@@ -1,6 +1,6 @@
 package com.sky.vo;
 
-import com.sky.entity.SetmealDish;
+import com.sky.entity.SetMealDish;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SetmealVO implements Serializable {
+public class SetMealVO implements Serializable {
 
     private Long id;
 
@@ -45,5 +45,5 @@ public class SetmealVO implements Serializable {
 
     //套餐和菜品的关联关系
     @Builder.Default
-    private List<SetmealDish> setmealDishes = new ArrayList<>();
+    private List<SetMealDish> setmealDishes = new ArrayList<>();
 }

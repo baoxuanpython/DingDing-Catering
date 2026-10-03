@@ -4,3 +4,8 @@
 *.class
 *Test.java
 **/test/
+
+# 日志文件和输出目录
+output/
+logs/
+*.log

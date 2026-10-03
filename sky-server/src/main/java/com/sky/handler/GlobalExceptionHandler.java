@@ -32,8 +32,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public Result alreadyExistExceptionHandler(SQLIntegrityConstraintViolationException ex) {
-        log.error(ex.getMessage());
-        return Result.error("数据已存在");
+        log.error("SQL完整性约束异常：{}", ex.getMessage());
+        String message = ex.getMessage();
+        if (message != null && message.contains("Duplicate entry")) {
+            return Result.error("数据已存在");
+        }
+        throw new BaseException("数据库操作失败：" + message);
     }
 
     /**
