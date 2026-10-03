@@ -35,7 +35,7 @@
     </insert>
     <update id="updateStatus">
         update setmeal
-        set status=#{status}
+        set status=#{status},update_time=NOW(),update_user=${@com.sky.context.BaseContext@getCurrentId()}
         where id = #{id}
     </update>
     <update id="updateSetMeal" parameterType="com.sky.entity.Setmeal">
@@ -73,7 +73,7 @@
             <if test="status!=null">and s.status=#{status}</if>
             <if test="categoryId!=null">and s.category_id =#{categoryId}</if>
         </where>
-        order by id
+        order by s.update_time desc
     </select>
     <select id="getSetMealById" resultMap="setMealResultMap">
         select s.id,

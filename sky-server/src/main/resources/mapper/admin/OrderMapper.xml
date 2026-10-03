@@ -3,4 +3,134 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.admin.OrderMapper">
 
+    <!-- 订单基本信息 ResultMap（不含详情列表） -->
+    <resultMap id="orderBaseMap" type="com.sky.vo.OrderVO">
+        <id column="id" property="id"/>
+        <result column="number" property="number"/>
+        <result column="status" property="status"/>
+        <result column="user_id" property="userId"/>
+        <result column="address_book_id" property="addressBookId"/>
+        <result column="order_time" property="orderTime"/>
+        <result column="checkout_time" property="checkoutTime"/>
+        <result column="pay_method" property="payMethod"/>
+        <result column="pay_status" property="payStatus"/>
+        <result column="amount" property="amount"/>
+        <result column="remark" property="remark"/>
+        <result column="consignee" property="consignee"/>
+        <result column="phone" property="phone"/>
+        <result column="address" property="address"/>
+        <result column="user_name" property="userName"/>
+        <result column="cancel_reason" property="cancelReason"/>
+        <result column="rejection_reason" property="rejectionReason"/>
+        <result column="cancel_time" property="cancelTime"/>
+        <result column="estimated_delivery_time" property="estimatedDeliveryTime"/>
+        <result column="delivery_status" property="deliveryStatus"/>
+        <result column="delivery_time" property="deliveryTime"/>
+        <result column="pack_amount" property="packAmount"/>
+        <result column="tableware_number" property="tablewareNumber"/>
+        <result column="tableware_status" property="tablewareStatus"/>
+    </resultMap>
+
+    <!-- 订单详情 ResultMap -->
+    <resultMap id="orderDetailMap" type="com.sky.entity.OrderDetail">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="order_id" property="orderId"/>
+        <result column="dish_id" property="dishId"/>
+        <result column="setmeal_id" property="setmealId"/>
+        <result column="dish_flavor" property="dishFlavor"/>
+        <result column="number" property="number"/>
+        <result column="amount" property="amount"/>
+        <result column="image" property="image"/>
+    </resultMap>
+    <!-- 取消订单 -->
+    <update id="cancelById" parameterType="com.sky.dto.OrdersCancelDTO">
+        update orders
+        set status        = ${@com.sky.entity.Orders@CANCELLED},
+            cancel_reason = #{cancelReason},
+            cancel_time   = now()
+        where id = #{id}
+    </update>
+    <update id="completeById" parameterType="java.lang.Long">
+        update orders
+        set status        = ${@com.sky.entity.Orders@COMPLETED},
+            delivery_time = now()
+        where id = #{id}
+    </update>
+    <update id="rejectionById" parameterType="com.sky.dto.OrdersRejectionDTO">
+        update orders
+        set status           = ${@com.sky.entity.Orders@CANCELLED},
+            rejection_reason = #{rejectionReason},
+            cancel_time      = now(),
+            pay_status       = if(pay_status = ${@com.sky.entity.Orders@PAID}, ${@com.sky.entity.Orders@REFUND}, pay_status)
+        where id = #{id}
+    </update>
+    <update id="confirmById" parameterType="com.sky.dto.OrdersConfirmDTO">
+        update orders
+        set status                  = ${@com.sky.entity.Orders@CONFIRMED},
+            estimated_delivery_time = NOW() + INTERVAL 30 MINUTE
+        where id = #{id}
+    </update>
+    <update id="deliveryById" parameterType="java.lang.Long">
+        update orders
+        set status        = ${@com.sky.entity.Orders@DELIVERY_IN_PROGRESS},
+            delivery_time = now() + INTERVAL 15 MINUTE
+        where id = #{id}
+    </update>
+
+    <!-- 查询1：订单基本信息（用于分页） -->
+    <select id="queryOrders" resultMap="orderBaseMap" parameterType="com.sky.dto.OrdersPageQueryDTO">
+        select
+        o.*,u.name as user_name
+        from orders o
+        left join address_book ab on ab.id = o.address_book_id
+        left join `user` u on u.id = o.user_id
+        <where>
+            <if test="status != null">o.status = #{status}</if>
+            <if test="phone != null and phone != ''">and ab.phone like concat('%',#{phone},'%')</if>
+            <if test="number != null and number != ''">and o.number like concat('%',#{number},'%')</if>
+            <if test="beginTime != null">and o.order_time &gt;= #{beginTime}</if>
+            <if test="endTime != null">and o.order_time &lt;= #{endTime}</if>
+        </where>
+        order by o.order_time desc
+    </select>
+
+    <!-- 查询2：批量查询订单详情 -->
+    <select id="queryOrderDetails" resultMap="orderDetailMap">
+        select id,
+        name,
+        order_id,
+        dish_id,
+        setmeal_id,
+        dish_flavor,
+        number,
+        amount,
+        image
+        from order_detail
+        where order_id in
+        <foreach collection="list" item="orderId" separator="," open="(" close=")">
+            #{orderId}
+        </foreach>
+        order by id
+    </select>
+    <select id="queryById" resultMap="orderBaseMap">
+        select *
+        from orders
+        where id = #{id}
+    </select>
+    <!-- 订单统计：待接单、待派送、派送中 -->
+    <select id="statistics" resultType="com.sky.vo.OrderStatisticsVO">
+        select sum(case when status = ${@com.sky.entity.Orders@TO_BE_CONFIRMED} then 1 else 0 end) as toBeConfirmed,
+               sum(case when status = ${@com.sky.entity.Orders@CONFIRMED} then 1 else 0 end)       as confirmed,
+               sum(case
+                       when status = ${@com.sky.entity.Orders@DELIVERY_IN_PROGRESS} then 1
+                       else 0 end)                                                                 as deliveryInProgress
+        from orders
+        where status in (
+                         ${@com.sky.entity.Orders@TO_BE_CONFIRMED},
+                         ${@com.sky.entity.Orders@CONFIRMED},
+                         ${@com.sky.entity.Orders@DELIVERY_IN_PROGRESS}
+            )
+    </select>
+
 </mapper>

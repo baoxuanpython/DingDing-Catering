@@ -17,53 +17,157 @@ import java.time.LocalDateTime;
 import static com.sky.context.BaseContext.getCurrentId;
 
 /**
- * 自动填充切面
+ * 自动填充切面（增强版）
+ * <p>
+ * 支持两种模式：
+ * 1. 标准模式：方法参数中包含带 @AutoFill 注解的实体类 → 自动填充公共字段
+ * 2. 简洁模式：方法参数中没有实体类（如简单状态更新）→ 优雅跳过，不报错
+ *
+ * @author sky-take-out
+ * @version 2.0
  */
 @Aspect
 @Component
 @Slf4j
 public class AutoFillAspect {
+
     /**
-     * 自动填充点切面
+     * 切入点：拦截所有带有 @AutoFill 注解的 Mapper 方法
      */
     @Pointcut("execution(* com.sky.mapper..*(..)) && @annotation(com.sky.annotation.AutoFill)")
     public void autoFillPointCut() {
     }
 
+    /**
+     * 前置通知：在目标方法执行前自动填充公共字段
+     * <p>
+     * 处理流程：
+     * 1. 获取方法的 @AutoFill 注解，确定操作类型（INSERT/UPDATE）
+     * 2. 遍历方法参数，查找带有 @AutoFill 注解的实体类
+     * 3. 对找到的实体类自动填充公共字段（createTime/updateTime/createUser/updateUser）
+     * 4. 如果未找到实体类，记录日志并优雅跳过（不抛异常）
+     *
+     * @param joinPoint 连接点对象，包含目标方法的信息
+     * @throws NoSuchMethodException     实体类缺少必要的 setter 方法
+     * @throws IllegalAccessException    无法访问 setter 方法
+     * @throws InvocationTargetException 调用 setter 方法时发生异常
+     */
     @Before("autoFillPointCut()")
     public void autoFillBefore(JoinPoint joinPoint) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        log.info("AutoFill 切面被触发，方法：{}", joinPoint.getSignature().getName());
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();//获取方法签名
-        AutoFill autoFill = signature.getMethod().getAnnotation(AutoFill.class);//获取注解
-        OperationType operationType = autoFill.value();//获取操作类型
-        Object[] args = joinPoint.getArgs();//获取参数
+        log.debug("AutoFill 切面触发 - 方法: {}", joinPoint.getSignature().getName());
+
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        AutoFill autoFill = signature.getMethod().getAnnotation(AutoFill.class);
+        OperationType operationType = autoFill.value();
+
+        Object[] args = joinPoint.getArgs();
         if (args == null || args.length == 0) {
+            log.debug("方法 {} 无参数，跳过自动填充", signature.getName());
             return;
         }
+
         Long currentId = getCurrentId();
-        boolean foundAutoFillEntity = false;
+        boolean foundEntity = false;
+
         for (Object arg : args) {
-            if (arg != null && arg.getClass().isAnnotationPresent(AutoFill.class)) {
-                foundAutoFillEntity = true;
-                if (operationType == OperationType.INSERT) {
-                    Method setCreateTime = arg.getClass().getMethod("setCreateTime", LocalDateTime.class);
-                    setCreateTime.invoke(arg, LocalDateTime.now());
-                    Method setUpdateTime = arg.getClass().getMethod("setUpdateTime", LocalDateTime.class);
-                    setUpdateTime.invoke(arg, LocalDateTime.now());
-                    Method setCreate = arg.getClass().getMethod("setCreateUser", Long.class);
-                    setCreate.invoke(arg, currentId);
-                    Method setUpdateUser = arg.getClass().getMethod("setUpdateUser", Long.class);
-                    setUpdateUser.invoke(arg, currentId);
-                } else if (operationType == OperationType.UPDATE) {
-                    Method setUpdateTime = arg.getClass().getMethod("setUpdateTime", LocalDateTime.class);
-                    setUpdateTime.invoke(arg, LocalDateTime.now());
-                    Method setUpdateUser = arg.getClass().getMethod("setUpdateUser", Long.class);
-                    setUpdateUser.invoke(arg, currentId);
-                }
+            if (arg != null && isAutoFillableEntity(arg)) {
+                foundEntity = true;
+                fillEntityFields(arg, operationType, currentId);
+                log.info("✅ 已为 [{}] 自动填充公共字段 - 操作类型: {}",
+                        arg.getClass().getSimpleName(), operationType);
             }
         }
-        if (!foundAutoFillEntity) {
-            throw new RuntimeException("方法 " + signature.getMethod().getName() + " 上有@AutoFill注解，但参数中没有带有@AutoFill注解的实体类对象");
+
+        if (!foundEntity) {
+            handleMissingEntity(signature, operationType);
         }
+    }
+
+    /**
+     * 判断是否为可自动填充的实体类
+     * <p>
+     * 条件：对象的类上必须标注了 @AutoFill 注解
+     *
+     * @param arg 方法参数对象
+     * @return 是否为可自动填充的实体类
+     */
+    private boolean isAutoFillableEntity(Object arg) {
+        return arg.getClass().isAnnotationPresent(AutoFill.class);
+    }
+
+    /**
+     * 填充实体类的公共字段
+     * <p>
+     * 根据操作类型填充不同的字段：
+     * - INSERT 操作：填充 createTime, updateTime, createUser, updateUser
+     * - UPDATE 操作：只填充 updateTime, updateUser
+     *
+     * @param entity        待填充的实体类对象
+     * @param operationType 操作类型（INSERT/UPDATE）
+     * @param currentId     当前登录用户ID
+     */
+    private void fillEntityFields(Object entity, OperationType operationType, Long currentId)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Class<?> clazz = entity.getClass();
+
+        if (operationType == OperationType.INSERT) {
+            invokeSetter(clazz, entity, "setCreateTime", LocalDateTime.class, LocalDateTime.now());
+            invokeSetter(clazz, entity, "setUpdateTime", LocalDateTime.class, LocalDateTime.now());
+            invokeSetter(clazz, entity, "setCreateUser", Long.class, currentId);
+            invokeSetter(clazz, entity, "setUpdateUser", Long.class, currentId);
+
+        } else if (operationType == OperationType.UPDATE) {
+            invokeSetter(clazz, entity, "setUpdateTime", LocalDateTime.class, LocalDateTime.now());
+            invokeSetter(clazz, entity, "setUpdateUser", Long.class, currentId);
+        }
+    }
+
+    /**
+     * 安全地调用实体类的 setter 方法
+     * <p>
+     * 如果实体类缺少指定的 setter 方法，不会抛出异常，
+     * 而是记录警告日志并跳过该字段的填充
+     *
+     * @param clazz      实体类的 Class 对象
+     * @param entity     实体类实例
+     * @param methodName setter 方法名（如 "setCreateTime"）
+     * @param paramType  参数类型（如 LocalDateTime.class）
+     * @param value      要设置的值
+     */
+    private void invokeSetter(Class<?> clazz, Object entity, String methodName,
+                              Class<?> paramType, Object value)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        try {
+            Method method = clazz.getMethod(methodName, paramType);
+            method.invoke(entity, value);
+        } catch (NoSuchMethodException e) {
+            log.warn("实体类 [{}] 缺少方法 [{}]，跳过该字段填充",
+                    clazz.getSimpleName(), methodName);
+        }
+    }
+
+    /**
+     * 处理未找到可填充实体类的情况
+     * <p>
+     * 不再抛出 RuntimeException，而是记录详细的提示信息。
+     * 这种情况通常出现在以下场景：
+     * 1. 简单的更新操作（如只更新状态字段），时间字段由 SQL NOW() 函数处理
+     * 2. 公共字段已在其他地方手动处理
+     * 3. 该方法确实不需要自动填充功能
+     *
+     * @param signature     方法签名
+     * @param operationType 操作类型
+     */
+    private void handleMissingEntity(MethodSignature signature, OperationType operationType) {
+        String methodName = signature.getMethod().getName();
+
+        log.info("ℹ️ 方法 [{}] 带有 @AutoFill({}) 注解，但参数中没有可填充的实体类对象。\n" +
+                        "   可能原因：\n" +
+                        "   1. 这是一个简单更新操作（如状态切换），时间字段由 SQL NOW() 处理\n" +
+                        "   2. 该方法的公共字段已在其他地方处理\n" +
+                        "   3. 此注解仅用于标记或未来扩展\n" +
+                        "   已自动跳过填充，不影响业务逻辑。",
+                methodName, operationType);
     }
 }
