@@ -2,9 +2,11 @@ package com.sky.service.admin.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.JwtClaimsConstant;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
@@ -12,35 +14,38 @@ import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
+import com.sky.exception.PasswordEditFailedException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.admin.EmployeeMapper;
+import com.sky.properties.JwtProperties;
 import com.sky.result.PageResult;
 import com.sky.service.admin.EmployeeService;
+import com.sky.utils.JwtUtil;
+import com.sky.vo.EmployeeLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 @Slf4j
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-
+    private final JwtProperties jwtProperties;
 
     private final EmployeeMapper employeeMapper;
 
-    public EmployeeServiceImpl(EmployeeMapper employeeMapper) {
+    public EmployeeServiceImpl(EmployeeMapper employeeMapper, JwtProperties jwtProperties) {
         this.employeeMapper = employeeMapper;
+        this.jwtProperties = jwtProperties;
     }
 
-    /**
-     * 员工登录
-     *
-     * @param employeeLoginDTO 登录信息
-     * @return 员工信息
-     */
-    public Employee login(EmployeeLoginDTO employeeLoginDTO) {
+    public EmployeeLoginVO login(EmployeeLoginDTO employeeLoginDTO) {
         String username = employeeLoginDTO.getUsername();
         String password = employeeLoginDTO.getPassword();
         //1、根据用户名查询数据库中的数据
@@ -63,9 +68,24 @@ public class EmployeeServiceImpl implements EmployeeService {
             //账号被锁定
             throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
+        //登录成功后，生成jwt令牌
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(JwtClaimsConstant.EMP_ID, employee.getId());
+        claims.put(JwtClaimsConstant.USERNAME, employee.getUsername());
+        claims.put(JwtClaimsConstant.NAME, employee.getName());
+        claims.put(JwtClaimsConstant.PHONE, employee.getPhone());
+        String token = JwtUtil.createJWT(
+                jwtProperties.getAdminSecretKey(),
+                jwtProperties.getAdminTtl(),
+                claims);
 
-        //3、返回实体对象
-        return employee;
+        //3、返回登录对象
+        return EmployeeLoginVO.builder()
+                .id(employee.getId())
+                .userName(employee.getUsername())
+                .name(employee.getName())
+                .token(token)
+                .build();
     }
 
     @Override
@@ -122,12 +142,20 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void editPassword(PasswordEditDTO passwordEditDTO) {
+        Function<String, String> toMD5 = password -> DigestUtils.md5DigestAsHex(password.getBytes());
+
+        passwordEditDTO.setEmpId(BaseContext.getCurrentId());
         Employee employee = employeeMapper.getById(passwordEditDTO.getEmpId());
         if (employee == null) {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
-        employee.setPassword(DigestUtils.md5DigestAsHex(passwordEditDTO.getNewPassword().getBytes()));
+        String newPassword = toMD5.apply(passwordEditDTO.getNewPassword());
+        if (newPassword.equals(employee.getPassword())) {
+            throw new PasswordEditFailedException(MessageConstant.PASSWORD_ERROR + "新旧密码不能相同");
+        }
+        employee.setPassword(toMD5.apply(passwordEditDTO.getNewPassword()));
         employeeMapper.updateEmployee(employee);
     }
 }

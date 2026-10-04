@@ -26,9 +26,12 @@ public interface SetMealMapper {
 
     SetMealVO getSetMealById(Long id);
 
-    @AutoFill(OperationType.UPDATE)
     void updateStatus(Integer status, Long id);
 
     @AutoFill(OperationType.UPDATE)
     void updateSetMeal(Setmeal setmeal);
+
+    Integer queryByCategoryId(@Param("categoryId") Long categoryId);
+
+    List<Long> queryDishesId(Long id);
 }

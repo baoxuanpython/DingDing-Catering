@@ -48,12 +48,11 @@ public class AutoFillAspect {
      * 4. 如果未找到实体类，记录日志并优雅跳过（不抛异常）
      *
      * @param joinPoint 连接点对象，包含目标方法的信息
-     * @throws NoSuchMethodException     实体类缺少必要的 setter 方法
      * @throws IllegalAccessException    无法访问 setter 方法
      * @throws InvocationTargetException 调用 setter 方法时发生异常
      */
     @Before("autoFillPointCut()")
-    public void autoFillBefore(JoinPoint joinPoint) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void autoFillBefore(JoinPoint joinPoint) throws InvocationTargetException, IllegalAccessException {
         log.debug("AutoFill 切面触发 - 方法: {}", joinPoint.getSignature().getName());
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -107,7 +106,7 @@ public class AutoFillAspect {
      * @param currentId     当前登录用户ID
      */
     private void fillEntityFields(Object entity, OperationType operationType, Long currentId)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+            throws InvocationTargetException, IllegalAccessException {
 
         Class<?> clazz = entity.getClass();
 
@@ -137,7 +136,7 @@ public class AutoFillAspect {
      */
     private void invokeSetter(Class<?> clazz, Object entity, String methodName,
                               Class<?> paramType, Object value)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+            throws InvocationTargetException, IllegalAccessException {
         try {
             Method method = clazz.getMethod(methodName, paramType);
             method.invoke(entity, value);
@@ -162,12 +161,13 @@ public class AutoFillAspect {
     private void handleMissingEntity(MethodSignature signature, OperationType operationType) {
         String methodName = signature.getMethod().getName();
 
-        log.info("ℹ️ 方法 [{}] 带有 @AutoFill({}) 注解，但参数中没有可填充的实体类对象。\n" +
-                        "   可能原因：\n" +
-                        "   1. 这是一个简单更新操作（如状态切换），时间字段由 SQL NOW() 处理\n" +
-                        "   2. 该方法的公共字段已在其他地方处理\n" +
-                        "   3. 此注解仅用于标记或未来扩展\n" +
-                        "   已自动跳过填充，不影响业务逻辑。",
+        log.info("""
+                    ℹ️ 方法 [{}] 带有 @AutoFill({}) 注解，但参数中没有可填充的实体类对象。
+                       可能原因：
+                       1. 这是一个简单更新操作（如状态切换），时间字段由 SQL NOW() 处理
+                       2. 该方法的公共字段已在其他地方处理
+                       3. 此注解仅用于标记或未来扩展
+                       已自动跳过填充，不影响业务逻辑。""",
                 methodName, operationType);
     }
 }

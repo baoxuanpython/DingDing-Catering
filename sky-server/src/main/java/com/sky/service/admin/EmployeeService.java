@@ -7,21 +7,13 @@ import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.result.PageResult;
 
+import com.sky.vo.EmployeeLoginVO;
 import jakarta.validation.Valid;
 
 public interface EmployeeService {
 
-    /**
-     * 员工登录
-     * @param employeeLoginDTO 登录信息
-     * @return 员工信息
-     */
-    Employee login(EmployeeLoginDTO employeeLoginDTO);
+    EmployeeLoginVO login(EmployeeLoginDTO employeeLoginDTO);
 
-    /**
-     * 员工注册
-     * @param employeeDTO 注册信息
-     */
     void addEmployee(EmployeeDTO employeeDTO);
 
     PageResult<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);

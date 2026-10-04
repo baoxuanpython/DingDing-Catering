@@ -32,11 +32,9 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-    private final JwtProperties jwtProperties;
 
     public EmployeeController(EmployeeService employeeService, JwtProperties jwtProperties) {
         this.employeeService = employeeService;
-        this.jwtProperties = jwtProperties;
     }
 
     /**
@@ -48,34 +46,9 @@ public class EmployeeController {
     @PostMapping("/login")
     @AutoLogDTO("员工登录")
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
-
-        Employee employee = employeeService.login(employeeLoginDTO);
-        //登录成功后，生成jwt令牌
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(JwtClaimsConstant.EMP_ID, employee.getId());
-        claims.put(JwtClaimsConstant.USERNAME, employee.getUsername());
-        claims.put(JwtClaimsConstant.NAME, employee.getName());
-        claims.put(JwtClaimsConstant.PHONE, employee.getPhone());
-        String token = JwtUtil.createJWT(
-                jwtProperties.getAdminSecretKey(),
-                jwtProperties.getAdminTtl(),
-                claims);
-
-        EmployeeLoginVO employeeLoginVO = EmployeeLoginVO.builder()
-                .id(employee.getId())
-                .userName(employee.getUsername())
-                .name(employee.getName())
-                .token(token)
-                .build();
-
+        EmployeeLoginVO employeeLoginVO = employeeService.login(employeeLoginDTO);
         return Result.success(employeeLoginVO);
     }
-
-    /**
-     * 退出
-     *
-     * @return 退出成功后的员工信息
-     */
     @PostMapping("/logout")
     @AutoLogDTO("员工退出")
     public Result<String> logout() {

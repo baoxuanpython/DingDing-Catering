@@ -32,4 +32,8 @@ public interface DishMapper {
     void updateDish(Dish dish);
 
     void updateStatus(Integer status, Long id);
+
+    Integer queryByCategoryId(@Param("categoryId") Long categoryId);
+
+    List<String> queryByStatus(@Param("dishIds") List<Long> dishIds);
 }

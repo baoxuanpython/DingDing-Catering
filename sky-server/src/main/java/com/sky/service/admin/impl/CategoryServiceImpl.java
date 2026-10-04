@@ -2,10 +2,14 @@ package com.sky.service.admin.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.admin.CategoryMapper;
+import com.sky.mapper.admin.DishMapper;
+import com.sky.mapper.admin.SetMealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.admin.CategoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +22,13 @@ import java.util.List;
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
+    private final SetMealMapper setMealMapper;
+    private final DishMapper dishMapper;
 
-    public CategoryServiceImpl(CategoryMapper categoryMapper) {
+    public CategoryServiceImpl(CategoryMapper categoryMapper, SetMealMapper setMealMapper, DishMapper dishMapper) {
         this.categoryMapper = categoryMapper;
+        this.setMealMapper = setMealMapper;
+        this.dishMapper = dishMapper;
     }
 
     public PageResult<Category> pageQuery(CategoryPageQueryDTO categoryPageQueryDTO) {
@@ -40,6 +48,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Long id) {
+        if (setMealMapper.queryByCategoryId(id) > 0) {
+            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL);
+        }
+        if (dishMapper.queryByCategoryId(id) > 0) {
+            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_DISH);
+        }
         categoryMapper.deleteCategory(id);
     }
 

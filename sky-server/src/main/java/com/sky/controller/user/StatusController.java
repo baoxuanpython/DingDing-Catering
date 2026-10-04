@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController("userStatusController")
 @RequestMapping("/user/shop")
 public class StatusController {
-    private final String SHOP_STATUS = "SHOP_STATUS";
     private final RedisTemplate<String, Object> redisTemplate;
 
     public StatusController(RedisTemplate<String, Object> redisTemplate) {
@@ -18,6 +17,7 @@ public class StatusController {
     @GetMapping("/status")
     @AutoLogDTO("获取店铺状态")
     public Result<Integer> getStatus() {
+        String SHOP_STATUS = "SHOP_STATUS";
         Integer status = (Integer) redisTemplate.opsForValue().get(SHOP_STATUS);
         return Result.success(status);
     }

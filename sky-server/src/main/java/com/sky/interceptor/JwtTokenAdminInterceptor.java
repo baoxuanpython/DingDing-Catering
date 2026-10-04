@@ -1,12 +1,17 @@
 package com.sky.interceptor;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.exception.TokenExpiredException;
+import com.sky.exception.TokenInvalidException;
+import com.sky.exception.UserNotLoginException;
 import com.sky.properties.JwtProperties;
 import com.sky.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -19,45 +24,31 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 @Slf4j
 public class JwtTokenAdminInterceptor implements HandlerInterceptor {
+    private final JwtProperties jwtProperties;
 
-    @Autowired
-    private JwtProperties jwtProperties;
+    public JwtTokenAdminInterceptor(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
+    }
 
-    /**
-     * 校验jwt
-     *
-     * @param request
-     * @param response
-     * @param handler
-     * @return
-     * @throws Exception
-     */
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //判断当前拦截到的是Controller的方法还是其他资源
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         if (!(handler instanceof HandlerMethod)) {
-            //当前拦截到的不是动态方法，直接放行
             return true;
         }
 
-        //1、从请求头中获取令牌
         String token = request.getHeader(jwtProperties.getAdminTokenName());
+        if (token == null) {
+            throw new UserNotLoginException(MessageConstant.USER_NOT_LOGIN);
+        }
 
-        //2、校验令牌
         try {
-            log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
             Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            String username = claims.get(JwtClaimsConstant.USERNAME).toString();
-            String name = claims.get(JwtClaimsConstant.NAME).toString();
-            String phone = claims.get(JwtClaimsConstant.PHONE).toString();
-            log.info("当前员工id：{}，用户名：{}，姓名：{}，手机号：{}", empId, username, name, phone);
             BaseContext.setCurrentId(empId);
-            //3、通过，放行
             return true;
+        } catch (ExpiredJwtException ex) {
+            throw new TokenExpiredException(ex.getMessage());
         } catch (Exception ex) {
-            //4、不通过，响应401状态码
-            response.setStatus(401);
-            return false;
+            throw new TokenInvalidException(ex.getMessage());
         }
     }
 }

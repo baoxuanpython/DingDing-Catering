@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.annotation.AutoLogDTO;
+import com.sky.constant.MessageConstant;
 import com.sky.exception.UploadFileFailException;
 import com.sky.result.Result;
 import com.sky.utils.AliOssUtil;
@@ -29,7 +30,7 @@ public class UploadController {
             String fileName = aliOssUtil.upload(file.getBytes(), file.getOriginalFilename());
             return Result.success(fileName);
         } catch (Exception e) {
-            throw new UploadFileFailException(e.getMessage());
+            throw new UploadFileFailException(MessageConstant.UPLOAD_FAILED);
         }
     }
 }

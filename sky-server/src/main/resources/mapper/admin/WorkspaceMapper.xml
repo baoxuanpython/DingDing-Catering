@@ -3,4 +3,42 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.admin.WorkspaceMapper">
 
+    <select id="getBusinessData" resultType="com.sky.vo.BusinessDataVO">
+        SELECT IFNULL(SUM(CASE WHEN o.status = ${@com.sky.entity.Orders@COMPLETED} THEN o.amount ELSE 0 END),
+                      0)                                                       AS turnover,
+               IFNULL(SUM(CASE WHEN o.status = ${@com.sky.entity.Orders@COMPLETED} THEN 1 ELSE 0 END),
+                      0)                                                       AS validOrderCount,
+               IFNULL(
+                       IF(COUNT(o.id) = 0, 0,
+                          ROUND(SUM(CASE WHEN o.status = ${@com.sky.entity.Orders@COMPLETED} THEN 1 ELSE 0 END) *
+                                100.0 / COUNT(o.id), 2)),
+                       0)                                                      AS orderCompletionRate,
+               IFNULL(
+                       IF(SUM(CASE WHEN o.status = ${@com.sky.entity.Orders@COMPLETED} THEN 1 ELSE 0 END) = 0, 0,
+                          ROUND(SUM(CASE WHEN o.status = ${@com.sky.entity.Orders@COMPLETED} THEN o.amount ELSE 0 END)
+                                    / SUM(CASE WHEN o.status = ${@com.sky.entity.Orders@COMPLETED} THEN 1 ELSE 0 END),
+                                2)),
+                       0)                                                      AS unitPrice,
+               (SELECT COUNT(*) FROM user WHERE DATE(create_time) = CURDATE()) AS newUsers
+        FROM orders o
+        WHERE DATE(o.order_time) = CURDATE();
+    </select>
+    <select id="getOverviewSetmeals" resultType="com.sky.vo.SetMealOverViewVO">
+        SELECT SUM(CASE WHEN status = ${@com.sky.constant.StatusConstant@ENABLE} THEN 1 ELSE 0 END) AS sold,
+               SUM(CASE WHEN status = ${@com.sky.constant.StatusConstant@DISABLE} THEN 1 ELSE 0 END) AS discontinued
+        FROM setmeal;
+    </select>
+    <select id="getOverviewDishes" resultType="com.sky.vo.DishOverViewVO">
+        SELECT SUM(CASE WHEN status = ${@com.sky.constant.StatusConstant@ENABLE} THEN 1 ELSE 0 END) AS sold,
+               SUM(CASE WHEN status = ${@com.sky.constant.StatusConstant@DISABLE} THEN 1 ELSE 0 END) AS discontinued
+        FROM dish;
+    </select>
+    <select id="getOverviewOrders" resultType="com.sky.vo.OrderOverViewVO">
+        SELECT SUM(CASE WHEN status = ${@com.sky.entity.Orders@TO_BE_CONFIRMED} THEN 1 ELSE 0 END) AS waitingOrders,
+               SUM(CASE WHEN status = ${@com.sky.entity.Orders@CONFIRMED} THEN 1 ELSE 0 END)       AS deliveredOrders,
+               SUM(CASE WHEN status = ${@com.sky.entity.Orders@COMPLETED} THEN 1 ELSE 0 END)       AS completedOrders,
+               SUM(CASE WHEN status = ${@com.sky.entity.Orders@CANCELLED} THEN 1 ELSE 0 END)       AS cancelledOrders,
+               COUNT(*)                                                                            AS allOrders
+        FROM orders;
+    </select>
 </mapper>

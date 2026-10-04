@@ -35,7 +35,9 @@
     </insert>
     <update id="updateStatus">
         update setmeal
-        set status=#{status},update_time=NOW(),update_user=${@com.sky.context.BaseContext@getCurrentId()}
+        set status=#{status},
+            update_time=NOW(),
+            update_user=${@com.sky.context.BaseContext@getCurrentId()}
         where id = #{id}
     </update>
     <update id="updateSetMeal" parameterType="com.sky.entity.Setmeal">
@@ -96,5 +98,15 @@
                  left join category c on c.id = s.category_id
         where s.id = #{id}
         order by sd.id
+    </select>
+    <select id="queryByCategoryId" resultType="java.lang.Integer">
+        select count(*)
+        from setmeal
+        where category_id = #{categoryId}
+    </select>
+    <select id="queryDishesId" resultType="java.lang.Long">
+        select dish_id
+        from setmeal_dish
+        where setmeal_id = #{id};
     </select>
 </mapper>

@@ -128,4 +128,18 @@
         where di.category_id = #{categoryId}
         order by di.id desc
     </select>
+    <select id="queryByCategoryId" resultType="java.lang.Integer">
+        select count(*)
+        from dish
+        where category_id = #{categoryId}
+    </select>
+    <select id="queryByStatus" resultType="java.lang.String">
+        select name
+        from dish
+        where id in
+        <foreach collection="dishIds" item="dishId" open="(" separator="," close=")">
+            #{dishId}
+        </foreach>
+        and status = ${@com.sky.constant.StatusConstant@DISABLE}
+    </select>
 </mapper>

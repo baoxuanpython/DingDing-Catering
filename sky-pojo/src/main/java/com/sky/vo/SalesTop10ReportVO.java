@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,5 +19,6 @@ public class SalesTop10ReportVO implements Serializable {
 
     //销量列表，以逗号分隔，例如：260,215,200
     private String numberList;
+
 
 }

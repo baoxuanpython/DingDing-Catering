@@ -23,5 +23,8 @@ public class MessageConstant {
     public static final String DISH_BE_RELATED_BY_SETMEAL = "当前菜品关联了套餐,不能删除";
     public static final String ORDER_STATUS_ERROR = "订单状态错误";
     public static final String ORDER_NOT_FOUND = "订单不存在";
-
+    public static final String PARAM_ERROR = "参数校验失败";
+    public static final String DATA_EXIST = "数据已存在";
+    public static final String JWT_EXPIRED = "JWT令牌已过期";
+    public static final String JWT_INVALID = "JWT令牌无效";
 }

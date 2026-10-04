@@ -2,10 +2,14 @@ package com.sky.service.admin.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.SetMealDTO;
 import com.sky.dto.SetMealPageQueryDTO;
 import com.sky.entity.SetMealDish;
 import com.sky.entity.Setmeal;
+import com.sky.exception.SetMealEnableFailedException;
+import com.sky.mapper.admin.DishMapper;
 import com.sky.mapper.admin.SetMealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.admin.SetmealService;
@@ -22,9 +26,11 @@ import java.util.List;
 @Service
 public class SetmealServiceImpl implements SetmealService {
     private final SetMealMapper setmealMapper;
+    private final DishMapper dishMapper;
 
-    public SetmealServiceImpl(SetMealMapper setmealMapper) {
+    public SetmealServiceImpl(SetMealMapper setmealMapper, DishMapper dishMapper) {
         this.setmealMapper = setmealMapper;
+        this.dishMapper = dishMapper;
     }
 
     @Override
@@ -68,7 +74,22 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Override
     public void updateStatus(Integer status, Long id) {
-        setmealMapper.updateStatus(status, id);
+        if (status.equals(StatusConstant.ENABLE)) {
+            List<Long> dishesId = setmealMapper.queryDishesId(id);
+            log.info("dishesId:{}", dishesId);
+            List<String> disableDishNames = dishMapper.queryByStatus(dishesId);
+            log.info("disabledDishNames:{}", disableDishNames);
+            if (disableDishNames.isEmpty()) {
+                setmealMapper.updateStatus(status, id);
+            } else {
+                String dishNames = String.join("、", disableDishNames);
+                throw new SetMealEnableFailedException(
+                        MessageConstant.SETMEAL_ENABLE_FAILED + "：【" + dishNames + "】");
+            }
+        } else {
+            setmealMapper.updateStatus(status, id);
+        }
+
     }
 
     @Override

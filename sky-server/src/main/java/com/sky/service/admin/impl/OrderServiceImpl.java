@@ -3,12 +3,14 @@ package com.sky.service.admin.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
 import com.sky.dto.OrdersCancelDTO;
 import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersRejectionDTO;
 import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
+import com.sky.exception.OrderBusinessException;
 import com.sky.mapper.admin.OrderMapper;
 import com.sky.result.PageResult;
 import com.sky.service.admin.OrderService;
@@ -18,16 +20,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
+
+    /**
+     * 所有有效的订单状态集合
+     * <p>使用 Set.of() 创建不可变集合，查找效率 O(1)</p>
+     */
+    private static final Set<Integer> VALID_ORDER_STATUSES = Set.of(
+            Orders.PENDING_PAYMENT,      // 1 - 待付款
+            Orders.TO_BE_CONFIRMED,      // 2 - 待接单
+            Orders.CONFIRMED,            // 3 - 已接单
+            Orders.DELIVERY_IN_PROGRESS, // 4 - 派送中
+            Orders.COMPLETED,            // 5 - 已完成
+            Orders.CANCELLED             // 6 - 已取消
+    );
 
     public OrderServiceImpl(OrderMapper orderMapper) {
         this.orderMapper = orderMapper;
@@ -66,6 +78,12 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(rollbackFor = Exception.class)
     public OrderVO queryOrderDetails(Long id) {
         OrderVO orderVO = orderMapper.queryById(id);
+        if (orderVO == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        if (!VALID_ORDER_STATUSES.contains(orderVO.getStatus())) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
         List<OrderDetail> orderDetailList = orderMapper.queryOrderDetails(Collections.singletonList(id));
         orderVO.setOrderDetailList(orderDetailList);
         orderVO.setOrderDishes(orderDetailList.stream().map(OrderDetail::getName).collect(Collectors.joining("、")));
