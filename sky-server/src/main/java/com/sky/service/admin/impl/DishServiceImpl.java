@@ -2,10 +2,12 @@ package com.sky.service.admin.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.admin.DishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.admin.DishService;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,6 +78,7 @@ public class DishServiceImpl implements DishService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteDish(String ids) {
 
+
         List<Long> idList = Arrays.stream(ids.split(","))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
@@ -83,6 +87,17 @@ public class DishServiceImpl implements DishService {
 
         if (idList.isEmpty()) {
             return;
+        }
+        List<String> nameList = dishMapper.queryStatusByIds(idList);
+        if (!nameList.isEmpty()) {
+            throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE + "：" + String.join("、", nameList));
+        }
+        List<HashMap<String, String>> setmealList = dishMapper.querySetmealByids(idList);
+        if (!setmealList.isEmpty()) {
+            String detail = setmealList.stream()
+                    .map(map -> map.get("name") + "【" + map.get("setmeal_names") + "】")
+                    .collect(Collectors.joining("；"));
+            throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL + "：" + detail);
         }
 
         dishMapper.deleteFlavorByDishIds(idList);

@@ -109,4 +109,12 @@
         from setmeal_dish
         where setmeal_id = #{id};
     </select>
+    <select id="queryStatusByIds" resultType="java.lang.String">
+        select s.name from setmeal s where s.id in
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        and status = ${@com.sky.constant.StatusConstant@ENABLE}
+    </select>
+
 </mapper>

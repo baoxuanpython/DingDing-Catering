@@ -9,3 +9,5 @@
 output/
 logs/
 *.log
+
+.trae/

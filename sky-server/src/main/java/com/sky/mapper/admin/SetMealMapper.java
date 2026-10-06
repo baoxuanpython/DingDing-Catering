@@ -9,6 +9,7 @@ import com.sky.vo.SetMealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Mapper
@@ -34,4 +35,7 @@ public interface SetMealMapper {
     Integer queryByCategoryId(@Param("categoryId") Long categoryId);
 
     List<Long> queryDishesId(Long id);
+
+    List<String> queryStatusByIds(List<Long> idList);
+
 }

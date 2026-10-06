@@ -100,4 +100,9 @@ public class GlobalExceptionHandler {
         log.error("订单业务异常：{}", ex.getMessage());
         return Result.error(ex.getMessage());
     }
+    @ExceptionHandler(DeletionNotAllowedException.class)
+    public Result<String> handleDeletionNotAllowedException(DeletionNotAllowedException ex) {
+        log.error("删除不允许：{}", ex.getMessage());
+        return Result.error(ex.getMessage());
+    }
 }

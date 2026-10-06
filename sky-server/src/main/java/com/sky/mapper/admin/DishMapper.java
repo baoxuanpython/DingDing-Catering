@@ -8,6 +8,7 @@ import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Mapper
@@ -36,4 +37,8 @@ public interface DishMapper {
     Integer queryByCategoryId(@Param("categoryId") Long categoryId);
 
     List<String> queryByStatus(@Param("dishIds") List<Long> dishIds);
+
+    List<String> queryStatusByIds(List<Long> idList);
+
+    List<HashMap<String, String>> querySetmealByids(List<Long> idList);
 }

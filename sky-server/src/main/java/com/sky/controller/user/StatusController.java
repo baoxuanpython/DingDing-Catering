@@ -2,25 +2,22 @@ package com.sky.controller.user;
 
 import com.sky.annotation.AutoLogDTO;
 import com.sky.result.Result;
-import org.springframework.data.redis.core.RedisTemplate;
+import com.sky.service.admin.ShopConfigService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("userStatusController")
 @RequestMapping("/user/shop")
 public class StatusController {
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final ShopConfigService shopConfigService;
 
-    public StatusController(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
+    public StatusController(ShopConfigService shopConfigService) {
+        this.shopConfigService = shopConfigService;
     }
 
     @GetMapping("/status")
     @AutoLogDTO("获取店铺状态")
     public Result<Integer> getStatus() {
-        String SHOP_STATUS = "SHOP_STATUS";
-        Integer status = (Integer) redisTemplate.opsForValue().get(SHOP_STATUS);
+        Integer status = shopConfigService.getShopStatus();
         return Result.success(status);
     }
 }
-
-

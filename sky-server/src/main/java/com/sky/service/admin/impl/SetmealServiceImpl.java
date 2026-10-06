@@ -8,6 +8,7 @@ import com.sky.dto.SetMealDTO;
 import com.sky.dto.SetMealPageQueryDTO;
 import com.sky.entity.SetMealDish;
 import com.sky.entity.Setmeal;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.exception.SetMealEnableFailedException;
 import com.sky.mapper.admin.DishMapper;
 import com.sky.mapper.admin.SetMealMapper;
@@ -51,17 +52,17 @@ public class SetmealServiceImpl implements SetmealService {
         if (setMealDishes == null || setMealDishes.isEmpty()) {
             return;
         }
-        setMealDishes.forEach(setMealDish -> {
-            setMealDish.setSetmealId(setmeal.getId());
-        });
+        setMealDishes.forEach(setMealDish -> setMealDish.setSetmealId(setmeal.getId()));
         setmealMapper.addSetMealDishes(setMealDishes);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteSetmeal(String ids) {
         List<Long> idList = Arrays.stream(ids.split(",")).map(String::trim).filter(s -> !s.isEmpty()).map(Long::parseLong).toList();
-        if (idList.isEmpty()) {
-            return;
+        List<String> nameList = setmealMapper.queryStatusByIds(idList);
+        if (!nameList.isEmpty()) {
+            throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE + "：" + String.join("、", nameList));
         }
         setmealMapper.deleteSetMeal(idList);
         setmealMapper.deleteSetMealDishes(idList);
@@ -93,6 +94,7 @@ public class SetmealServiceImpl implements SetmealService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateSetmeal(SetMealDTO setmealDTO) {
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO, setmeal);
@@ -102,9 +104,7 @@ public class SetmealServiceImpl implements SetmealService {
         if (setMealDishes == null || setMealDishes.isEmpty()) {
             return;
         }
-        setMealDishes.forEach(setMealDish -> {
-            setMealDish.setSetmealId(setmeal.getId());
-        });
+        setMealDishes.forEach(setMealDish -> setMealDish.setSetmealId(setmeal.getId()));
         log.info("setMealDishes: {}", setMealDishes);
         setmealMapper.addSetMealDishes(setMealDishes);
     }

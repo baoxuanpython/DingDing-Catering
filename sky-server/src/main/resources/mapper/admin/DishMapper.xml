@@ -142,4 +142,23 @@
         </foreach>
         and status = ${@com.sky.constant.StatusConstant@DISABLE}
     </select>
+    <select id="queryStatusByIds" resultType="java.lang.String">
+        select name from dish where id in
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and status = ${@com.sky.constant.StatusConstant@ENABLE}
+    </select>
+    <select id="querySetmealByids" resultType="java.util.HashMap">
+        select d.name, group_concat(s.name order by s.name asc separator ',') as setmeal_names
+        from dish d
+        inner join setmeal_dish sd on d.id = sd.dish_id
+        inner join setmeal s on sd.setmeal_id = s.id
+        where d.id in
+        <foreach collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and d.status = 0
+        group by d.id, d.name
+    </select>
 </mapper>
