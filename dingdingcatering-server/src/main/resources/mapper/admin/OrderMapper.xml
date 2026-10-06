@@ -78,7 +78,7 @@
         where id = #{id}
     </update>
 
-    <!-- 查询1：订单基本信息（用于分页�?-->
+    <!-- 查询1：订单基本信息（用于分页查询） -->
     <select id="queryOrders" resultMap="orderBaseMap" parameterType="com.dingdingcatering.dto.OrdersPageQueryDTO">
         select
         o.*,u.name as user_name
@@ -95,7 +95,7 @@
         order by o.order_time desc
     </select>
 
-    <!-- 查询2：批量查询订单详�?-->
+    <!-- 查询2：批量查询订单详情 -->
     <select id="queryOrderDetails" resultMap="orderDetailMap">
         select id,
         name,

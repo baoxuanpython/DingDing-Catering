@@ -8,7 +8,7 @@
         from (select d.name, sum(all_sales.sale_num) as sales
               from dish d
                        INNER JOIN (
-                  -- 1、获取单品数�?
+                  -- 1、获取单品销量
                   select od.dish_id, od.number as sale_num
                   from order_detail od
                            INNER JOIN orders o on od.order_id = o.id
@@ -16,7 +16,7 @@
                     and od.dish_id is not null
                     and o.order_time between #{begin} and #{end}
                   UNION ALL
-                  -- 2、套餐拆解销量：下单数量*套餐内菜品份�?
+                  -- 2、套餐拆解销量：下单数量*套餐内菜品份数
                   select sd.dish_id, od.number * sd.copies as sale_num
                   from order_detail od
                            INNER JOIN orders o ON od.order_id = o.id
