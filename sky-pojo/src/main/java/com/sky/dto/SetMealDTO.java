@@ -1,7 +1,7 @@
-package com.sky.dto;
+package com.dingdingcatering.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.sky.entity.SetMealDish;
+import com.dingdingcatering.entity.SetMealDish;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -24,7 +24,7 @@ public class SetMealDTO implements Serializable {
     //套餐价格
     private BigDecimal price;
 
-    //状态 0:停用 1:启用
+    //状�?0:停用 1:启用
     private Integer status;
 
     //描述信息

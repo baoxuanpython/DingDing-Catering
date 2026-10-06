@@ -1,8 +1,8 @@
-package com.sky.utils;
+package com.dingdingcatering.utils;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.sky.properties.WeChatProperties;
+import com.dingdingcatering.properties.WeChatProperties;
 import com.wechat.pay.contrib.apache.httpclient.WechatPayHttpClientBuilder;
 import com.wechat.pay.contrib.apache.httpclient.util.PemUtil;
 import org.apache.commons.lang.RandomStringUtils;
@@ -30,7 +30,7 @@ import java.util.Base64;
 import java.util.List;
 
 /**
- * 微信支付工具类
+ * 微信支付工具�?
  */
 @Component
 public class WeChatPayUtil {
@@ -125,8 +125,8 @@ public class WeChatPayUtil {
     /**
      * jsapi下单
      *
-     * @param orderNum    商户订单号
-     * @param total       总金额
+     * @param orderNum    商户订单�?
+     * @param total       总金�?
      * @param description 商品描述
      * @param openid      微信用户的openid
      * @return
@@ -155,16 +155,16 @@ public class WeChatPayUtil {
     }
 
     /**
-     * 小程序支付
+     * 小程序支�?
      *
-     * @param orderNum    商户订单号
-     * @param total       金额，单位 元
+     * @param orderNum    商户订单�?
+     * @param total       金额，单�?�?
      * @param description 商品描述
      * @param openid      微信用户的openid
      * @return
      */
     public JSONObject pay(String orderNum, BigDecimal total, String description, String openid) throws Exception {
-        //统一下单，生成预支付交易单
+        //统一下单，生成预支付交易�?
         String bodyAsString = jsapi(orderNum, total, description, openid);
         //解析返回结果
         JSONObject jsonObject = JSON.parseObject(bodyAsString);
@@ -179,7 +179,7 @@ public class WeChatPayUtil {
             list.add(timeStamp);
             list.add(nonceStr);
             list.add("prepay_id=" + prepayId);
-            //二次签名，调起支付需要重新签名
+            //二次签名，调起支付需要重新签�?
             StringBuilder stringBuilder = new StringBuilder();
             for (Object o : list) {
                 stringBuilder.append(o).append("\n");
@@ -206,12 +206,12 @@ public class WeChatPayUtil {
     }
 
     /**
-     * 申请退款
+     * 申请退�?
      *
-     * @param outTradeNo    商户订单号
-     * @param outRefundNo   商户退款单号
-     * @param refund        退款金额
-     * @param total         原订单金额
+     * @param outTradeNo    商户订单�?
+     * @param outRefundNo   商户退款单�?
+     * @param refund        退款金�?
+     * @param total         原订单金�?
      * @return
      */
     public String refund(String outTradeNo, String outRefundNo, BigDecimal refund, BigDecimal total) throws Exception {
@@ -229,7 +229,7 @@ public class WeChatPayUtil {
 
         String body = jsonObject.toJSONString();
 
-        //调用申请退款接口
+        //调用申请退款接�?
         return post(REFUNDS, body);
     }
 }

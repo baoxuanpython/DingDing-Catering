@@ -1,4 +1,4 @@
-package com.sky.exception;
+package com.dingdingcatering.exception;
 
 /**
  * JWT令牌无效异常

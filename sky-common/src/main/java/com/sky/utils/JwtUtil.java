@@ -1,4 +1,4 @@
-package com.sky.utils;
+package com.dingdingcatering.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -16,14 +16,14 @@ public class JwtUtil {
      *
      * @param secretKey jwt秘钥
      * @param ttlMillis jwt过期时间(毫秒)
-     * @param claims    设置的信息
+     * @param claims    设置的信�?
      * @return
      */
     public static String createJWT(String secretKey, long ttlMillis, Map<String, Object> claims) {
         // 生成密钥
         SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
-        // 生成JWT的时间
+        // 生成JWT的时�?
         long expMillis = System.currentTimeMillis() + ttlMillis;
         Date exp = new Date(expMillis);
 
@@ -38,7 +38,7 @@ public class JwtUtil {
     /**
      * Token解密
      *
-     * @param secretKey jwt秘钥 此秘钥一定要保留好在服务端, 不能暴露出去, 否则sign就可以被伪造, 如果对接多个客户端建议改造成多个
+     * @param secretKey jwt秘钥 此秘钥一定要保留好在服务�? 不能暴露出去, 否则sign就可以被伪�? 如果对接多个客户端建议改造成多个
      * @param token     加密后的token
      * @return
      */

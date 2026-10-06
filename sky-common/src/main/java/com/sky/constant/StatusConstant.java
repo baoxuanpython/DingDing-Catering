@@ -1,7 +1,7 @@
-package com.sky.constant;
+package com.dingdingcatering.constant;
 
 /**
- * 状态常量，启用或者禁用
+ * 状态常量，启用或者禁�?
  */
 public class StatusConstant {
 

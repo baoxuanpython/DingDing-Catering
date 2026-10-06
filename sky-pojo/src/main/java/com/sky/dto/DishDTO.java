@@ -1,7 +1,7 @@
-package com.sky.dto;
+package com.dingdingcatering.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.sky.entity.DishFlavor;
+import com.dingdingcatering.entity.DishFlavor;
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;

@@ -1,9 +1,9 @@
-package com.sky.mapper.admin;
+package com.dingdingcatering.mapper.admin;
 
-import com.sky.annotation.AutoFill;
-import com.sky.dto.CategoryPageQueryDTO;
-import com.sky.entity.Category;
-import com.sky.enumeration.OperationType;
+import com.dingdingcatering.annotation.AutoFill;
+import com.dingdingcatering.dto.CategoryPageQueryDTO;
+import com.dingdingcatering.entity.Category;
+import com.dingdingcatering.enumeration.OperationType;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

@@ -1,7 +1,7 @@
-package com.sky.entity;
+package com.dingdingcatering.entity;
 
-import com.sky.annotation.AutoFill;
-import com.sky.enumeration.OperationType;
+import com.dingdingcatering.annotation.AutoFill;
+import com.dingdingcatering.enumeration.OperationType;
 import io.github.vipxieliang.validx.annotations.ChineseIdCard;
 import io.github.vipxieliang.validx.annotations.ChinesePhone;
 import lombok.AllArgsConstructor;
@@ -30,8 +30,8 @@ public class Employee implements Serializable {
 
     private String password;
 
-    @NotBlank(message = "手机号不能为空")
-    @ChinesePhone(message = "请输入正确的手机号")
+    @NotBlank(message = "手机号不能为�?)
+    @ChinesePhone(message = "请输入正确的手机�?)
     private String phone;
 
     private String sex;

@@ -1,13 +1,13 @@
-package com.sky.controller.admin;
+package com.dingdingcatering.controller.admin;
 
-import com.sky.annotation.AutoLogDTO;
-import com.sky.dto.DataOverViewQueryDTO;
-import com.sky.result.Result;
-import com.sky.service.admin.ReportService;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.SalesTop10ReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
+import com.dingdingcatering.annotation.AutoLogDTO;
+import com.dingdingcatering.dto.DataOverViewQueryDTO;
+import com.dingdingcatering.result.Result;
+import com.dingdingcatering.service.admin.ReportService;
+import com.dingdingcatering.vo.OrderReportVO;
+import com.dingdingcatering.vo.SalesTop10ReportVO;
+import com.dingdingcatering.vo.TurnoverReportVO;
+import com.dingdingcatering.vo.UserReportVO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +48,7 @@ public class ReportController {
         return Result.success(reportVO);
     }
     @GetMapping("/turnoverStatistics")
-    @AutoLogDTO("查询营业额统计")
+    @AutoLogDTO("查询营业额统�?)
     public Result<TurnoverReportVO> turnoverStatistics(@RequestParam String begin, @RequestParam String end) {
         DataOverViewQueryDTO queryDTO = DataOverViewQueryDTO.addTime(begin, end);
         TurnoverReportVO reportVO = reportService.turnoverStatistics(queryDTO);

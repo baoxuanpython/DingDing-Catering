@@ -1,12 +1,12 @@
-package com.sky.controller.admin;
+package com.dingdingcatering.controller.admin;
 
-import com.sky.annotation.AutoLogDTO;
-import com.sky.result.Result;
-import com.sky.service.admin.WorkspaceService;
-import com.sky.vo.BusinessDataVO;
-import com.sky.vo.DishOverViewVO;
-import com.sky.vo.OrderOverViewVO;
-import com.sky.vo.SetMealOverViewVO;
+import com.dingdingcatering.annotation.AutoLogDTO;
+import com.dingdingcatering.result.Result;
+import com.dingdingcatering.service.admin.WorkspaceService;
+import com.dingdingcatering.vo.BusinessDataVO;
+import com.dingdingcatering.vo.DishOverViewVO;
+import com.dingdingcatering.vo.OrderOverViewVO;
+import com.dingdingcatering.vo.SetMealOverViewVO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

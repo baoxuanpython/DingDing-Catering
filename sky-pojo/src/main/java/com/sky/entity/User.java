@@ -1,4 +1,4 @@
-package com.sky.entity;
+package com.dingdingcatering.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,10 +25,10 @@ public class User implements Serializable {
     //姓名
     private String name;
 
-    //手机号
+    //手机�?
     private String phone;
 
-    //性别 0 女 1 男
+    //性别 0 �?1 �?
     private String sex;
 
     //身份证号

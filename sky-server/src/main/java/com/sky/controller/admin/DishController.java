@@ -1,13 +1,13 @@
-package com.sky.controller.admin;
+package com.dingdingcatering.controller.admin;
 
 
-import com.sky.annotation.AutoLogDTO;
-import com.sky.dto.DishDTO;
-import com.sky.dto.DishPageQueryDTO;
-import com.sky.result.PageResult;
-import com.sky.result.Result;
-import com.sky.service.admin.DishService;
-import com.sky.vo.DishVO;
+import com.dingdingcatering.annotation.AutoLogDTO;
+import com.dingdingcatering.dto.DishDTO;
+import com.dingdingcatering.dto.DishPageQueryDTO;
+import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.result.Result;
+import com.dingdingcatering.service.admin.DishService;
+import com.dingdingcatering.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -68,7 +68,7 @@ public class DishController {
     }
 
     @PostMapping("/status/{status}")
-    @AutoLogDTO("修改菜品状态")
+    @AutoLogDTO("修改菜品状�?)
     public Result<Void> updateStatus(@PathVariable Integer status,@RequestParam Long id) {
         dishService.updateStatus(status ,id);
         return Result.success();

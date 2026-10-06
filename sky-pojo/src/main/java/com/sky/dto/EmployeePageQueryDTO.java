@@ -1,4 +1,4 @@
-package com.sky.dto;
+package com.dingdingcatering.dto;
 
 import lombok.Data;
 
@@ -13,7 +13,7 @@ public class EmployeePageQueryDTO implements Serializable {
     //页码
     private int page;
 
-    //每页显示记录数
+    //每页显示记录�?
     private int pageSize;
 
 }

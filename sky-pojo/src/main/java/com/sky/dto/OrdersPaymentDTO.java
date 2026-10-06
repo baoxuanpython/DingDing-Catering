@@ -1,11 +1,11 @@
-package com.sky.dto;
+package com.dingdingcatering.dto;
 
 import lombok.Data;
 import java.io.Serializable;
 
 @Data
 public class OrdersPaymentDTO implements Serializable {
-    //订单号
+    //订单�?
     private String orderNumber;
 
     //付款方式

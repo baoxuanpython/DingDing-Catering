@@ -1,4 +1,4 @@
-package com.sky.exception;
+package com.dingdingcatering.exception;
 
 /**
  * 套餐启用失败异常

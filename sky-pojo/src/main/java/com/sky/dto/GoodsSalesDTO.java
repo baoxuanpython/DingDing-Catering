@@ -1,4 +1,4 @@
-package com.sky.dto;
+package com.dingdingcatering.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +15,6 @@ public class GoodsSalesDTO implements Serializable {
     //商品名称
     private String name;
 
-    //销量
+    //销�?
     private Integer number;
 }

@@ -1,11 +1,11 @@
-package com.sky.service.admin.impl;
+package com.dingdingcatering.service.admin.impl;
 
-import com.sky.mapper.admin.WorkspaceMapper;
-import com.sky.service.admin.WorkspaceService;
-import com.sky.vo.BusinessDataVO;
-import com.sky.vo.DishOverViewVO;
-import com.sky.vo.OrderOverViewVO;
-import com.sky.vo.SetMealOverViewVO;
+import com.dingdingcatering.mapper.admin.WorkspaceMapper;
+import com.dingdingcatering.service.admin.WorkspaceService;
+import com.dingdingcatering.vo.BusinessDataVO;
+import com.dingdingcatering.vo.DishOverViewVO;
+import com.dingdingcatering.vo.OrderOverViewVO;
+import com.dingdingcatering.vo.SetMealOverViewVO;
 import org.springframework.stereotype.Service;
 
 @Service

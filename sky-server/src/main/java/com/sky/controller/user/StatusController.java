@@ -1,8 +1,8 @@
-package com.sky.controller.user;
+package com.dingdingcatering.controller.user;
 
-import com.sky.annotation.AutoLogDTO;
-import com.sky.result.Result;
-import com.sky.service.admin.ShopConfigService;
+import com.dingdingcatering.annotation.AutoLogDTO;
+import com.dingdingcatering.result.Result;
+import com.dingdingcatering.service.admin.ShopConfigService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("userStatusController")
@@ -15,7 +15,7 @@ public class StatusController {
     }
 
     @GetMapping("/status")
-    @AutoLogDTO("获取店铺状态")
+    @AutoLogDTO("获取店铺状�?)
     public Result<Integer> getStatus() {
         Integer status = shopConfigService.getShopStatus();
         return Result.success(status);

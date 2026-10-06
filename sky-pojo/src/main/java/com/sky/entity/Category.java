@@ -1,7 +1,7 @@
-package com.sky.entity;
+package com.dingdingcatering.entity;
 
-import com.sky.annotation.AutoFill;
-import com.sky.enumeration.OperationType;
+import com.dingdingcatering.annotation.AutoFill;
+import com.dingdingcatering.enumeration.OperationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,7 +30,7 @@ public class Category implements Serializable {
     //顺序
     private Integer sort;
 
-    //分类状态 0标识禁用 1表示启用
+    //分类状�?0标识禁用 1表示启用
     private Integer status;
 
     //创建时间
@@ -39,9 +39,9 @@ public class Category implements Serializable {
     //更新时间
     private LocalDateTime updateTime;
 
-    //创建人
+    //创建�?
     private Long createUser;
 
-    //修改人
+    //修改�?
     private Long updateUser;
 }

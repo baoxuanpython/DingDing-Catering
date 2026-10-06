@@ -1,4 +1,4 @@
-package com.sky.entity;
+package com.dingdingcatering.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * 地址簿
+ * 地址�?
  */
 @Data
 @Builder
@@ -23,13 +23,13 @@ public class AddressBook implements Serializable {
     //用户id
     private Long userId;
 
-    //收货人
+    //收货�?
     private String consignee;
 
-    //手机号
+    //手机�?
     private String phone;
 
-    //性别 0 女 1 男
+    //性别 0 �?1 �?
     private String sex;
 
     //省级区划编号
@@ -56,6 +56,6 @@ public class AddressBook implements Serializable {
     //标签
     private String label;
 
-    //是否默认 0否 1是
+    //是否默认 0�?1�?
     private Integer isDefault;
 }

@@ -1,4 +1,4 @@
-package com.sky.exception;
+package com.dingdingcatering.exception;
 
 /**
  * JWT令牌过期异常
@@ -6,7 +6,7 @@ package com.sky.exception;
 public class TokenExpiredException extends BaseException {
 
     public TokenExpiredException() {
-        super("JWT令牌已过期");
+        super("JWT令牌已过�?);
     }
 
     public TokenExpiredException(String msg) {

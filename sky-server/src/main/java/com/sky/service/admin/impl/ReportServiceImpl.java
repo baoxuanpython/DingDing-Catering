@@ -1,12 +1,12 @@
-package com.sky.service.admin.impl;
+package com.dingdingcatering.service.admin.impl;
 
-import com.sky.dto.DataOverViewQueryDTO;
-import com.sky.mapper.admin.ReportMapper;
-import com.sky.service.admin.ReportService;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.SalesTop10ReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
+import com.dingdingcatering.dto.DataOverViewQueryDTO;
+import com.dingdingcatering.mapper.admin.ReportMapper;
+import com.dingdingcatering.service.admin.ReportService;
+import com.dingdingcatering.vo.OrderReportVO;
+import com.dingdingcatering.vo.SalesTop10ReportVO;
+import com.dingdingcatering.vo.TurnoverReportVO;
+import com.dingdingcatering.vo.UserReportVO;
 import org.springframework.stereotype.Service;
 
 @Service

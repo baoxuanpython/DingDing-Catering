@@ -1,4 +1,4 @@
-package com.sky.service.admin;
+package com.dingdingcatering.service.admin;
 
 public interface ShopConfigService {
 

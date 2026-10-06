@@ -2,12 +2,12 @@ sky:
   datasource:
     host: localhost
     port: 3306
-    database: sky_take_out
+    database: dingding_catering
     username: root
     password: 123456
   alioss:
     region: cn-beijing
-    bucket-name: cangqiong-take-out-ioe44
+    bucket-name: dingding-catering
     access-key-id: LTAI5t9x4s5rg2aEfRKfpqbD
     access-key-secret: l5p5wvcj1nVlt3wWDv68NO9mQ8JGxe
   redis:

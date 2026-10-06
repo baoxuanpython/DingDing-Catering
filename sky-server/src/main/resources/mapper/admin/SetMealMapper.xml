@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.sky.mapper.admin.SetMealMapper">
-    <resultMap id="setMealResultMap" type="com.sky.vo.SetMealVO">
+<mapper namespace="com.dingdingcatering.mapper.admin.SetMealMapper">
+    <resultMap id="setMealResultMap" type="com.dingdingcatering.vo.SetMealVO">
         <id column="id" property="id"/>
         <result column="category_id" property="categoryId"/>
         <result column="name" property="name"/>
@@ -12,7 +12,7 @@
         <result column="update_time" property="updateTime"/>
         <result column="category_name" property="categoryName"/>
         <result column="status" property="status"/>
-        <collection property="setmealDishes" ofType="com.sky.entity.SetMealDish">
+        <collection property="setmealDishes" ofType="com.dingdingcatering.entity.SetMealDish">
             <id column="setmeal_dish_id" property="id"/>
             <result column="setmeal_id" property="setmealId"/>
             <result column="dish_id" property="dishId"/>
@@ -21,7 +21,7 @@
             <result column="copies" property="copies"/>
         </collection>
     </resultMap>
-    <insert id="addSetMeal" parameterType="com.sky.entity.Setmeal" useGeneratedKeys="true" keyProperty="id">
+    <insert id="addSetMeal" parameterType="com.dingdingcatering.entity.Setmeal" useGeneratedKeys="true" keyProperty="id">
         insert into setmeal (category_id, name, price, description, image, create_time, update_time, create_user,
                              update_user)
         values (#{categoryId}, #{name}, #{price}, #{description}, #{image}, #{createTime}, #{updateTime},
@@ -37,10 +37,10 @@
         update setmeal
         set status=#{status},
             update_time=NOW(),
-            update_user=${@com.sky.context.BaseContext@getCurrentId()}
+            update_user=${@com.dingdingcatering.context.BaseContext@getCurrentId()}
         where id = #{id}
     </update>
-    <update id="updateSetMeal" parameterType="com.sky.entity.Setmeal">
+    <update id="updateSetMeal" parameterType="com.dingdingcatering.entity.Setmeal">
         update setmeal
         <set>
             <if test="categoryId!=null">category_id=#{categoryId},</if>
@@ -66,7 +66,7 @@
         </foreach>
     </delete>
 
-    <select id="pageQuery" resultType="com.sky.vo.SetMealVO">
+    <select id="pageQuery" resultType="com.dingdingcatering.vo.SetMealVO">
         select s.id,s.category_id,s.name,s.price,s.status,s.description,s.image,s.update_time,c.name as categoryName
         from setmeal s left
         join category c on c.id = s.category_id
@@ -114,7 +114,7 @@
         <foreach collection="idList" item="id" separator="," open="(" close=")">
             #{id}
         </foreach>
-        and status = ${@com.sky.constant.StatusConstant@ENABLE}
+        and status = ${@com.dingdingcatering.constant.StatusConstant@ENABLE}
     </select>
 
 </mapper>

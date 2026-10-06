@@ -1,10 +1,10 @@
-package com.sky.controller.admin;
+package com.dingdingcatering.controller.admin;
 
-import com.sky.annotation.AutoLogDTO;
-import com.sky.constant.MessageConstant;
-import com.sky.exception.UploadFileFailException;
-import com.sky.result.Result;
-import com.sky.utils.AliOssUtil;
+import com.dingdingcatering.annotation.AutoLogDTO;
+import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.exception.UploadFileFailException;
+import com.dingdingcatering.result.Result;
+import com.dingdingcatering.utils.AliOssUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

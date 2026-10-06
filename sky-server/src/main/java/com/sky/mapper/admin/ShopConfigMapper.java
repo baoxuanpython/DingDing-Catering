@@ -1,4 +1,4 @@
-package com.sky.mapper.admin;
+package com.dingdingcatering.mapper.admin;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

@@ -1,9 +1,9 @@
-package com.sky.service.admin;
+package com.dingdingcatering.service.admin;
 
-import com.sky.dto.SetMealDTO;
-import com.sky.dto.SetMealPageQueryDTO;
-import com.sky.result.PageResult;
-import com.sky.vo.SetMealVO;
+import com.dingdingcatering.dto.SetMealDTO;
+import com.dingdingcatering.dto.SetMealPageQueryDTO;
+import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.vo.SetMealVO;
 
 
 public interface SetmealService {

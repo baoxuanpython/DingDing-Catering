@@ -1,7 +1,7 @@
-package com.sky.enumeration;
+package com.dingdingcatering.enumeration;
 
 /**
- * 数据库操作类型
+ * 数据库操作类�?
  */
 public enum OperationType {
 

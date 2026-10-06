@@ -1,20 +1,20 @@
-package com.sky.service.admin.impl;
+package com.dingdingcatering.service.admin.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.sky.constant.MessageConstant;
-import com.sky.constant.StatusConstant;
-import com.sky.dto.SetMealDTO;
-import com.sky.dto.SetMealPageQueryDTO;
-import com.sky.entity.SetMealDish;
-import com.sky.entity.Setmeal;
-import com.sky.exception.DeletionNotAllowedException;
-import com.sky.exception.SetMealEnableFailedException;
-import com.sky.mapper.admin.DishMapper;
-import com.sky.mapper.admin.SetMealMapper;
-import com.sky.result.PageResult;
-import com.sky.service.admin.SetmealService;
-import com.sky.vo.SetMealVO;
+import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.constant.StatusConstant;
+import com.dingdingcatering.dto.SetMealDTO;
+import com.dingdingcatering.dto.SetMealPageQueryDTO;
+import com.dingdingcatering.entity.SetMealDish;
+import com.dingdingcatering.entity.Setmeal;
+import com.dingdingcatering.exception.DeletionNotAllowedException;
+import com.dingdingcatering.exception.SetMealEnableFailedException;
+import com.dingdingcatering.mapper.admin.DishMapper;
+import com.dingdingcatering.mapper.admin.SetMealMapper;
+import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.service.admin.SetmealService;
+import com.dingdingcatering.vo.SetMealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -62,7 +62,7 @@ public class SetmealServiceImpl implements SetmealService {
         List<Long> idList = Arrays.stream(ids.split(",")).map(String::trim).filter(s -> !s.isEmpty()).map(Long::parseLong).toList();
         List<String> nameList = setmealMapper.queryStatusByIds(idList);
         if (!nameList.isEmpty()) {
-            throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE + "Ôºö" + String.join("„ÄÅ", nameList));
+            throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE + "Ôº? + String.join("„Ä?, nameList));
         }
         setmealMapper.deleteSetMeal(idList);
         setmealMapper.deleteSetMealDishes(idList);
@@ -83,9 +83,9 @@ public class SetmealServiceImpl implements SetmealService {
             if (disableDishNames.isEmpty()) {
                 setmealMapper.updateStatus(status, id);
             } else {
-                String dishNames = String.join("„ÄÅ", disableDishNames);
+                String dishNames = String.join("„Ä?, disableDishNames);
                 throw new SetMealEnableFailedException(
-                        MessageConstant.SETMEAL_ENABLE_FAILED + "Ôºö„Äê" + dishNames + "„Äë");
+                        MessageConstant.SETMEAL_ENABLE_FAILED + "Ôºö„Ä? + dishNames + "„Ä?);
             }
         } else {
             setmealMapper.updateStatus(status, id);

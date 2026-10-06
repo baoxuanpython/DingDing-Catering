@@ -1,7 +1,7 @@
-package com.sky.exception;
+package com.dingdingcatering.exception;
 
 /**
- * 账号不存在异常
+ * 账号不存在异�?
  */
 public class AccountNotFoundException extends BaseException {
 

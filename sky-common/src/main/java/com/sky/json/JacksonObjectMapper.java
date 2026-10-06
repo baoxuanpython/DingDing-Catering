@@ -1,4 +1,4 @@
-package com.sky.json;
+package com.dingdingcatering.json;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,9 +18,9 @@ import java.time.format.DateTimeFormatter;
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
 /**
- * 对象映射器:基于jackson将Java对象转为json，或者将json转为Java对象
- * 将JSON解析为Java对象的过程称为 [从JSON反序列化Java对象]
- * 从Java对象生成JSON的过程称为 [序列化Java对象到JSON]
+ * 对象映射�?基于jackson将Java对象转为json，或者将json转为Java对象
+ * 将JSON解析为Java对象的过程称�?[从JSON反序列化Java对象]
+ * 从Java对象生成JSON的过程称�?[序列化Java对象到JSON]
  */
 public class JacksonObjectMapper extends ObjectMapper {
 
@@ -34,7 +34,7 @@ public class JacksonObjectMapper extends ObjectMapper {
         //收到未知属性时不报异常
         this.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        //反序列化时，属性不存在的兼容处理
+        //反序列化时，属性不存在的兼容处�?
         this.getDeserializationConfig().withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
         SimpleModule simpleModule = new SimpleModule()

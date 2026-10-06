@@ -1,6 +1,6 @@
-package com.sky.vo;
+package com.dingdingcatering.vo;
 
-import com.sky.entity.DishFlavor;
+import com.dingdingcatering.entity.DishFlavor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +34,7 @@ public class DishVO implements Serializable {
     private LocalDateTime updateTime;
     //分类名称
     private String categoryName;
-    //菜品关联的口味
+    //菜品关联的口�?
     @Builder.Default
     private List<DishFlavor> flavors = new ArrayList<>();
 

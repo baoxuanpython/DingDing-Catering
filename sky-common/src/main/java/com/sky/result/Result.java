@@ -1,4 +1,4 @@
-package com.sky.result;
+package com.dingdingcatering.result;
 
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Data
 public class Result<T> implements Serializable {
 
-    private Integer code; //编码：1成功，0和其它数字为失败
+    private Integer code; //编码�?成功�?和其它数字为失败
     private String msg; //错误信息
     private T data; //数据
 
@@ -37,9 +37,9 @@ public class Result<T> implements Serializable {
 
     /**
      * 返回带自定义错误码的错误结果
-     * 用于区分不同类型的错误（如认证失败、业务失败等）
+     * 用于区分不同类型的错误（如认证失败、业务失败等�?
      *
-     * @param code 错误码（建议使用 ErrorCode 常量）
+     * @param code 错误码（建议使用 ErrorCode 常量�?
      * @param msg  错误信息
      * @return 统一结果对象
      */

@@ -8,14 +8,14 @@
         <groupId>org.springframework.boot</groupId>
         <version>3.2.5</version>
     </parent>
-    <groupId>com.sky</groupId>
-    <artifactId>sky-take-out</artifactId>
+    <groupId>com.dingdingcatering</groupId>
+    <artifactId>dingding-catering</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>sky-common</module>
-        <module>sky-pojo</module>
-        <module>sky-server</module>
+        <module>dingdingcatering-common</module>
+        <module>dingdingcatering-pojo</module>
+        <module>dingdingcatering-server</module>
     </modules>
     <properties>
         <java.version>17</java.version>

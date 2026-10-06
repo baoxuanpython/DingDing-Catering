@@ -1,21 +1,21 @@
-package com.sky.service.admin.impl;
+package com.dingdingcatering.service.admin.impl;
 
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.sky.constant.MessageConstant;
-import com.sky.dto.OrdersCancelDTO;
-import com.sky.dto.OrdersConfirmDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersRejectionDTO;
-import com.sky.entity.OrderDetail;
-import com.sky.entity.Orders;
-import com.sky.exception.OrderBusinessException;
-import com.sky.mapper.admin.OrderMapper;
-import com.sky.result.PageResult;
-import com.sky.service.admin.OrderService;
-import com.sky.vo.OrderStatisticsVO;
-import com.sky.vo.OrderVO;
+import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.dto.OrdersCancelDTO;
+import com.dingdingcatering.dto.OrdersConfirmDTO;
+import com.dingdingcatering.dto.OrdersPageQueryDTO;
+import com.dingdingcatering.dto.OrdersRejectionDTO;
+import com.dingdingcatering.entity.OrderDetail;
+import com.dingdingcatering.entity.Orders;
+import com.dingdingcatering.exception.OrderBusinessException;
+import com.dingdingcatering.mapper.admin.OrderMapper;
+import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.service.admin.OrderService;
+import com.dingdingcatering.vo.OrderStatisticsVO;
+import com.dingdingcatering.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,16 +29,16 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
 
     /**
-     * 所有有效的订单状态集合
+     * 所有有效的订单状态集�?
      * <p>使用 Set.of() 创建不可变集合，查找效率 O(1)</p>
      */
     private static final Set<Integer> VALID_ORDER_STATUSES = Set.of(
-            Orders.PENDING_PAYMENT,      // 1 - 待付款
-            Orders.TO_BE_CONFIRMED,      // 2 - 待接单
-            Orders.CONFIRMED,            // 3 - 已接单
+            Orders.PENDING_PAYMENT,      // 1 - 待付�?
+            Orders.TO_BE_CONFIRMED,      // 2 - 待接�?
+            Orders.CONFIRMED,            // 3 - 已接�?
             Orders.DELIVERY_IN_PROGRESS, // 4 - 派送中
-            Orders.COMPLETED,            // 5 - 已完成
-            Orders.CANCELLED             // 6 - 已取消
+            Orders.COMPLETED,            // 5 - 已完�?
+            Orders.CANCELLED             // 6 - 已取�?
     );
 
     public OrderServiceImpl(OrderMapper orderMapper) {
@@ -52,21 +52,21 @@ public class OrderServiceImpl implements OrderService {
             List<OrderVO> orderList = orderMapper.queryOrders(ordersPageQueryDTO);
 
             if (!orderList.isEmpty()) {
-                // 批量获取订单ID，组成列表
+                // 批量获取订单ID，组成列�?
                 List<Long> orderIds = orderList.stream().map(OrderVO::getId).collect(Collectors.toList());
                 //批量获取订单详情
                 List<OrderDetail> details = orderMapper.queryOrderDetails(orderIds);
                 // 按订单分组，组成详情Map（包含完整订单详情对象）
                 Map<Long, List<OrderDetail>> detailMap = details.stream().collect(Collectors.groupingBy(OrderDetail::getOrderId));
 
-                // 按订单分组，提取菜品列表（只保留name）
+                // 按订单分组，提取菜品列表（只保留name�?
                 Map<Long, List<String>> orderDishesMap = details.stream()
                         .collect(Collectors.groupingBy(OrderDetail::getOrderId, Collectors.mapping(OrderDetail::getName, Collectors.toList())));
 
-                // 分别将每个订单的详情列表和菜品ID列表设置到订单VO中
+                // 分别将每个订单的详情列表和菜品ID列表设置到订单VO�?
                 orderList.forEach(order -> {
                     order.setOrderDetailList(detailMap.getOrDefault(order.getId(), Collections.emptyList()));
-                    order.setOrderDishes(String.join("、", orderDishesMap.getOrDefault(order.getId(), Collections.emptyList())));
+                    order.setOrderDishes(String.join("�?, orderDishesMap.getOrDefault(order.getId(), Collections.emptyList())));
                 });
             }
 
@@ -86,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
         }
         List<OrderDetail> orderDetailList = orderMapper.queryOrderDetails(Collections.singletonList(id));
         orderVO.setOrderDetailList(orderDetailList);
-        orderVO.setOrderDishes(orderDetailList.stream().map(OrderDetail::getName).collect(Collectors.joining("、")));
+        orderVO.setOrderDishes(orderDetailList.stream().map(OrderDetail::getName).collect(Collectors.joining("�?)));
         return orderVO;
     }
 

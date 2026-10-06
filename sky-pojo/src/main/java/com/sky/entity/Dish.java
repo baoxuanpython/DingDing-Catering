@@ -1,6 +1,6 @@
-package com.sky.entity;
+package com.dingdingcatering.entity;
 
-import com.sky.annotation.AutoFill;
+import com.dingdingcatering.annotation.AutoFill;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

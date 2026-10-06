@@ -1,4 +1,4 @@
-package com.sky.vo;
+package com.dingdingcatering.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,10 +25,10 @@ public class OrderReportVO implements Serializable {
     //订单总数
     private Integer totalOrderCount;
 
-    //有效订单数
+    //有效订单�?
     private Integer validOrderCount;
 
-    //订单完成率
+    //订单完成�?
     private Double orderCompletionRate;
 
 }

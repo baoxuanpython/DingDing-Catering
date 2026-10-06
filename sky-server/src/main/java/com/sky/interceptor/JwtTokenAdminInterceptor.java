@@ -1,13 +1,13 @@
-package com.sky.interceptor;
+package com.dingdingcatering.interceptor;
 
-import com.sky.constant.JwtClaimsConstant;
-import com.sky.constant.MessageConstant;
-import com.sky.context.BaseContext;
-import com.sky.exception.TokenExpiredException;
-import com.sky.exception.TokenInvalidException;
-import com.sky.exception.UserNotLoginException;
-import com.sky.properties.JwtProperties;
-import com.sky.utils.JwtUtil;
+import com.dingdingcatering.constant.JwtClaimsConstant;
+import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.context.BaseContext;
+import com.dingdingcatering.exception.TokenExpiredException;
+import com.dingdingcatering.exception.TokenInvalidException;
+import com.dingdingcatering.exception.UserNotLoginException;
+import com.dingdingcatering.properties.JwtProperties;
+import com.dingdingcatering.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;

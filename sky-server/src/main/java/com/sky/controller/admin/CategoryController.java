@@ -1,12 +1,12 @@
-package com.sky.controller.admin;
+package com.dingdingcatering.controller.admin;
 
-import com.sky.annotation.AutoLogDTO;
-import com.sky.dto.CategoryDTO;
-import com.sky.dto.CategoryPageQueryDTO;
-import com.sky.entity.Category;
-import com.sky.result.PageResult;
-import com.sky.result.Result;
-import com.sky.service.admin.CategoryService;
+import com.dingdingcatering.annotation.AutoLogDTO;
+import com.dingdingcatering.dto.CategoryDTO;
+import com.dingdingcatering.dto.CategoryPageQueryDTO;
+import com.dingdingcatering.entity.Category;
+import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.result.Result;
+import com.dingdingcatering.service.admin.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +45,7 @@ public class CategoryController {
         return Result.success(categoryService.listQuery(type));
     }
     @PostMapping("/status/{status}")
-    @AutoLogDTO("更新分类状态")
+    @AutoLogDTO("更新分类状�?)
     public Result<Void> updateStatus(@PathVariable Integer status, @RequestParam Long id) {
         categoryService.updateStatus(status, id);
         return Result.success();

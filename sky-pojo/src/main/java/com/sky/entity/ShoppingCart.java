@@ -1,4 +1,4 @@
-package com.sky.entity;
+package com.dingdingcatering.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 购物车
+ * 购物�?
  */
 @Data
 @Builder

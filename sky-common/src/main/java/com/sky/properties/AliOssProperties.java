@@ -1,4 +1,4 @@
-package com.sky.properties;
+package com.dingdingcatering.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

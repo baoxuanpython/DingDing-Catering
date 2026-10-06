@@ -1,9 +1,9 @@
-package com.sky.service.admin;
+package com.dingdingcatering.service.admin;
 
-import com.sky.vo.BusinessDataVO;
-import com.sky.vo.DishOverViewVO;
-import com.sky.vo.OrderOverViewVO;
-import com.sky.vo.SetMealOverViewVO;
+import com.dingdingcatering.vo.BusinessDataVO;
+import com.dingdingcatering.vo.DishOverViewVO;
+import com.dingdingcatering.vo.OrderOverViewVO;
+import com.dingdingcatering.vo.SetMealOverViewVO;
 
 public interface WorkspaceService {
     BusinessDataVO getBusinessData();

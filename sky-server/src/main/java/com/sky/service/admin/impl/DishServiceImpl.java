@@ -1,17 +1,17 @@
-package com.sky.service.admin.impl;
+package com.dingdingcatering.service.admin.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.sky.constant.MessageConstant;
-import com.sky.dto.DishDTO;
-import com.sky.dto.DishPageQueryDTO;
-import com.sky.entity.Dish;
-import com.sky.entity.DishFlavor;
-import com.sky.exception.DeletionNotAllowedException;
-import com.sky.mapper.admin.DishMapper;
-import com.sky.result.PageResult;
-import com.sky.service.admin.DishService;
-import com.sky.vo.DishVO;
+import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.dto.DishDTO;
+import com.dingdingcatering.dto.DishPageQueryDTO;
+import com.dingdingcatering.entity.Dish;
+import com.dingdingcatering.entity.DishFlavor;
+import com.dingdingcatering.exception.DeletionNotAllowedException;
+import com.dingdingcatering.mapper.admin.DishMapper;
+import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.service.admin.DishService;
+import com.dingdingcatering.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -90,14 +90,14 @@ public class DishServiceImpl implements DishService {
         }
         List<String> nameList = dishMapper.queryStatusByIds(idList);
         if (!nameList.isEmpty()) {
-            throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE + "Ôºö" + String.join("„ÄÅ", nameList));
+            throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE + "Ôº? + String.join("„Ä?, nameList));
         }
         List<HashMap<String, String>> setmealList = dishMapper.querySetmealByids(idList);
         if (!setmealList.isEmpty()) {
             String detail = setmealList.stream()
-                    .map(map -> map.get("name") + "„Äê" + map.get("setmeal_names") + "„Äë")
-                    .collect(Collectors.joining("Ôºõ"));
-            throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL + "Ôºö" + detail);
+                    .map(map -> map.get("name") + "„Ä? + map.get("setmeal_names") + "„Ä?)
+                    .collect(Collectors.joining("Ôº?));
+            throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL + "Ôº? + detail);
         }
 
         dishMapper.deleteFlavorByDishIds(idList);

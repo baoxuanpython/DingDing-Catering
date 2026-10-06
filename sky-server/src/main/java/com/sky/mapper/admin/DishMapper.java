@@ -1,10 +1,10 @@
-package com.sky.mapper.admin;
+package com.dingdingcatering.mapper.admin;
 
-import com.sky.annotation.AutoFill;
-import com.sky.dto.DishPageQueryDTO;
-import com.sky.entity.Dish;
-import com.sky.entity.DishFlavor;
-import com.sky.vo.DishVO;
+import com.dingdingcatering.annotation.AutoFill;
+import com.dingdingcatering.dto.DishPageQueryDTO;
+import com.dingdingcatering.entity.Dish;
+import com.dingdingcatering.entity.DishFlavor;
+import com.dingdingcatering.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

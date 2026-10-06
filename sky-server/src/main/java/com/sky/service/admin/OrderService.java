@@ -1,12 +1,12 @@
-package com.sky.service.admin;
+package com.dingdingcatering.service.admin;
 
-import com.sky.dto.OrdersCancelDTO;
-import com.sky.dto.OrdersConfirmDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersRejectionDTO;
-import com.sky.result.PageResult;
-import com.sky.vo.OrderStatisticsVO;
-import com.sky.vo.OrderVO;
+import com.dingdingcatering.dto.OrdersCancelDTO;
+import com.dingdingcatering.dto.OrdersConfirmDTO;
+import com.dingdingcatering.dto.OrdersPageQueryDTO;
+import com.dingdingcatering.dto.OrdersRejectionDTO;
+import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.vo.OrderStatisticsVO;
+import com.dingdingcatering.vo.OrderVO;
 
 public interface OrderService {
 

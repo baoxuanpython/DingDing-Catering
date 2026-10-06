@@ -1,4 +1,4 @@
-package com.sky.exception;
+package com.dingdingcatering.exception;
 
 public class AddressBookBusinessException extends BaseException {
 

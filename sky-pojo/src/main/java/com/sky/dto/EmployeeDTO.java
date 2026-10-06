@@ -1,4 +1,4 @@
-package com.sky.dto;
+package com.dingdingcatering.dto;
 
 import io.github.vipxieliang.validx.annotations.ChineseIdCard;
 import io.github.vipxieliang.validx.annotations.ChinesePhone;
@@ -16,8 +16,8 @@ public class EmployeeDTO implements Serializable {
 
     private String name;
 
-    @NotBlank(message = "手机号不能为空")
-    @ChinesePhone(message = "请输入正确的手机号")
+    @NotBlank(message = "手机号不能为�?)
+    @ChinesePhone(message = "请输入正确的手机�?)
     private String phone;
 
     private String sex;

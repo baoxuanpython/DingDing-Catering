@@ -1,15 +1,15 @@
-package com.sky.controller.admin;
+package com.dingdingcatering.controller.admin;
 
-import com.sky.annotation.AutoLogDTO;
-import com.sky.dto.OrdersCancelDTO;
-import com.sky.dto.OrdersConfirmDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersRejectionDTO;
-import com.sky.result.PageResult;
-import com.sky.result.Result;
-import com.sky.service.admin.OrderService;
-import com.sky.vo.OrderStatisticsVO;
-import com.sky.vo.OrderVO;
+import com.dingdingcatering.annotation.AutoLogDTO;
+import com.dingdingcatering.dto.OrdersCancelDTO;
+import com.dingdingcatering.dto.OrdersConfirmDTO;
+import com.dingdingcatering.dto.OrdersPageQueryDTO;
+import com.dingdingcatering.dto.OrdersRejectionDTO;
+import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.result.Result;
+import com.dingdingcatering.service.admin.OrderService;
+import com.dingdingcatering.vo.OrderStatisticsVO;
+import com.dingdingcatering.vo.OrderVO;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -67,7 +67,7 @@ public class OrderController {
         return Result.success();
     }
     @PutMapping("/delivery/{id}")
-    @AutoLogDTO("订单派送")
+    @AutoLogDTO("订单派�?)
     public Result<Void> deliveryById(@PathVariable Long id) {
         orderService.deliveryById(id);
         return Result.success();

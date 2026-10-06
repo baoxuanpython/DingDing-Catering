@@ -1,12 +1,12 @@
-package com.sky.mapper.admin;
+package com.dingdingcatering.mapper.admin;
 
-import com.sky.dto.OrdersCancelDTO;
-import com.sky.dto.OrdersConfirmDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersRejectionDTO;
-import com.sky.entity.OrderDetail;
-import com.sky.vo.OrderStatisticsVO;
-import com.sky.vo.OrderVO;
+import com.dingdingcatering.dto.OrdersCancelDTO;
+import com.dingdingcatering.dto.OrdersConfirmDTO;
+import com.dingdingcatering.dto.OrdersPageQueryDTO;
+import com.dingdingcatering.dto.OrdersRejectionDTO;
+import com.dingdingcatering.entity.OrderDetail;
+import com.dingdingcatering.vo.OrderStatisticsVO;
+import com.dingdingcatering.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -1,7 +1,7 @@
-package com.sky.service.admin.impl;
+package com.dingdingcatering.service.admin.impl;
 
-import com.sky.mapper.admin.ShopConfigMapper;
-import com.sky.service.admin.ShopConfigService;
+import com.dingdingcatering.mapper.admin.ShopConfigMapper;
+import com.dingdingcatering.service.admin.ShopConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,7 @@ public class ShopConfigServiceImpl implements ShopConfigService {
         int rows = shopConfigMapper.updateValue(SHOP_STATUS_KEY, status.toString());
         if (rows == 0) {
             log.error("更新店铺状态失败，可能配置项不存在");
-            throw new RuntimeException("更新店铺状态失败");
+            throw new RuntimeException("更新店铺状态失�?);
         }
         log.info("店铺状态已更新为：{}", status == 1 ? "营业" : "打烊");
     }

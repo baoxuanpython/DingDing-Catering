@@ -1,4 +1,4 @@
-package com.sky.utils;
+package com.dingdingcatering.utils;
 
 import com.alibaba.fastjson2.JSONObject;
 import org.apache.http.NameValuePair;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Http工具类
+ * Http工具�?
  */
 public class HttpClientUtil {
 
@@ -52,10 +52,10 @@ public class HttpClientUtil {
             //创建GET请求
             HttpGet httpGet = new HttpGet(uri);
 
-            //发送请求
+            //发送请�?
             response = httpClient.execute(httpGet);
 
-            //判断响应状态
+            //判断响应状�?
             if(response.getStatusLine().getStatusCode() == 200){
                 result = EntityUtils.toString(response.getEntity(),"UTF-8");
             }

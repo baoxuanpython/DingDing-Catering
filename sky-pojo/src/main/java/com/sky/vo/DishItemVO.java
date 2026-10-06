@@ -1,4 +1,4 @@
-package com.sky.vo;
+package com.dingdingcatering.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

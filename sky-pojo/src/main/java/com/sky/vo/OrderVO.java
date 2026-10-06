@@ -1,7 +1,7 @@
-package com.sky.vo;
+package com.dingdingcatering.vo;
 
-import com.sky.entity.OrderDetail;
-import com.sky.entity.Orders;
+import com.dingdingcatering.entity.OrderDetail;
+import com.dingdingcatering.entity.Orders;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

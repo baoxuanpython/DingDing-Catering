@@ -1,6 +1,6 @@
-package com.sky.dto;
+package com.dingdingcatering.dto;
 
-import com.sky.entity.OrderDetail;
+import com.dingdingcatering.entity.OrderDetail;
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -12,10 +12,10 @@ public class OrdersDTO implements Serializable {
 
     private Long id;
 
-    //订单号
+    //订单�?
     private String number;
 
-    //订单状态 1待付款，2待派送，3已派送，4已完成，5已取消
+    //订单状�?1待付款，2待派送，3已派送，4已完成，5已取�?
     private Integer status;
 
     //下单用户id
@@ -30,7 +30,7 @@ public class OrdersDTO implements Serializable {
     //结账时间
     private LocalDateTime checkoutTime;
 
-    //支付方式 1微信，2支付宝
+    //支付方式 1微信�?支付�?
     private Integer payMethod;
 
     //实收金额
@@ -39,16 +39,16 @@ public class OrdersDTO implements Serializable {
     //备注
     private String remark;
 
-    //用户名
+    //用户�?
     private String userName;
 
-    //手机号
+    //手机�?
     private String phone;
 
     //地址
     private String address;
 
-    //收货人
+    //收货�?
     private String consignee;
 
     private List<OrderDetail> orderDetails;

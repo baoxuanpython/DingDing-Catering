@@ -1,4 +1,4 @@
-package com.sky.constant;
+package com.dingdingcatering.constant;
 
 import lombok.extern.slf4j.Slf4j;
 

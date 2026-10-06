@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.sky.mapper.admin.OrderMapper">
+<mapper namespace="com.dingdingcatering.mapper.admin.OrderMapper">
 
     <!-- 订单基本信息 ResultMap（不含详情列表） -->
-    <resultMap id="orderBaseMap" type="com.sky.vo.OrderVO">
+    <resultMap id="orderBaseMap" type="com.dingdingcatering.vo.OrderVO">
         <id column="id" property="id"/>
         <result column="number" property="number"/>
         <result column="status" property="status"/>
@@ -32,7 +32,7 @@
     </resultMap>
 
     <!-- 订单详情 ResultMap -->
-    <resultMap id="orderDetailMap" type="com.sky.entity.OrderDetail">
+    <resultMap id="orderDetailMap" type="com.dingdingcatering.entity.OrderDetail">
         <id column="id" property="id"/>
         <result column="name" property="name"/>
         <result column="order_id" property="orderId"/>
@@ -44,42 +44,42 @@
         <result column="image" property="image"/>
     </resultMap>
     <!-- 取消订单 -->
-    <update id="cancelById" parameterType="com.sky.dto.OrdersCancelDTO">
+    <update id="cancelById" parameterType="com.dingdingcatering.dto.OrdersCancelDTO">
         update orders
-        set status        = ${@com.sky.entity.Orders@CANCELLED},
+        set status        = ${@com.dingdingcatering.entity.Orders@CANCELLED},
             cancel_reason = #{cancelReason},
             cancel_time   = now()
         where id = #{id}
     </update>
     <update id="completeById" parameterType="java.lang.Long">
         update orders
-        set status        = ${@com.sky.entity.Orders@COMPLETED},
+        set status        = ${@com.dingdingcatering.entity.Orders@COMPLETED},
             delivery_time = now()
         where id = #{id}
     </update>
-    <update id="rejectionById" parameterType="com.sky.dto.OrdersRejectionDTO">
+    <update id="rejectionById" parameterType="com.dingdingcatering.dto.OrdersRejectionDTO">
         update orders
-        set status           = ${@com.sky.entity.Orders@CANCELLED},
+        set status           = ${@com.dingdingcatering.entity.Orders@CANCELLED},
             rejection_reason = #{rejectionReason},
             cancel_time      = now(),
-            pay_status       = if(pay_status = ${@com.sky.entity.Orders@PAID}, ${@com.sky.entity.Orders@REFUND}, pay_status)
+            pay_status       = if(pay_status = ${@com.dingdingcatering.entity.Orders@PAID}, ${@com.dingdingcatering.entity.Orders@REFUND}, pay_status)
         where id = #{id}
     </update>
-    <update id="confirmById" parameterType="com.sky.dto.OrdersConfirmDTO">
+    <update id="confirmById" parameterType="com.dingdingcatering.dto.OrdersConfirmDTO">
         update orders
-        set status                  = ${@com.sky.entity.Orders@CONFIRMED},
+        set status                  = ${@com.dingdingcatering.entity.Orders@CONFIRMED},
             estimated_delivery_time = NOW() + INTERVAL 30 MINUTE
         where id = #{id}
     </update>
     <update id="deliveryById" parameterType="java.lang.Long">
         update orders
-        set status        = ${@com.sky.entity.Orders@DELIVERY_IN_PROGRESS},
+        set status        = ${@com.dingdingcatering.entity.Orders@DELIVERY_IN_PROGRESS},
             delivery_time = now() + INTERVAL 15 MINUTE
         where id = #{id}
     </update>
 
-    <!-- 查询1：订单基本信息（用于分页） -->
-    <select id="queryOrders" resultMap="orderBaseMap" parameterType="com.sky.dto.OrdersPageQueryDTO">
+    <!-- 查询1：订单基本信息（用于分页�?-->
+    <select id="queryOrders" resultMap="orderBaseMap" parameterType="com.dingdingcatering.dto.OrdersPageQueryDTO">
         select
         o.*,u.name as user_name
         from orders o
@@ -95,7 +95,7 @@
         order by o.order_time desc
     </select>
 
-    <!-- 查询2：批量查询订单详情 -->
+    <!-- 查询2：批量查询订单详�?-->
     <select id="queryOrderDetails" resultMap="orderDetailMap">
         select id,
         name,
@@ -119,17 +119,17 @@
         where id = #{id}
     </select>
     <!-- 订单统计：待接单、待派送、派送中 -->
-    <select id="statistics" resultType="com.sky.vo.OrderStatisticsVO">
-        select sum(case when status = ${@com.sky.entity.Orders@TO_BE_CONFIRMED} then 1 else 0 end) as toBeConfirmed,
-               sum(case when status = ${@com.sky.entity.Orders@CONFIRMED} then 1 else 0 end)       as confirmed,
+    <select id="statistics" resultType="com.dingdingcatering.vo.OrderStatisticsVO">
+        select sum(case when status = ${@com.dingdingcatering.entity.Orders@TO_BE_CONFIRMED} then 1 else 0 end) as toBeConfirmed,
+               sum(case when status = ${@com.dingdingcatering.entity.Orders@CONFIRMED} then 1 else 0 end)       as confirmed,
                sum(case
-                       when status = ${@com.sky.entity.Orders@DELIVERY_IN_PROGRESS} then 1
+                       when status = ${@com.dingdingcatering.entity.Orders@DELIVERY_IN_PROGRESS} then 1
                        else 0 end)                                                                 as deliveryInProgress
         from orders
         where status in (
-                         ${@com.sky.entity.Orders@TO_BE_CONFIRMED},
-                         ${@com.sky.entity.Orders@CONFIRMED},
-                         ${@com.sky.entity.Orders@DELIVERY_IN_PROGRESS}
+                         ${@com.dingdingcatering.entity.Orders@TO_BE_CONFIRMED},
+                         ${@com.dingdingcatering.entity.Orders@CONFIRMED},
+                         ${@com.dingdingcatering.entity.Orders@DELIVERY_IN_PROGRESS}
             )
     </select>
 

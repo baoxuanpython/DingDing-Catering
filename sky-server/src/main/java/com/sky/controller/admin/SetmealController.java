@@ -1,12 +1,12 @@
-package com.sky.controller.admin;
+package com.dingdingcatering.controller.admin;
 
-import com.sky.annotation.AutoLogDTO;
-import com.sky.dto.SetMealDTO;
-import com.sky.dto.SetMealPageQueryDTO;
-import com.sky.result.PageResult;
-import com.sky.result.Result;
-import com.sky.service.admin.SetmealService;
-import com.sky.vo.SetMealVO;
+import com.dingdingcatering.annotation.AutoLogDTO;
+import com.dingdingcatering.dto.SetMealDTO;
+import com.dingdingcatering.dto.SetMealPageQueryDTO;
+import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.result.Result;
+import com.dingdingcatering.service.admin.SetmealService;
+import com.dingdingcatering.vo.SetMealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +50,7 @@ public class SetmealController {
     }
 
     @PostMapping("/status/{status}")
-    @AutoLogDTO("更新套餐状态")
+    @AutoLogDTO("更新套餐状�?)
     public Result<Void> updateStatus(@PathVariable Integer status ,@RequestParam Long id) {
         setmealService.updateStatus(status,id);
         return Result.success();

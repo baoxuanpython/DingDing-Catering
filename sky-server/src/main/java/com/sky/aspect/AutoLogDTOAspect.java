@@ -1,10 +1,10 @@
-package com.sky.aspect;
+package com.dingdingcatering.aspect;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONWriter;
-import com.sky.annotation.AutoLogDTO;
-import com.sky.result.Result;
+import com.dingdingcatering.annotation.AutoLogDTO;
+import com.dingdingcatering.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -20,7 +20,7 @@ import java.util.Arrays;
 @Component
 @Slf4j
 public class AutoLogDTOAspect {
-    @Pointcut("execution(* com.sky.controller..*(..)) && @annotation(com.sky.annotation.AutoLogDTO)")
+    @Pointcut("execution(* com.dingdingcatering.controller..*(..)) && @annotation(com.dingdingcatering.annotation.AutoLogDTO)")
     public void pointcut() {
     }
 
@@ -36,14 +36,14 @@ public class AutoLogDTOAspect {
         Object[] args = joinPoint.getArgs();
 
         StringBuilder logMessage = new StringBuilder();
-        logMessage.append("【").append(className).append(".").append(methodName).append("】");
+        logMessage.append("�?).append(className).append(".").append(methodName).append("�?);
 
         if (!customMessage.isEmpty()) {
             logMessage.append(" ").append(customMessage);
         }
 
         if (args == null || args.length == 0) {
-            log.info("{} 无参数", logMessage);
+            log.info("{} 无参�?, logMessage);
         } else {
             log.info("{} 参数: {}", logMessage, Arrays.toString(args));
         }
@@ -58,7 +58,7 @@ public class AutoLogDTOAspect {
             String methodName = signature.getMethod().getName();
             String className = signature.getDeclaringType().getSimpleName();
             StringBuilder logMessage = new StringBuilder();
-            logMessage.append("【").append(className).append(".").append(methodName).append("】");
+            logMessage.append("�?).append(className).append(".").append(methodName).append("�?);
             if (!autoLogDTO.value().isEmpty()) {
                 logMessage.append(" ").append(autoLogDTO.value());
             }
@@ -78,7 +78,7 @@ public class AutoLogDTOAspect {
             String formattedJson = JSON.toJSONString(jsonResult, JSONWriter.Feature.PrettyFormat);
 
             log.info("╔══════════════════════════════════════════════════════════════╗");
-            log.info("║ {} 返回值详情", logMessage);
+            log.info("�?{} 返回值详�?, logMessage);
             log.info("╚══════════════════════════════════════════════════════════════╝");
             log.info("{}", formattedJson);
             log.info("");

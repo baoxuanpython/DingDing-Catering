@@ -1,4 +1,4 @@
-package com.sky.dto;
+package com.dingdingcatering.dto;
 
 import lombok.Data;
 
@@ -10,10 +10,10 @@ public class PasswordEditDTO implements Serializable {
     //员工id
     private Long empId;
 
-    //旧密码
+    //旧密�?
     private String oldPassword;
 
-    //新密码
+    //新密�?
     private String newPassword;
 
 }

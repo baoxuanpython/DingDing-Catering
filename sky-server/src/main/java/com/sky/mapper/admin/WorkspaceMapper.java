@@ -1,10 +1,10 @@
-package com.sky.mapper.admin;
+package com.dingdingcatering.mapper.admin;
 
-import com.sky.annotation.AutoLogDTO;
-import com.sky.vo.BusinessDataVO;
-import com.sky.vo.DishOverViewVO;
-import com.sky.vo.OrderOverViewVO;
-import com.sky.vo.SetMealOverViewVO;
+import com.dingdingcatering.annotation.AutoLogDTO;
+import com.dingdingcatering.vo.BusinessDataVO;
+import com.dingdingcatering.vo.DishOverViewVO;
+import com.dingdingcatering.vo.OrderOverViewVO;
+import com.dingdingcatering.vo.SetMealOverViewVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.web.bind.annotation.GetMapping;
 

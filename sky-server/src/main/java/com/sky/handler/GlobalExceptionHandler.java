@@ -1,8 +1,8 @@
-package com.sky.handler;
+package com.dingdingcatering.handler;
 
-import com.sky.constant.MessageConstant;
-import com.sky.exception.*;
-import com.sky.result.Result;
+import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.exception.*;
+import com.dingdingcatering.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 /**
- * 全局异常处理器
+ * 全局异常处理�?
  *
- * <p>设计说明：</p>
+ * <p>设计说明�?/p>
  * <ul>
  *     <li>统一返回 HTTP 200 状态码，通过 {@link Result#code} 区分业务成功/失败</li>
- *     <li>不使用 @ResponseStatus 注解，避免前端 Axios 拦截器误判</li>
- *     <li>详细的异常信息记录在日志中，返回给前端的都是友好的提示消息</li>
+ *     <li>不使�?@ResponseStatus 注解，避免前�?Axios 拦截器误�?/li>
+ *     <li>详细的异常信息记录在日志中，返回给前端的都是友好的提示消�?/li>
  * </ul>
  */
 @RestControllerAdvice

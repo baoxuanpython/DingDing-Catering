@@ -1,13 +1,13 @@
-package com.sky.service.admin;
+package com.dingdingcatering.service.admin;
 
-import com.sky.dto.EmployeeDTO;
-import com.sky.dto.EmployeeLoginDTO;
-import com.sky.dto.EmployeePageQueryDTO;
-import com.sky.dto.PasswordEditDTO;
-import com.sky.entity.Employee;
-import com.sky.result.PageResult;
+import com.dingdingcatering.dto.EmployeeDTO;
+import com.dingdingcatering.dto.EmployeeLoginDTO;
+import com.dingdingcatering.dto.EmployeePageQueryDTO;
+import com.dingdingcatering.dto.PasswordEditDTO;
+import com.dingdingcatering.entity.Employee;
+import com.dingdingcatering.result.PageResult;
 
-import com.sky.vo.EmployeeLoginVO;
+import com.dingdingcatering.vo.EmployeeLoginVO;
 import jakarta.validation.Valid;
 
 public interface EmployeeService {

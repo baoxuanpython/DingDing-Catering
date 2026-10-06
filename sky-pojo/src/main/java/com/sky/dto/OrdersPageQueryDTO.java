@@ -1,4 +1,4 @@
-package com.sky.dto;
+package com.dingdingcatering.dto;
 
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;

@@ -1,4 +1,4 @@
-package com.sky.entity;
+package com.dingdingcatering.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

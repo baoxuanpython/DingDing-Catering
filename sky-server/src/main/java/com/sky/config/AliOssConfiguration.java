@@ -1,7 +1,7 @@
-package com.sky.config;
+package com.dingdingcatering.config;
 
-import com.sky.properties.AliOssProperties;
-import com.sky.utils.AliOssUtil;
+import com.dingdingcatering.properties.AliOssProperties;
+import com.dingdingcatering.utils.AliOssUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

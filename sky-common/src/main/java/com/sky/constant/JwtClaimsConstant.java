@@ -1,4 +1,4 @@
-package com.sky.constant;
+package com.dingdingcatering.constant;
 
 public class JwtClaimsConstant {
 

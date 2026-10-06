@@ -1,9 +1,9 @@
-package com.sky.service.admin;
+package com.dingdingcatering.service.admin;
 
-import com.sky.dto.CategoryDTO;
-import com.sky.dto.CategoryPageQueryDTO;
-import com.sky.entity.Category;
-import com.sky.result.PageResult;
+import com.dingdingcatering.dto.CategoryDTO;
+import com.dingdingcatering.dto.CategoryPageQueryDTO;
+import com.dingdingcatering.entity.Category;
+import com.dingdingcatering.result.PageResult;
 
 import java.util.List;
 

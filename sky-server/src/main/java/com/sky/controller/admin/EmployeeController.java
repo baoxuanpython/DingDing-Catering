@@ -1,18 +1,18 @@
-package com.sky.controller.admin;
+package com.dingdingcatering.controller.admin;
 
-import com.sky.annotation.AutoLogDTO;
-import com.sky.constant.JwtClaimsConstant;
-import com.sky.dto.EmployeeDTO;
-import com.sky.dto.EmployeeLoginDTO;
-import com.sky.dto.EmployeePageQueryDTO;
-import com.sky.dto.PasswordEditDTO;
-import com.sky.entity.Employee;
-import com.sky.properties.JwtProperties;
-import com.sky.result.PageResult;
-import com.sky.result.Result;
-import com.sky.service.admin.EmployeeService;
-import com.sky.utils.JwtUtil;
-import com.sky.vo.EmployeeLoginVO;
+import com.dingdingcatering.annotation.AutoLogDTO;
+import com.dingdingcatering.constant.JwtClaimsConstant;
+import com.dingdingcatering.dto.EmployeeDTO;
+import com.dingdingcatering.dto.EmployeeLoginDTO;
+import com.dingdingcatering.dto.EmployeePageQueryDTO;
+import com.dingdingcatering.dto.PasswordEditDTO;
+import com.dingdingcatering.entity.Employee;
+import com.dingdingcatering.properties.JwtProperties;
+import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.result.Result;
+import com.dingdingcatering.service.admin.EmployeeService;
+import com.dingdingcatering.utils.JwtUtil;
+import com.dingdingcatering.vo.EmployeeLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,9 +50,9 @@ public class EmployeeController {
         return Result.success(employeeLoginVO);
     }
     @PostMapping("/logout")
-    @AutoLogDTO("员工退出")
+    @AutoLogDTO("员工退�?)
     public Result<String> logout() {
-        return Result.success("退出登录");
+        return Result.success("退出登�?);
     }
 
     @PostMapping
@@ -69,7 +69,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/status/{status}")
-    @AutoLogDTO("更新员工状态")
+    @AutoLogDTO("更新员工状�?)
     public Result<Void> updateStatus(@PathVariable Integer status, @RequestParam Long id) {
         employeeService.updateStatus(status, id);
         return Result.success();

@@ -1,4 +1,4 @@
-package com.sky.entity;
+package com.dingdingcatering.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Orders implements Serializable {
 
     /**
-     * 订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消
+     * 订单状�?1待付�?2待接�?3已接�?4派送中 5已完�?6已取�?
      */
     public static final Integer PENDING_PAYMENT = 1;
     public static final Integer TO_BE_CONFIRMED = 2;
@@ -29,7 +29,7 @@ public class Orders implements Serializable {
     public static final Integer CANCELLED = 6;
 
     /**
-     * 支付状态 0未支付 1已支付 2退款
+     * 支付状�?0未支�?1已支�?2退�?
      */
     public static final Integer UN_PAID = 0;
     public static final Integer PAID = 1;
@@ -39,10 +39,10 @@ public class Orders implements Serializable {
 
     private Long id;
 
-    //订单号
+    //订单�?
     private String number;
 
-    //订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消 7退款
+    //订单状�?1待付�?2待接�?3已接�?4派送中 5已完�?6已取�?7退�?
     private Integer status;
 
     //下单用户id
@@ -57,10 +57,10 @@ public class Orders implements Serializable {
     //结账时间
     private LocalDateTime checkoutTime;
 
-    //支付方式 1微信，2支付宝
+    //支付方式 1微信�?支付�?
     private Integer payMethod;
 
-    //支付状态 0未支付 1已支付 2退款
+    //支付状�?0未支�?1已支�?2退�?
     private Integer payStatus;
 
     //实收金额
@@ -69,16 +69,16 @@ public class Orders implements Serializable {
     //备注
     private String remark;
 
-    //用户名
+    //用户�?
     private String userName;
 
-    //手机号
+    //手机�?
     private String phone;
 
     //地址
     private String address;
 
-    //收货人
+    //收货�?
     private String consignee;
 
     //订单取消原因
@@ -93,18 +93,18 @@ public class Orders implements Serializable {
     //预计送达时间
     private LocalDateTime estimatedDeliveryTime;
 
-    //配送状态  1立即送出  0选择具体时间
+    //配送状�? 1立即送出  0选择具体时间
     private Integer deliveryStatus;
 
     //送达时间
     private LocalDateTime deliveryTime;
 
-    //打包费
+    //打包�?
     private int packAmount;
 
     //餐具数量
     private int tablewareNumber;
 
-    //餐具数量状态  1按餐量提供  0选择具体数量
+    //餐具数量状�? 1按餐量提�? 0选择具体数量
     private Integer tablewareStatus;
 }

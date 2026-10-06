@@ -1,6 +1,6 @@
-package com.sky.vo;
+package com.dingdingcatering.vo;
 
-import com.sky.entity.SetMealDish;
+import com.dingdingcatering.entity.SetMealDish;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +28,7 @@ public class SetMealVO implements Serializable {
     //套餐价格
     private BigDecimal price;
 
-    //状态 0:停用 1:启用
+    //状�?0:停用 1:启用
     private Integer status;
 
     //描述信息

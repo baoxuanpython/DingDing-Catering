@@ -1,27 +1,27 @@
-package com.sky.service.admin.impl;
+package com.dingdingcatering.service.admin.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.sky.constant.JwtClaimsConstant;
-import com.sky.constant.MessageConstant;
-import com.sky.constant.PasswordConstant;
-import com.sky.constant.StatusConstant;
-import com.sky.context.BaseContext;
-import com.sky.dto.EmployeeDTO;
-import com.sky.dto.EmployeeLoginDTO;
-import com.sky.dto.EmployeePageQueryDTO;
-import com.sky.dto.PasswordEditDTO;
-import com.sky.entity.Employee;
-import com.sky.exception.AccountLockedException;
-import com.sky.exception.AccountNotFoundException;
-import com.sky.exception.PasswordEditFailedException;
-import com.sky.exception.PasswordErrorException;
-import com.sky.mapper.admin.EmployeeMapper;
-import com.sky.properties.JwtProperties;
-import com.sky.result.PageResult;
-import com.sky.service.admin.EmployeeService;
-import com.sky.utils.JwtUtil;
-import com.sky.vo.EmployeeLoginVO;
+import com.dingdingcatering.constant.JwtClaimsConstant;
+import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.constant.PasswordConstant;
+import com.dingdingcatering.constant.StatusConstant;
+import com.dingdingcatering.context.BaseContext;
+import com.dingdingcatering.dto.EmployeeDTO;
+import com.dingdingcatering.dto.EmployeeLoginDTO;
+import com.dingdingcatering.dto.EmployeePageQueryDTO;
+import com.dingdingcatering.dto.PasswordEditDTO;
+import com.dingdingcatering.entity.Employee;
+import com.dingdingcatering.exception.AccountLockedException;
+import com.dingdingcatering.exception.AccountNotFoundException;
+import com.dingdingcatering.exception.PasswordEditFailedException;
+import com.dingdingcatering.exception.PasswordErrorException;
+import com.dingdingcatering.mapper.admin.EmployeeMapper;
+import com.dingdingcatering.properties.JwtProperties;
+import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.service.admin.EmployeeService;
+import com.dingdingcatering.utils.JwtUtil;
+import com.dingdingcatering.vo.EmployeeLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -48,12 +48,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeLoginVO login(EmployeeLoginDTO employeeLoginDTO) {
         String username = employeeLoginDTO.getUsername();
         String password = employeeLoginDTO.getPassword();
-        //1、根据用户名查询数据库中的数据
+        //1、根据用户名查询数据库中的数�?
         Employee employee = employeeMapper.getByUsername(username);
 
-        //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
+        //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定�?
         if (employee == null) {
-            //账号不存在
+            //账号不存�?
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
 
@@ -65,7 +65,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         if (employee.getStatus().equals(StatusConstant.DISABLE)) {
-            //账号被锁定
+            //账号被锁�?
             throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
         //登录成功后，生成jwt令牌
@@ -79,7 +79,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 jwtProperties.getAdminTtl(),
                 claims);
 
-        //3、返回登录对象
+        //3、返回登录对�?
         return EmployeeLoginVO.builder()
                 .id(employee.getId())
                 .userName(employee.getUsername())

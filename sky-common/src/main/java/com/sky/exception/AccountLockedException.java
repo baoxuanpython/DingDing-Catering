@@ -1,7 +1,7 @@
-package com.sky.exception;
+package com.dingdingcatering.exception;
 
 /**
- * 账号被锁定异常
+ * 账号被锁定异�?
  */
 public class AccountLockedException extends BaseException {
 

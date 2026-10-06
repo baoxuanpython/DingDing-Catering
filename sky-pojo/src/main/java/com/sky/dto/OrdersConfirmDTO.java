@@ -1,4 +1,4 @@
-package com.sky.dto;
+package com.dingdingcatering.dto;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class OrdersConfirmDTO implements Serializable {
 
     private Long id;
-    //订单状态 1待付款 2待接单 3 已接单 4 派送中 5 已完成 6 已取消 7 退款
+    //订单状�?1待付�?2待接�?3 已接�?4 派送中 5 已完�?6 已取�?7 退�?
     private Integer status;
 
 }

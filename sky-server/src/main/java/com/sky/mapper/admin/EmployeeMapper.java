@@ -1,9 +1,9 @@
-package com.sky.mapper.admin;
+package com.dingdingcatering.mapper.admin;
 
-import com.sky.annotation.AutoFill;
-import com.sky.dto.EmployeePageQueryDTO;
-import com.sky.entity.Employee;
-import com.sky.enumeration.OperationType;
+import com.dingdingcatering.annotation.AutoFill;
+import com.dingdingcatering.dto.EmployeePageQueryDTO;
+import com.dingdingcatering.entity.Employee;
+import com.dingdingcatering.enumeration.OperationType;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -13,7 +13,7 @@ import java.util.List;
 public interface EmployeeMapper {
 
     /**
-     * 根据用户名查询员工
+     * 根据用户名查询员�?
      * @param username
      * @return
      */
