@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Slf4j
-@Service
+@Service("adminCategoryServiceImpl")
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
     private final SetMealMapper setMealMapper;

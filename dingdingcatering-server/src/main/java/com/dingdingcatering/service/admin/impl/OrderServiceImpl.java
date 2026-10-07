@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
+@Service("adminOrderServiceImpl")
 @Slf4j
 public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;

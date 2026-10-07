@@ -12,7 +12,7 @@ import com.dingdingcatering.vo.OrderStatisticsVO;
 import com.dingdingcatering.vo.OrderVO;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@RestController("adminOrderController")
 @RequestMapping("/admin/order")
 public class OrderController {
     private final OrderService orderService;

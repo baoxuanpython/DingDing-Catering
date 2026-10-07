@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dingdingcatering.mapper.user.AddressBookMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO address_book
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <!-- 必填字段：始终插入 -->
+            user_id,
+            consignee,
+            phone,
+            detail,
+            <!-- 可选字段：非空时才插入 -->
+            <if test="sex != null and sex != ''">sex,</if>
+            <if test="provinceCode != null and provinceCode != ''">province_code,</if>
+            <if test="provinceName != null and provinceName != ''">province_name,</if>
+            <if test="cityCode != null and cityCode != ''">city_code,</if>
+            <if test="cityName != null and cityName != ''">city_name,</if>
+            <if test="districtCode != null and districtCode != ''">district_code,</if>
+            <if test="districtName != null and districtName != ''">district_name,</if>
+            <if test="label != null and label != ''">label,</if>
+            <if test="isDefault != null">is_default,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <!-- 必填字段值 -->
+            #{userId},
+            #{consignee},
+            #{phone},
+            #{detail},
+            <!-- 可选字段值 -->
+            <if test="sex != null and sex != ''">#{sex},</if>
+            <if test="provinceCode != null and provinceCode != ''">#{provinceCode},</if>
+            <if test="provinceName != null and provinceName != ''">#{provinceName},</if>
+            <if test="cityCode != null and cityCode != ''">#{cityCode},</if>
+            <if test="cityName != null and cityName != ''">#{cityName},</if>
+            <if test="districtCode != null and districtCode != ''">#{districtCode},</if>
+            <if test="districtName != null and districtName != ''">#{districtName},</if>
+            <if test="label != null and label != ''">#{label},</if>
+            <if test="isDefault != null">#{isDefault},</if>
+        </trim>
+    </insert>
+</mapper>

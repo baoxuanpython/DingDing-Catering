@@ -1,23 +1,23 @@
 package com.dingdingcatering.service.admin.impl;
 
-import com.dingdingcatering.mapper.admin.ShopConfigMapper;
-import com.dingdingcatering.service.admin.ShopConfigService;
+import com.dingdingcatering.mapper.admin.StatusMapper;
+import com.dingdingcatering.service.admin.StatusService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class ShopConfigServiceImpl implements ShopConfigService {
+public class StatusServiceImpl implements StatusService {
     private static final String SHOP_STATUS_KEY = "SHOP_STATUS";
-    private final ShopConfigMapper shopConfigMapper;
+    private final StatusMapper statusMapper;
 
-    public ShopConfigServiceImpl(ShopConfigMapper shopConfigMapper) {
-        this.shopConfigMapper = shopConfigMapper;
+    public StatusServiceImpl(StatusMapper statusMapper) {
+        this.statusMapper = statusMapper;
     }
 
     @Override
-    public Integer getShopStatus() {
-        String value = shopConfigMapper.getValue(SHOP_STATUS_KEY);
+    public Integer getStatus() {
+        String value = statusMapper.getValue(SHOP_STATUS_KEY);
         if (value == null) {
             log.warn("店铺状态配置未找到，返回默认值：1（营业）");
             return 1;
@@ -26,8 +26,8 @@ public class ShopConfigServiceImpl implements ShopConfigService {
     }
 
     @Override
-    public void updateShopStatus(Integer status) {
-        int rows = shopConfigMapper.updateValue(SHOP_STATUS_KEY, status.toString());
+    public void updateStatus(Integer status) {
+        int rows = statusMapper.updateValue(SHOP_STATUS_KEY, status.toString());
         if (rows == 0) {
             log.error("更新店铺状态失败，可能配置项不存在");
             throw new RuntimeException("更新店铺状态失败");

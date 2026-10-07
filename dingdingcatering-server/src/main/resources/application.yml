@@ -8,9 +8,9 @@ spring:
     allow-circular-references: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-    username: ${sky.datasource.username}
-    password: ${sky.datasource.password}
+    url: jdbc:mysql://${dingding.datasource.host}:${dingding.datasource.port}/${dingding.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${dingding.datasource.username}
+    password: ${dingding.datasource.password}
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 5
@@ -39,8 +39,8 @@ spring:
         login-password: 12345678
   data:
     redis:
-      host: ${sky.redis.host}
-      port: ${sky.redis.port}
+      host: ${dingding.redis.host}
+      port: ${dingding.redis.port}
       database: 0
 
 mybatis:
@@ -59,16 +59,24 @@ logging:
         service: info
         controller: info
 
-sky:
+dingding:
   jwt:
     # 设置jwt签名加密时使用的秘钥
-    admin-secret-key: ewquoisalkdsdkljaslkdjalksjdlkasjldkjaslkdjalk
+    admin-secret-key: ${dingding.jwt.admin-secret-key}
     # 设置jwt过期时间
-    admin-ttl: 7200000
+    admin-ttl: ${dingding.jwt.admin-ttl}
     # 设置前端传递过来的令牌名称
-    admin-token-name: token
+    admin-token-name: ${dingding.jwt.admin-token-name}
+
+    user-secret-key: ${dingding.jwt.user-secret-key}
+    user-ttl: ${dingding.jwt.user-ttl}
+    user-token-name: ${dingding.jwt.user-token-name}
   alioss:
-    region: ${sky.alioss.region}
-    bucket-name: ${sky.alioss.bucket-name}
-    access-key-id: ${sky.alioss.access-key-id}
-    access-key-secret: ${sky.alioss.access-key-secret}
+    region: ${dingding.alioss.region}`
+    bucket-name: ${dingding.alioss.bucket-name}
+    access-key-id: ${dingding.alioss.access-key-id}
+    access-key-secret: ${dingding.alioss.access-key-secret}
+  wechat:
+    appid: ${dingding.wechat.appid}
+    secret: ${dingding.wechat.secret}
+

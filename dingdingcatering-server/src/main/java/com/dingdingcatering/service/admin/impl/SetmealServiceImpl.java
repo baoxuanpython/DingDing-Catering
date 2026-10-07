@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@Service
+@Service("adminSetmealServiceImpl")
 public class SetmealServiceImpl implements SetmealService {
     private final SetMealMapper setmealMapper;
     private final DishMapper dishMapper;

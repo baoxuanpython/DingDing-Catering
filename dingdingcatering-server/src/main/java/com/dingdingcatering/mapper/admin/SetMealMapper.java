@@ -8,10 +8,12 @@ import com.dingdingcatering.enumeration.OperationType;
 import com.dingdingcatering.vo.SetMealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 
+@Component("adminSetMealMapper")
 @Mapper
 public interface SetMealMapper {
     List<SetMealVO> pageQuery(SetMealPageQueryDTO setmealPageQueryDTO);

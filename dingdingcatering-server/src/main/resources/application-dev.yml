@@ -1,4 +1,4 @@
-sky:
+dingding:
   datasource:
     host: localhost
     port: 3306
@@ -13,3 +13,13 @@ sky:
   redis:
     host: localhost
     port: 6379
+  jwt:
+    admin-secret-key: ewquoisalkdsdkljaslkdjalksjdlkasjldkjaslkdjalk
+    admin-ttl: 7200000
+    admin-token-name: token
+    user-secret-key: qwoiursalkjdlxaslkdjvnlasdqsdasdsvadertqpwipots
+    user-ttl: 7200000
+    user-token-name: authentication
+  wechat:
+    appid: wx75ff47dbae1adc47
+    secret: b282dccbe6ac68277b166d8de10d41e0

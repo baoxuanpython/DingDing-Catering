@@ -7,10 +7,12 @@ import com.dingdingcatering.entity.DishFlavor;
 import com.dingdingcatering.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 
+@Component("adminDishMapper")
 @Mapper
 public interface DishMapper {
 

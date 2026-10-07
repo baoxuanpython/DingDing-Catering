@@ -11,3 +11,4 @@ logs/
 *.log
 
 .trae/
+dingdingcatering-server/src/main/resources/application-dev.yml

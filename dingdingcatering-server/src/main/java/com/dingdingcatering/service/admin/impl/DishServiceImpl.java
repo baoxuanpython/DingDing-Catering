@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+@Service("adminDishServiceImpl")
 public class DishServiceImpl implements DishService {
     private final DishMapper dishMapper;
 

@@ -9,9 +9,11 @@ import com.dingdingcatering.vo.OrderStatisticsVO;
 import com.dingdingcatering.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component("adminOrderMapper")
 @Mapper
 public interface OrderMapper {
     List<OrderVO> queryOrders(OrdersPageQueryDTO ordersPageQueryDTO);
