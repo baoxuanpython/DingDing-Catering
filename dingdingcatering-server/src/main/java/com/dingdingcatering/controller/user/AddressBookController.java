@@ -17,6 +17,7 @@ public class AddressBookController {
     }
     @PostMapping
     public Result<Void> save(@RequestBody AddressBook addressBook) {
-        return Result.success(addressBookService.save(addressBook));
+//        return Result.success(addressBookService.save(addressBook));
+        return Result.success(null);
     }
 }
