@@ -58,6 +58,7 @@ logging:
         mapper: debug
         service: info
         controller: info
+        interceptor: debug
 
 dingding:
   jwt:
@@ -79,4 +80,3 @@ dingding:
   wechat:
     appid: ${dingding.wechat.appid}
     secret: ${dingding.wechat.secret}
-

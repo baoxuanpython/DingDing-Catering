@@ -1,5 +1,7 @@
 package com.dingdingcatering.service.admin.impl;
 
+import com.dingdingcatering.annotation.AutoClearCache;
+import com.dingdingcatering.enumeration.CacheType;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.dingdingcatering.constant.MessageConstant;
@@ -56,35 +58,28 @@ public class DishServiceImpl implements DishService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @AutoClearCache(CacheType.DISH)
     public void addDish(DishDTO dishDTO) {
         Dish dish = new Dish();
-
         BeanUtils.copyProperties(dishDTO, dish);
-
         dishMapper.addDish(dish);
-
         Long dishId = dish.getId();
-
         List<DishFlavor> flavors = dishDTO.getFlavors();
-
         if (flavors != null && !flavors.isEmpty()) {
             flavors.forEach(flavor -> flavor.setDishId(dishId));
-
             dishMapper.addDishFlavor(flavors);
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @AutoClearCache({CacheType.DISH, CacheType.CATEGORY})
     public void deleteDish(String ids) {
-
-
         List<Long> idList = Arrays.stream(ids.split(","))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .map(Long::parseLong)
                 .collect(Collectors.toList());
-
         if (idList.isEmpty()) {
             return;
         }
@@ -99,26 +94,20 @@ public class DishServiceImpl implements DishService {
                     .collect(Collectors.joining("、"));
             throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL + " " + detail);
         }
-
         dishMapper.deleteFlavorByDishIds(idList);
-
         dishMapper.deleteByIds(idList);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @AutoClearCache(CacheType.DISH)
     public void updateDish(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
-
         dishMapper.updateDish(dish);
-
         Long dishId = dish.getId();
-
         dishMapper.deleteFlavorByDishIds(Collections.singletonList(dishId));
-
         List<DishFlavor> flavors = dishDTO.getFlavors();
-
         if (flavors != null && !flavors.isEmpty()) {
             flavors.forEach(flavor -> flavor.setDishId(dishId));
             dishMapper.addDishFlavor(flavors);
@@ -126,6 +115,7 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    @AutoClearCache(CacheType.DISH)
     public void updateStatus(Integer status, Long id) {
         dishMapper.updateStatus(status, id);
     }

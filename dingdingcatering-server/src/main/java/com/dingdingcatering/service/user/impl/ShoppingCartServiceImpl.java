@@ -1,4 +1,4 @@
-package com.dingdingcatering.service.user.Impl;
+package com.dingdingcatering.service.user.impl;
 
 import com.dingdingcatering.mapper.user.ShoppingCartMapper;
 import com.dingdingcatering.service.user.ShoppingCartService;

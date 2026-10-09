@@ -12,4 +12,11 @@
         from user
         where openid = #{openid}
     </select>
+
+    <select id="getById" resultType="com.dingdingcatering.entity.User">
+        select *
+        from user
+        where id = #{id}
+          and openid = #{openid}
+    </select>
 </mapper>

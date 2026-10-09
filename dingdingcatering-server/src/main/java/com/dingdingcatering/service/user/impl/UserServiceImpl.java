@@ -1,4 +1,4 @@
-package com.dingdingcatering.service.user.Impl;
+package com.dingdingcatering.service.user.impl;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.dingdingcatering.constant.MessageConstant;

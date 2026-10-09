@@ -10,6 +10,7 @@ public class MessageConstant {
     public static final String ACCOUNT_LOCKED = "账号被锁";
     public static final String UNKNOWN_ERROR = "未知错误";
     public static final String USER_NOT_LOGIN = "用户未登录";
+    public static final String USER_NOT_FOUND = "用户不存在或已被删除";
     public static final String CATEGORY_BE_RELATED_BY_SETMEAL = "当前分类关联了套餐，不能删除";
     public static final String CATEGORY_BE_RELATED_BY_DISH = "当前分类关联了菜品，不能删除";
     public static final String SHOPPING_CART_IS_NULL = "购物车数据为空，不能下单";
@@ -27,4 +28,6 @@ public class MessageConstant {
     public static final String DATA_EXIST = "数据已存在";
     public static final String JWT_EXPIRED = "JWT令牌已过期";
     public static final String JWT_INVALID = "JWT令牌无效";
+    public static final String SECURITY_ERROR = "无权为其他用户操作数据";
+    public static final String JSON_PROCESSING_ERROR = "JSON 序列化/反序列化异常";
 }

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Component;
 @Component("userOrderMapper")
 @Mapper
 public interface OrderMapper {
+    void sendReminder(Long id);
 }

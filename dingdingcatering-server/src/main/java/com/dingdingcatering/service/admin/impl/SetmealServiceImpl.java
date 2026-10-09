@@ -1,5 +1,7 @@
 package com.dingdingcatering.service.admin.impl;
 
+import com.dingdingcatering.annotation.AutoClearCache;
+import com.dingdingcatering.enumeration.CacheType;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.dingdingcatering.constant.MessageConstant;
@@ -44,6 +46,7 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @AutoClearCache({CacheType.SETMEAL_CATEGORY, CacheType.SETMEAL_DISH})
     public void addSetmeal(SetMealDTO setmealDTO) {
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO, setmeal);
@@ -58,6 +61,7 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @AutoClearCache({CacheType.SETMEAL_CATEGORY, CacheType.SETMEAL_DISH})
     public void deleteSetmeal(String ids) {
         List<Long> idList = Arrays.stream(ids.split(",")).map(String::trim).filter(s -> !s.isEmpty()).map(Long::parseLong).toList();
         List<String> nameList = setmealMapper.queryStatusByIds(idList);
@@ -74,6 +78,7 @@ public class SetmealServiceImpl implements SetmealService {
     }
 
     @Override
+    @AutoClearCache({CacheType.SETMEAL_CATEGORY, CacheType.SETMEAL_DISH})
     public void updateStatus(Integer status, Long id) {
         if (status.equals(StatusConstant.ENABLE)) {
             List<Long> dishesId = setmealMapper.queryDishesId(id);
@@ -95,6 +100,7 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @AutoClearCache({CacheType.SETMEAL_CATEGORY, CacheType.SETMEAL_DISH})
     public void updateSetmeal(SetMealDTO setmealDTO) {
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO, setmeal);

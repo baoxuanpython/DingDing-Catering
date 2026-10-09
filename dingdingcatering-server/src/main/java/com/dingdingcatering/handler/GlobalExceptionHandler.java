@@ -3,6 +3,7 @@ package com.dingdingcatering.handler;
 import com.dingdingcatering.constant.MessageConstant;
 import com.dingdingcatering.exception.*;
 import com.dingdingcatering.result.Result;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -104,5 +105,15 @@ public class GlobalExceptionHandler {
     public Result<String> handleDeletionNotAllowedException(DeletionNotAllowedException ex) {
         log.error("删除不允许：{}", ex.getMessage());
         return Result.error(ex.getMessage());
+    }
+    @ExceptionHandler(SecurityException.class)
+    public Result<String> handleSecurityException(SecurityException ex) {
+        log.error("安全异常：{}", ex.getMessage());
+        return Result.error(ex.getMessage());
+    }
+    @ExceptionHandler(JsonProcessingException.class)
+    public Result<String> handleJsonProcessingException(JsonProcessingException ex) {
+        log.error("JSON 序列/反序列化异常：{}", ex.getMessage());
+        return Result.error(MessageConstant.JSON_PROCESSING_ERROR);
     }
 }

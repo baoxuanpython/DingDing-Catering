@@ -1,8 +1,10 @@
 package com.dingdingcatering.service.admin.impl;
 
+import com.dingdingcatering.annotation.AutoClearCache;
+import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.enumeration.CacheType;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.dingdingcatering.constant.MessageConstant;
 import com.dingdingcatering.dto.CategoryDTO;
 import com.dingdingcatering.dto.CategoryPageQueryDTO;
 import com.dingdingcatering.entity.Category;
@@ -18,19 +20,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Slf4j
 @Service("adminCategoryServiceImpl")
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
+
     private final CategoryMapper categoryMapper;
     private final SetMealMapper setMealMapper;
     private final DishMapper dishMapper;
 
-    public CategoryServiceImpl(CategoryMapper categoryMapper, SetMealMapper setMealMapper, DishMapper dishMapper) {
+    public CategoryServiceImpl(CategoryMapper categoryMapper,
+                               SetMealMapper setMealMapper,
+                               DishMapper dishMapper) {
         this.categoryMapper = categoryMapper;
         this.setMealMapper = setMealMapper;
         this.dishMapper = dishMapper;
     }
 
+    @Override
     public PageResult<Category> pageQuery(CategoryPageQueryDTO categoryPageQueryDTO) {
         try (Page<Category> page = PageHelper.startPage(categoryPageQueryDTO.getPage(), categoryPageQueryDTO.getPageSize())) {
             List<Category> list = categoryMapper.pageQuery(categoryPageQueryDTO);
@@ -39,6 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @AutoClearCache(CacheType.CATEGORY)
     public void addCategory(CategoryDTO categoryDTO) {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
@@ -47,6 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @AutoClearCache(CacheType.CATEGORY)
     public void deleteCategory(Long id) {
         if (setMealMapper.queryByCategoryId(id) > 0) {
             throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL);
@@ -63,6 +71,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @AutoClearCache(CacheType.CATEGORY)
     public void updateStatus(Integer status, Long id) {
         Category category = new Category();
         category.setStatus(status);
@@ -71,10 +80,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @AutoClearCache(CacheType.CATEGORY)
     public void updateCategory(CategoryDTO categoryDTO) {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
         categoryMapper.updateCategory(category);
     }
-
 }

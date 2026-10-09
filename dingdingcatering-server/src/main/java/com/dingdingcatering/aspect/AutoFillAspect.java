@@ -162,12 +162,12 @@ public class AutoFillAspect {
         String methodName = signature.getMethod().getName();
 
         log.info("""
-                    ℹ️ 方法 [{}] 带有 @AutoFill({}) 注解，但参数中没有可填充的实体类对象。
-                       可能原因：
-                       1. 这是一个简单更新操作（如状态切换），时间字段由 SQL NOW() 处理
-                       2. 该方法的公共字段已在其他地方处理
-                       3. 此注解仅用于标记或未来扩展，不执行实际填充
-                       已自动跳过填充，不影响业务逻辑""",
-                methodName, operationType);
+                   方法 [{}] 带有 @AutoFill({}) 注解，但参数中没有可填充的实体类对象。
+                   可能原因：
+                   1. 这是一个简单更新操作（如状态切换），时间字段由 SQL NOW() 处理
+                   2. 该方法的公共字段已在其他地方处理
+                   3. 此注解仅用于标记或未来扩展，不执行实际填充
+                   已自动跳过填充，不影响业务逻辑
+               """, methodName, operationType);
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.dingdingcatering.mapper.user.AddressBookMapper">
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO address_book
@@ -38,4 +39,68 @@
             <if test="isDefault != null">#{isDefault},</if>
         </trim>
     </insert>
+
+    <update id="updateAddressBook">
+        UPDATE address_book
+        <set>
+            <!-- 可选字段：非空时才更新 -->
+            <if test="consignee != null and consignee != ''">consignee = #{consignee},</if>
+            <if test="sex != null and sex != ''">sex = #{sex},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="provinceCode != null and provinceCode != ''">province_code = #{provinceCode},</if>
+            <if test="provinceName != null and provinceName != ''">province_name = #{provinceName},</if>
+            <if test="cityCode != null and cityCode != ''">city_code = #{cityCode},</if>
+            <if test="cityName != null and cityName != ''">city_name = #{cityName},</if>
+            <if test="districtCode != null and districtCode != ''">district_code = #{districtCode},</if>
+            <if test="districtName != null and districtName != ''">district_name = #{districtName},</if>
+            <if test="detail != null and detail != ''">detail = #{detail},</if>
+            <if test="label != null and label != ''">label = #{label},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+        </set>
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </update>
+
+    <!-- 设置指定地址为默认地址（注意：调用前应先调用 clearDefaultByUserId 清除旧默认） -->
+    <update id="updateDefaultAddressBook">
+        UPDATE address_book
+        SET is_default = ${@com.dingdingcatering.constant.DefaultConstant@DEFAULT}
+        WHERE user_id = #{userId}
+          AND id = #{id}
+    </update>
+
+    <!-- 清除用户所有地址的默认标记（设置为非默认） -->
+    <update id="clearDefaultByUserId">
+        UPDATE address_book
+        SET is_default = ${@com.dingdingcatering.constant.DefaultConstant@NOT_DEFAULT}
+        WHERE user_id = #{userId}
+          AND is_default = ${@com.dingdingcatering.constant.DefaultConstant@DEFAULT}
+    </update>
+
+    <delete id="delete">
+        DELETE
+        FROM address_book
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </delete>
+
+    <select id="list" resultType="com.dingdingcatering.entity.AddressBook">
+        SELECT *
+        FROM address_book
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="defaultAddressBook" resultType="com.dingdingcatering.entity.AddressBook">
+        SELECT *
+        FROM address_book
+        WHERE user_id = #{userId}
+          AND is_default = ${@com.dingdingcatering.constant.DefaultConstant@DEFAULT}
+    </select>
+
+    <select id="selectById" resultType="com.dingdingcatering.entity.AddressBook">
+        SELECT *
+        FROM address_book
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </select>
 </mapper>

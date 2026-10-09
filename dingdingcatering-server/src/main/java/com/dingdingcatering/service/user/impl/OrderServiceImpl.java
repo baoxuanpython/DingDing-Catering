@@ -1,4 +1,4 @@
-package com.dingdingcatering.service.user.Impl;
+package com.dingdingcatering.service.user.impl;
 
 import com.dingdingcatering.mapper.user.OrderMapper;
 import com.dingdingcatering.service.user.OrderService;
@@ -11,5 +11,10 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     public OrderServiceImpl(OrderMapper orderMapper) {
         this.orderMapper = orderMapper;
+    }
+
+    @Override
+    public void sendReminder(Long id) {
+        orderMapper.sendReminder(id);
     }
 }
