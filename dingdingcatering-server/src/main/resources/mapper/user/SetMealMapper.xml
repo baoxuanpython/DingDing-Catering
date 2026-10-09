@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.dingdingcatering.mapper.user.SetmealMapper">
+<mapper namespace="com.dingdingcatering.mapper.user.SetMealMapper">
     <select id="list" resultType="com.dingdingcatering.entity.Setmeal">
         select *
         from setmeal

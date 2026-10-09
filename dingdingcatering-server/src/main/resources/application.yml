@@ -56,7 +56,7 @@ logging:
     com:
       dingdingcatering:
         mapper: debug
-        service: info
+        service: debug
         controller: info
         interceptor: debug
 

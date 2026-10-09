@@ -1,6 +1,5 @@
 package com.dingdingcatering.controller.admin;
 
-import com.dingdingcatering.annotation.AutoLogDTO;
 import com.dingdingcatering.dto.SetMealDTO;
 import com.dingdingcatering.dto.SetMealPageQueryDTO;
 import com.dingdingcatering.result.PageResult;
@@ -22,41 +21,35 @@ public class SetmealController {
     }
 
     @GetMapping("/page")
-    @AutoLogDTO("分页查询套餐")
     public Result<PageResult<SetMealVO>> pageQuery(SetMealPageQueryDTO setmealPageQueryDTO) {
         PageResult<SetMealVO> result = setmealService.pageQuery(setmealPageQueryDTO);
         return Result.success(result);
     }
 
     @PostMapping
-    @AutoLogDTO("新增套餐")
     public Result<Void> addSetmeal(@RequestBody SetMealDTO setmealDTO) {
         setmealService.addSetmeal(setmealDTO);
         return Result.success();
     }
 
     @DeleteMapping
-    @AutoLogDTO("删除套餐")
     public Result<Void> deleteSetmeal(@RequestParam String ids) {
         setmealService.deleteSetmeal(ids);
         return Result.success();
     }
 
     @GetMapping("/{id}")
-    @AutoLogDTO("根据套餐id查询套餐详情")
     public Result<SetMealVO> getSetmealById(@PathVariable Long id) {
         SetMealVO setMealVO = setmealService.getSetmealById(id);
         return Result.success(setMealVO);
     }
 
     @PostMapping("/status/{status}")
-    @AutoLogDTO("更新套餐状态")
     public Result<Void> updateStatus(@PathVariable Integer status ,@RequestParam Long id) {
         setmealService.updateStatus(status,id);
         return Result.success();
     }
     @PutMapping
-    @AutoLogDTO("更新套餐")
     public Result<Void> updateSetmeal(@RequestBody SetMealDTO setmealDTO) {
         setmealService.updateSetmeal(setmealDTO);
         return Result.success();

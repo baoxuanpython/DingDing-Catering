@@ -1,6 +1,5 @@
 package com.dingdingcatering.controller.admin;
 
-import com.dingdingcatering.annotation.AutoLogDTO;
 import com.dingdingcatering.constant.MessageConstant;
 import com.dingdingcatering.exception.UploadFileFailException;
 import com.dingdingcatering.result.Result;
@@ -23,7 +22,6 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    @AutoLogDTO("上传文件")
     public Result<String> upload(MultipartFile file) {
         // 上传文件到OSS
         try {

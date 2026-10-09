@@ -73,7 +73,7 @@
                   ROUND(SUM(valid_cnt) / SUM(total_cnt), 2))                           AS orderCompletionRate
         FROM (SELECT ds.dt,
                      COUNT(o.id)                                                                     AS total_cnt,
-                     SUM(CASE WHEN o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED} THEN 1 ELSE 0 END) AS valid_cnt
+                     SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}) AS valid_cnt
               FROM date_series ds
                        LEFT JOIN orders o ON DATE(o.order_time) = ds.dt
               GROUP BY ds.dt) t;

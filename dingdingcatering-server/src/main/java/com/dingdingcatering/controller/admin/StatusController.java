@@ -1,6 +1,5 @@
 package com.dingdingcatering.controller.admin;
 
-import com.dingdingcatering.annotation.AutoLogDTO;
 import com.dingdingcatering.result.Result;
 import com.dingdingcatering.service.admin.StatusService;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +14,11 @@ public class StatusController {
     }
 
     @GetMapping("/status")
-    @AutoLogDTO("获取店铺状态")
     public Result<Integer> getStatus() {
         Integer status = statusService.getStatus();
         return Result.success(status);
     }
 
-    @AutoLogDTO("设置店铺状态")
     @PutMapping("/{status}")
     public Result<Void> setStatus(@PathVariable Integer status) {
         statusService.updateStatus(status);

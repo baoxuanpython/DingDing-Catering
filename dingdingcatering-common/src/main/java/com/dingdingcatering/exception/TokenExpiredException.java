@@ -5,10 +5,6 @@ package com.dingdingcatering.exception;
  */
 public class TokenExpiredException extends BaseException {
 
-    public TokenExpiredException() {
-        super("JWT令牌已过期");
-    }
-
     public TokenExpiredException(String msg) {
         super(msg);
     }

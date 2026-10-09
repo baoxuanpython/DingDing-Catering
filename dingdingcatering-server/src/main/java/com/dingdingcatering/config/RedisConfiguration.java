@@ -1,6 +1,5 @@
 package com.dingdingcatering.config;
 
-import com.dingdingcatering.constant.RedisConstant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
@@ -33,17 +32,14 @@ public class RedisConfiguration {
         log.info("开始创建 RedisTemplate...");
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
-
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
         redisTemplate.setKeySerializer(stringRedisSerializer);
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
-
         GenericJackson2JsonRedisSerializer jsonRedisSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
         redisTemplate.setValueSerializer(jsonRedisSerializer);
         redisTemplate.setHashValueSerializer(jsonRedisSerializer);
-
         redisTemplate.afterPropertiesSet();
-        log.info("RedisTemplate 初始化完成 - 使用统一的 ObjectMapper Bean");
+        log.info("RedisTemplate 初始化完成 - 使用统一的objectMapper Bean（实际使用 JacksonObjectMapper（自定义配置））");
         return redisTemplate;
     }
 
@@ -51,17 +47,14 @@ public class RedisConfiguration {
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         log.info("开始创建 RedisCacheManager...");
         GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
-
+        int CACHE_EXPIRE_MINUTES = 600;
         RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer))
-                .entryTtl(Duration.ofMinutes(RedisConstant.CACHE_EXPIRE_MINUTES))
+                .entryTtl(Duration.ofMinutes(CACHE_EXPIRE_MINUTES))
                 .disableCachingNullValues()
                 .computePrefixWith(cacheName -> cacheName + ":");
-        RedisCacheManager cacheManager = RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(cacheConfig)
-                .build();
-        log.info("RedisCacheManager 初始化完成 - TTL={}分钟", RedisConstant.CACHE_EXPIRE_MINUTES);
-        return cacheManager;
+        log.info("RedisCacheManager 初始化完成 - 过期时间={}分钟", CACHE_EXPIRE_MINUTES);
+        return RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(cacheConfig).build();
     }
 }

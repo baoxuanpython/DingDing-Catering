@@ -42,5 +42,5 @@ public interface DishMapper {
 
     List<String> queryStatusByIds(List<Long> idList);
 
-    List<HashMap<String, String>> querySetmealByids(List<Long> idList);
+    List<HashMap<String, String>> querySetmealByIds(List<Long> idList);
 }

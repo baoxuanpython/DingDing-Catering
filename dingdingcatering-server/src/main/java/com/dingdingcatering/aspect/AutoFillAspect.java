@@ -1,6 +1,7 @@
 package com.dingdingcatering.aspect;
 
 import com.dingdingcatering.annotation.AutoFill;
+import com.dingdingcatering.constant.AutoFillConstant;
 import com.dingdingcatering.enumeration.OperationType;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -64,10 +65,8 @@ public class AutoFillAspect {
             log.debug("方法 {} 无参数，跳过自动填充", signature.getName());
             return;
         }
-
         Long currentId = getCurrentId();
         boolean foundEntity = false;
-
         for (Object arg : args) {
             if (arg != null && isAutoFillableEntity(arg)) {
                 foundEntity = true;
@@ -76,7 +75,6 @@ public class AutoFillAspect {
                         arg.getClass().getSimpleName(), operationType);
             }
         }
-
         if (!foundEntity) {
             handleMissingEntity(signature, operationType);
         }
@@ -111,14 +109,14 @@ public class AutoFillAspect {
         Class<?> clazz = entity.getClass();
 
         if (operationType == OperationType.INSERT) {
-            invokeSetter(clazz, entity, "setCreateTime", LocalDateTime.class, LocalDateTime.now());
-            invokeSetter(clazz, entity, "setUpdateTime", LocalDateTime.class, LocalDateTime.now());
-            invokeSetter(clazz, entity, "setCreateUser", Long.class, currentId);
-            invokeSetter(clazz, entity, "setUpdateUser", Long.class, currentId);
+            invokeSetter(clazz, entity, AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class, LocalDateTime.now());
+            invokeSetter(clazz, entity, AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class, LocalDateTime.now());
+            invokeSetter(clazz, entity, AutoFillConstant.SET_CREATE_USER, Long.class, currentId);
+            invokeSetter(clazz, entity, AutoFillConstant.SET_UPDATE_USER, Long.class, currentId);
 
         } else if (operationType == OperationType.UPDATE) {
-            invokeSetter(clazz, entity, "setUpdateTime", LocalDateTime.class, LocalDateTime.now());
-            invokeSetter(clazz, entity, "setUpdateUser", Long.class, currentId);
+            invokeSetter(clazz, entity, AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class, LocalDateTime.now());
+            invokeSetter(clazz, entity, AutoFillConstant.SET_UPDATE_USER, Long.class, currentId);
         }
     }
 

@@ -15,6 +15,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void sendReminder(Long id) {
+        log.info("发送订单催单提醒: orderId={}", id);
         orderMapper.sendReminder(id);
+        log.info("发送订单催单提醒成功: orderId={}", id);
     }
 }

@@ -4,40 +4,40 @@
 <mapper namespace="com.dingdingcatering.mapper.admin.WorkspaceMapper">
 
     <select id="getBusinessData" resultType="com.dingdingcatering.vo.BusinessDataVO">
-        SELECT IFNULL(SUM(CASE WHEN o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED} THEN o.amount ELSE 0 END),
+        SELECT IFNULL(SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}),
                       0)                                                       AS turnover,
-               IFNULL(SUM(CASE WHEN o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED} THEN 1 ELSE 0 END),
+               IFNULL(SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}),
                       0)                                                       AS validOrderCount,
                IFNULL(
                        IF(COUNT(o.id) = 0, 0,
-                          ROUND(SUM(CASE WHEN o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED} THEN 1 ELSE 0 END) *
+                          ROUND(SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}) *
                                 100.0 / COUNT(o.id), 2)),
                        0)                                                      AS orderCompletionRate,
                IFNULL(
-                       IF(SUM(CASE WHEN o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED} THEN 1 ELSE 0 END) = 0, 0,
-                          ROUND(SUM(CASE WHEN o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED} THEN o.amount ELSE 0 END)
-                                    / SUM(CASE WHEN o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED} THEN 1 ELSE 0 END),
+                       IF(SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}) = 0, 0,
+                          ROUND(SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED})
+                                    / SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}),
                                 2)),
                        0)                                                      AS unitPrice,
                (SELECT COUNT(*) FROM user WHERE DATE(create_time) = CURDATE()) AS newUsers
         FROM orders o
         WHERE DATE(o.order_time) = CURDATE();
     </select>
-    <select id="getOverviewSetmeals" resultType="com.dingdingcatering.vo.SetMealOverViewVO">
-        SELECT SUM(CASE WHEN status = ${@com.dingdingcatering.constant.StatusConstant@ENABLE} THEN 1 ELSE 0 END) AS sold,
-               SUM(CASE WHEN status = ${@com.dingdingcatering.constant.StatusConstant@DISABLE} THEN 1 ELSE 0 END) AS discontinued
+    <select id="getOverviewSetmeal" resultType="com.dingdingcatering.vo.SetMealOverViewVO">
+        SELECT SUM(status = ${@com.dingdingcatering.constant.StatusConstant@ENABLE}) AS sold,
+               SUM(status = ${@com.dingdingcatering.constant.StatusConstant@DISABLE}) AS discontinued
         FROM setmeal;
     </select>
     <select id="getOverviewDishes" resultType="com.dingdingcatering.vo.DishOverViewVO">
-        SELECT SUM(CASE WHEN status = ${@com.dingdingcatering.constant.StatusConstant@ENABLE} THEN 1 ELSE 0 END) AS sold,
-               SUM(CASE WHEN status = ${@com.dingdingcatering.constant.StatusConstant@DISABLE} THEN 1 ELSE 0 END) AS discontinued
+        SELECT SUM(status = ${@com.dingdingcatering.constant.StatusConstant@ENABLE}) AS sold,
+               SUM(status = ${@com.dingdingcatering.constant.StatusConstant@DISABLE}) AS discontinued
         FROM dish;
     </select>
     <select id="getOverviewOrders" resultType="com.dingdingcatering.vo.OrderOverViewVO">
-        SELECT SUM(CASE WHEN status = ${@com.dingdingcatering.entity.Orders@TO_BE_CONFIRMED} THEN 1 ELSE 0 END) AS waitingOrders,
-               SUM(CASE WHEN status = ${@com.dingdingcatering.entity.Orders@CONFIRMED} THEN 1 ELSE 0 END)       AS deliveredOrders,
-               SUM(CASE WHEN status = ${@com.dingdingcatering.entity.Orders@COMPLETED} THEN 1 ELSE 0 END)       AS completedOrders,
-               SUM(CASE WHEN status = ${@com.dingdingcatering.entity.Orders@CANCELLED} THEN 1 ELSE 0 END)       AS cancelledOrders,
+        SELECT SUM(status = ${@com.dingdingcatering.entity.Orders@TO_BE_CONFIRMED}) AS waitingOrders,
+               SUM(status = ${@com.dingdingcatering.entity.Orders@CONFIRMED})       AS deliveredOrders,
+               SUM(status = ${@com.dingdingcatering.entity.Orders@COMPLETED})       AS completedOrders,
+               SUM(status = ${@com.dingdingcatering.entity.Orders@CANCELLED})       AS cancelledOrders,
                COUNT(*)                                                                            AS allOrders
         FROM orders;
     </select>

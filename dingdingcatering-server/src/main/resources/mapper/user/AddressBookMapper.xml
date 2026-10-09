@@ -64,7 +64,7 @@
     <!-- 设置指定地址为默认地址（注意：调用前应先调用 clearDefaultByUserId 清除旧默认） -->
     <update id="updateDefaultAddressBook">
         UPDATE address_book
-        SET is_default = ${@com.dingdingcatering.constant.DefaultConstant@DEFAULT}
+        SET is_default = 1
         WHERE user_id = #{userId}
           AND id = #{id}
     </update>
@@ -72,9 +72,9 @@
     <!-- 清除用户所有地址的默认标记（设置为非默认） -->
     <update id="clearDefaultByUserId">
         UPDATE address_book
-        SET is_default = ${@com.dingdingcatering.constant.DefaultConstant@NOT_DEFAULT}
+        SET is_default = 0
         WHERE user_id = #{userId}
-          AND is_default = ${@com.dingdingcatering.constant.DefaultConstant@DEFAULT}
+          AND is_default = 1
     </update>
 
     <delete id="delete">
@@ -94,7 +94,7 @@
         SELECT *
         FROM address_book
         WHERE user_id = #{userId}
-          AND is_default = ${@com.dingdingcatering.constant.DefaultConstant@DEFAULT}
+          AND is_default = 1
     </select>
 
     <select id="selectById" resultType="com.dingdingcatering.entity.AddressBook">

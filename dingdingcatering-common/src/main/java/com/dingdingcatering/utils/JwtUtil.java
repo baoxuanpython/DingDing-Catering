@@ -17,16 +17,14 @@ public class JwtUtil {
      * @param secretKey jwt秘钥
      * @param ttlMillis jwt过期时间(毫秒)
      * @param claims    设置的claims
-     * @return
+     * @return 加密后的token
      */
     public static String createJWT(String secretKey, long ttlMillis, Map<String, Object> claims) {
         // 生成密钥
         SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-
-        // 生成JWT的过期时间
+        // JWT的过期时间
         long expMillis = System.currentTimeMillis() + ttlMillis;
         Date exp = new Date(expMillis);
-
         // 设置jwt的body
         return Jwts.builder()
                 .claims(claims)
@@ -40,19 +38,17 @@ public class JwtUtil {
      *
      * @param secretKey jwt秘钥 此秘钥一定要保留好在服务端 不能暴露出去, 否则sign就可以被伪造 如果对接多个客户端建议改造成多个
      * @param token     加密后的token
-     * @return
+     * @return 解密后的claims
      */
     public static Claims parseJWT(String secretKey, String token) {
         // 生成密钥
         SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-
-        // 得到DefaultJwtParser
-        Claims claims = Jwts.parser()
+        // 返回解密后的claims
+        return Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-        return claims;
     }
 
 }

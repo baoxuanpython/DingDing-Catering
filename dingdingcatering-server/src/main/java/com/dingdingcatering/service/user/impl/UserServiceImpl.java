@@ -35,14 +35,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserLoginVO login(UserLoginDTO userLoginDTO) {
+        log.info("用户登录尝试: code={}", userLoginDTO.getCode());
         String openid = getOpenId(userLoginDTO.getCode());
         if (openid == null) {
+            log.warn("用户登录失败: 获取openid失败, code={}", userLoginDTO.getCode());
             throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
         }
         User user = userMapper.login(openid);
         if (user == null) {
+            log.info("用户首次登录，自动注册: openid={}", openid);
             user = User.builder().openid(openid).build();
             userMapper.createUser(user);
+            log.info("用户注册成功: id={}, openid={}", user.getId(), openid);
+        } else {
+            log.info("用户登录成功: id={}, openid={}", user.getId(), openid);
         }
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
@@ -58,6 +64,7 @@ public class UserServiceImpl implements UserService {
 
 
     private String getOpenId(String code) {
+        log.debug("调用微信接口获取openid: code={}", code);
         Map<String, String> postMap = new HashMap<>();
         postMap.put(WechatApiConstant.APPID, weChatProperties.getAppid());
         postMap.put(WechatApiConstant.SECRET, weChatProperties.getSecret());
@@ -65,6 +72,12 @@ public class UserServiceImpl implements UserService {
         postMap.put(WechatApiConstant.GRANT_TYPE, WechatApiConstant.GRANT_TYPE_VALUE);
         String response = HttpClientUtil.doGet(WechatApiConstant.WECHAT_LOGIN_URL, postMap);
         JSONObject jsonObject = JSONObject.parseObject(response);
-        return jsonObject.getString("openid");
+        String openid = jsonObject.getString("openid");
+        if (openid == null) {
+            log.warn("获取openid失败: response={}", response);
+        } else {
+            log.debug("获取openid成功: openid={}", openid);
+        }
+        return openid;
     }
 }

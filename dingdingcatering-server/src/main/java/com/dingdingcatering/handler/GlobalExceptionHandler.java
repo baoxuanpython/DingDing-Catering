@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Objects;
 
 /**
  * 全局异常处理器
  *
  * <p>设计说明：</p>
  * <ul>
- *     <li>统一返回 HTTP 200 状态码，通过 {@link Result#code} 区分业务成功/失败</li>
+ *     <li>统一返回 HTTP 200 状态码，通过 Result#code 区分业务成功/失败</li>
  *     <li>不使用 @ResponseStatus 注解，避免前端 Axios错误处理</li>
  *     <li>详细的异常信息记录在日志中，返回给前端的都是友好的提示信息</li>
  * </ul>
@@ -28,7 +29,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
-
     public Result<String> handleBaseException(BaseException ex) {
         log.error("业务异常：{}", ex.getMessage());
         return Result.error(MessageConstant.UNKNOWN_ERROR);
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Result<String> handleValidationException(MethodArgumentNotValidException ex) {
-        String message = ex.getBindingResult().getFieldError().getDefaultMessage();
+        String message = Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage();
         log.error("参数校验失败：{}", message);
         return Result.error(MessageConstant.PARAM_ERROR);
     }

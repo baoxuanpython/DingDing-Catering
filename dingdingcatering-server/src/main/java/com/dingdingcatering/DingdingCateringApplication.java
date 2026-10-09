@@ -11,6 +11,5 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class DingdingCateringApplication {
     public static void main(String[] args) {
         SpringApplication.run(DingdingCateringApplication.class, args);
-        log.info("Dingding Catering server started");
     }
 }

@@ -10,11 +10,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
 
-@Component("adminSetMealMapper")
 @Mapper
+@Component("adminSetMealMapper")
 public interface SetMealMapper {
     List<SetMealVO> pageQuery(SetMealPageQueryDTO setmealPageQueryDTO);
 

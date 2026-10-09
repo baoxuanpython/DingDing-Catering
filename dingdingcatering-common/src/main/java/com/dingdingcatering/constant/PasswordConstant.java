@@ -8,9 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PasswordConstant {
 
-    public static final String DEFAULT_PASSWORD = "CQTK123456";
-
-    public static final String DEFAULT_PASSWORD(String lastSixNumberOfIdNumber){
+    public static String DEFAULT_PASSWORD(String lastSixNumberOfIdNumber){
         return "CQTK" + lastSixNumberOfIdNumber.substring(lastSixNumberOfIdNumber.length() - 6);
     }
 }

@@ -8,7 +8,7 @@ import com.dingdingcatering.vo.SetMealOverViewVO;
 public interface WorkspaceService {
     BusinessDataVO getBusinessData();
 
-    SetMealOverViewVO getOverviewSetmeals();
+    SetMealOverViewVO getOverviewSetmeal();
 
     DishOverViewVO getOverviewDishes();
 

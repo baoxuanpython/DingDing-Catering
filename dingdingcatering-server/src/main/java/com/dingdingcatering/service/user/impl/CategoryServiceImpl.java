@@ -23,7 +23,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Cacheable(value = "category", key = "#type != null ? 'type:' + #type : 'list'", unless = "#result == null || #result.isEmpty()")
     public List<Category> list(Integer type) {
         log.info("缓存未命中，查询分类列表，type: {}", type);
-        return categoryMapper.listByType(type);
+        List<Category> result = categoryMapper.listByType(type);
+        log.debug("查询分类列表完成: type={}, count={}", type, result.size());
+        return result;
     }
 
 }

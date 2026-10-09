@@ -1,6 +1,5 @@
 package com.dingdingcatering.controller.admin;
 
-import com.dingdingcatering.annotation.AutoLogDTO;
 import com.dingdingcatering.dto.DataOverViewQueryDTO;
 import com.dingdingcatering.result.Result;
 import com.dingdingcatering.service.admin.ReportService;
@@ -28,14 +27,12 @@ public class ReportController {
     }
 
     @GetMapping("/export")
-    @AutoLogDTO("导出订单报表")
     public Result<Void> exportReport(HttpServletRequest request) {
 //        TODO 导出订单报表
         return Result.success();
     }
 
     @GetMapping("/top10")
-    @AutoLogDTO("查询销量Top10菜品")
     public Result<SalesTop10ReportVO> top10Dish(@RequestParam String begin, @RequestParam String end) {
         DataOverViewQueryDTO queryDTO = DataOverViewQueryDTO.addTime(begin, end);
         SalesTop10ReportVO reportVO = reportService.top10Dish(queryDTO);
@@ -43,7 +40,6 @@ public class ReportController {
     }
 
     @GetMapping("/userStatistics")
-    @AutoLogDTO("查询用户统计信息")
     public Result<UserReportVO> userStatistics(@RequestParam String begin, @RequestParam String end) {
         DataOverViewQueryDTO queryDTO = DataOverViewQueryDTO.addTime(begin, end);
         UserReportVO reportVO = reportService.userStatistics(queryDTO);
@@ -51,7 +47,6 @@ public class ReportController {
     }
 
     @GetMapping("/turnoverStatistics")
-    @AutoLogDTO("查询营业额统计信息")
     public Result<TurnoverReportVO> turnoverStatistics(@RequestParam String begin, @RequestParam String end) {
         DataOverViewQueryDTO queryDTO = DataOverViewQueryDTO.addTime(begin, end);
         TurnoverReportVO reportVO = reportService.turnoverStatistics(queryDTO);
@@ -59,7 +54,6 @@ public class ReportController {
     }
 
     @GetMapping("/ordersStatistics")
-    @AutoLogDTO("查询订单统计")
     public Result<OrderReportVO> ordersStatistics(@RequestParam String begin, @RequestParam String end) {
         DataOverViewQueryDTO queryDTO = DataOverViewQueryDTO.addTime(begin, end);
         OrderReportVO reportVO = reportService.ordersStatistics(queryDTO);

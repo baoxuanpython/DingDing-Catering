@@ -149,7 +149,7 @@
         </foreach>
         and status = ${@com.dingdingcatering.constant.StatusConstant@ENABLE}
     </select>
-    <select id="querySetmealByids" resultType="java.util.HashMap">
+    <select id="querySetmealByIds" resultType="java.util.HashMap">
         select d.name, group_concat(s.name order by s.name asc separator ',') as setmeal_names
         from dish d
         inner join setmeal_dish sd on d.id = sd.dish_id
