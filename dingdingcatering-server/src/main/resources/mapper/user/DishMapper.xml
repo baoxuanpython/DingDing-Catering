@@ -38,4 +38,11 @@
         where di.category_id = #{categoryId}
         order by di.id desc
     </select>
+
+    <select id="getById" resultType="com.dingdingcatering.entity.Dish">
+        SELECT id, name, category_id, price, image, description, status,
+               create_time, update_time, create_user, update_user
+        FROM dish
+        WHERE id = #{id}
+    </select>
 </mapper>

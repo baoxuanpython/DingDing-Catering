@@ -3,11 +3,13 @@ package com.dingdingcatering.controller.user;
 import com.dingdingcatering.entity.AddressBook;
 import com.dingdingcatering.result.Result;
 import com.dingdingcatering.service.user.AddressBookService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Slf4j
 @RequestMapping("/user/addressBook")
 public class AddressBookController {
     private final AddressBookService addressBookService;
@@ -48,8 +50,8 @@ public class AddressBookController {
         return Result.success(addressBookService.getAddressBook(id));
     }
     @PutMapping("/default")
-    public Result<Void> updateDefaultAddressBook(@RequestParam Integer id) {
-        addressBookService.updateDefaultAddressBook(id);
+    public Result<Void> setDefaultAddressBook(@RequestBody AddressBook addressBook) {
+        addressBookService.setDefaultAddressBook(addressBook.getId());
         return Result.success();
     }
 }

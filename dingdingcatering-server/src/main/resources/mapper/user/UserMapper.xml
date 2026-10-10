@@ -19,4 +19,9 @@
         where id = #{id}
           and openid = #{openid}
     </select>
+    <select id="getUserName" resultType="java.lang.String">
+        select name
+        from user
+        where id = #{id}
+    </select>
 </mapper>

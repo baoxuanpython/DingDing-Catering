@@ -17,5 +17,5 @@ public interface AddressBookService {
 
     AddressBook getAddressBook(Long id);
 
-    void updateDefaultAddressBook(Integer id);
+    void setDefaultAddressBook(Long id);
 }

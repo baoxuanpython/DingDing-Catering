@@ -13,4 +13,4 @@ logs/
 .trae/
 dingdingcatering-server/src/main/resources/application-dev.yml
 
-./ai-advice
+lessons/

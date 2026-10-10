@@ -15,4 +15,11 @@
                  INNER JOIN dish d ON sd.dish_id = d.id
         WHERE sd.setmeal_id = #{id}
     </select>
+
+    <select id="getById" resultType="com.dingdingcatering.entity.Setmeal">
+        SELECT id, category_id, name, price, status, description, image,
+               create_time, update_time, create_user, update_user
+        FROM setmeal
+        WHERE id = #{id}
+    </select>
 </mapper>

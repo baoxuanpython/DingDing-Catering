@@ -62,7 +62,7 @@
     </update>
 
     <!-- 设置指定地址为默认地址（注意：调用前应先调用 clearDefaultByUserId 清除旧默认） -->
-    <update id="updateDefaultAddressBook">
+    <update id="setDefaultAddressBook">
         UPDATE address_book
         SET is_default = 1
         WHERE user_id = #{userId}
@@ -102,5 +102,10 @@
         FROM address_book
         WHERE id = #{id}
           AND user_id = #{userId}
+    </select>
+    <select id="getUserId" resultType="java.lang.Long">
+        SELECT user_id
+        FROM address_book
+        WHERE id = #{id}
     </select>
 </mapper>

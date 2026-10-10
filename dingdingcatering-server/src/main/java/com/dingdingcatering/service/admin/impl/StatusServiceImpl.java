@@ -1,8 +1,11 @@
 package com.dingdingcatering.service.admin.impl;
 
+import com.dingdingcatering.annotation.AutoClearCache;
+import com.dingdingcatering.enumeration.CacheType;
 import com.dingdingcatering.mapper.admin.StatusMapper;
 import com.dingdingcatering.service.admin.StatusService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -16,16 +19,19 @@ public class StatusServiceImpl implements StatusService {
     }
 
     @Override
+    @Cacheable(value = "shopStatus", key = "'shopStatus'", unless = "#result == null")
     public Integer getStatus() {
         String value = statusMapper.getValue(SHOP_STATUS_KEY);
         if (value == null) {
-            log.warn("店铺状态配置未找到，返回默认值：1（营业）");
+            log.error("店铺状态配置未找到，返回默认值：1（营业）");
             return 1;
         }
+        log.info("获取店铺状态：{}", value);
         return Integer.parseInt(value);
     }
 
     @Override
+    @AutoClearCache(CacheType.SHOP_STATUS)
     public void updateStatus(Integer status) {
         int rows = statusMapper.updateValue(SHOP_STATUS_KEY, status.toString());
         if (rows == 0) {

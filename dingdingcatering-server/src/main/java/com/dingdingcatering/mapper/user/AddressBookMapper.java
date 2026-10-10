@@ -19,7 +19,9 @@ public interface AddressBookMapper {
 
     AddressBook selectById(Long id, Long userId);
 
-    void updateDefaultAddressBook(Integer id, Long userId);
+    void setDefaultAddressBook(Long id, Long userId);
 
     void clearDefaultByUserId(Long userId);
+
+    Long getUserId(Long id);
 }

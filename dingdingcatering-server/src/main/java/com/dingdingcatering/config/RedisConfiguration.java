@@ -53,7 +53,7 @@ public class RedisConfiguration {
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer))
                 .entryTtl(Duration.ofMinutes(CACHE_EXPIRE_MINUTES))
                 .disableCachingNullValues()
-                .computePrefixWith(cacheName -> cacheName + ":");
+                .computePrefixWith(cacheName -> !cacheName.isEmpty() ? cacheName + ":" : "");
         log.info("RedisCacheManager 初始化完成 - 过期时间={}分钟", CACHE_EXPIRE_MINUTES);
         return RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(cacheConfig).build();
     }

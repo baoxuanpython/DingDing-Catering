@@ -24,6 +24,7 @@ public class AddressBookServiceImpl implements AddressBookService {
     @Override
     public void save(AddressBook addressBook) {
         Long currentUserId = BaseContext.getCurrentId();
+        addressBook.setUserId(currentUserId);
         log.info("新增地址: userId={}", currentUserId);
         validateUserIdOwnership(addressBook.getUserId(), currentUserId);
         addressBookMapper.insert(addressBook);
@@ -45,14 +46,15 @@ public class AddressBookServiceImpl implements AddressBookService {
     }
 
     @Override
-    @Transactional
-    public void updateDefaultAddressBook(Integer id) {
+    @Transactional(rollbackFor = Exception.class)
+    public void setDefaultAddressBook(Long id) {
         Long userId = BaseContext.getCurrentId();
-        log.info("更新默认地址: id={}, userId={}", id, userId);
-        validateUserIdOwnership((long) id, userId);
+        log.info("设置默认地址: id={}, userId={}", id, userId);
+        Long addressBookUserId = addressBookMapper.getUserId(id);
+        validateUserIdOwnership(addressBookUserId, userId);
         addressBookMapper.clearDefaultByUserId(userId);
-        addressBookMapper.updateDefaultAddressBook(id, userId);
-        log.info("更新默认地址成功: id={}, userId={}", id, userId);
+        addressBookMapper.setDefaultAddressBook(id, userId);
+        log.info("设置默认地址成功: id={}, userId={}", id, userId);
     }
 
     @Override

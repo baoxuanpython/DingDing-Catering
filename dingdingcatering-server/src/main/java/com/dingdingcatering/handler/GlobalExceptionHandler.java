@@ -81,39 +81,52 @@ public class GlobalExceptionHandler {
         log.error("密码修改失败：{}", ex.getMessage());
         return Result.error(MessageConstant.PASSWORD_EDIT_FAILED);
     }
+
     @ExceptionHandler(UserNotLoginException.class)
     public Result<String> handleUserNotLoginException(UserNotLoginException ex) {
         log.error("用户未登录：{}", ex.getMessage());
         return Result.error(MessageConstant.USER_NOT_LOGIN);
     }
+
     @ExceptionHandler(AccountNotFoundException.class)
     public Result<String> handleAccountNotFoundException(AccountNotFoundException ex) {
         log.error("账号不存在：{}", ex.getMessage());
         return Result.error(MessageConstant.LOGIN_FAILED);
     }
+
     @ExceptionHandler(UploadFileFailException.class)
     public Result<String> handleUploadFileFailException(UploadFileFailException ex) {
         log.error("上传文件失败：{}", ex.getMessage());
         return Result.error(MessageConstant.UPLOAD_FAILED);
     }
+
     @ExceptionHandler(OrderBusinessException.class)
     public Result<String> handleOrderBusinessException(OrderBusinessException ex) {
         log.error("订单业务异常：{}", ex.getMessage());
         return Result.error(ex.getMessage());
     }
+
     @ExceptionHandler(DeletionNotAllowedException.class)
     public Result<String> handleDeletionNotAllowedException(DeletionNotAllowedException ex) {
         log.error("删除不允许：{}", ex.getMessage());
         return Result.error(ex.getMessage());
     }
+
     @ExceptionHandler(SecurityException.class)
     public Result<String> handleSecurityException(SecurityException ex) {
         log.error("安全异常：{}", ex.getMessage());
         return Result.error(ex.getMessage());
     }
+
     @ExceptionHandler(JsonProcessingException.class)
     public Result<String> handleJsonProcessingException(JsonProcessingException ex) {
         log.error("JSON 序列/反序列化异常：{}", ex.getMessage());
         return Result.error(MessageConstant.JSON_PROCESSING_ERROR);
+    }
+
+    @ExceptionHandler(ShoppingCartBusinessException.class)
+    public Result<String> handleShoppingCartBusinessException(ShoppingCartBusinessException ex) {
+        log.error("购物车业务异常：{}", ex.getMessage());
+        return Result.error(ex.getMessage());
     }
 }

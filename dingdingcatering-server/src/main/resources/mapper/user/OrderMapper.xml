@@ -1,4 +1,95 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.dingdingcatering.mapper.user.OrderMapper">
+    <insert id="insertOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into orders
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            number, user_id, address_book_id, order_time, amount,
+            <if test="status != null">status,</if>
+            <if test="checkoutTime != null">checkout_time,</if>
+            <if test="payMethod != null">pay_method,</if>
+            <if test="payStatus != null">pay_status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="phone != null">phone,</if>
+            <if test="address != null">address,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="consignee != null">consignee,</if>
+            <if test="cancelReason != null">cancel_reason,</if>
+            <if test="rejectionReason != null">rejection_reason,</if>
+            <if test="cancelTime != null">cancel_time,</if>
+            <if test="estimatedDeliveryTime != null">estimated_delivery_time,</if>
+            <if test="deliveryStatus != null">delivery_status,</if>
+            <if test="deliveryTime != null">delivery_time,</if>
+            <if test="packAmount != null">pack_amount,</if>
+            <if test="tablewareNumber != null">tableware_number,</if>
+            <if test="tablewareStatus != null">tableware_status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{number}, #{userId}, #{addressBookId}, #{orderTime}, #{amount},
+            <if test="status != null">#{status},</if>
+            <if test="checkoutTime != null">#{checkoutTime},</if>
+            <if test="payMethod != null">#{payMethod},</if>
+            <if test="payStatus != null">#{payStatus},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="address != null">#{address},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="consignee != null">#{consignee},</if>
+            <if test="cancelReason != null">#{cancelReason},</if>
+            <if test="rejectionReason != null">#{rejectionReason},</if>
+            <if test="cancelTime != null">#{cancelTime},</if>
+            <if test="estimatedDeliveryTime != null">#{estimatedDeliveryTime},</if>
+            <if test="deliveryStatus != null">#{deliveryStatus},</if>
+            <if test="deliveryTime != null">#{deliveryTime},</if>
+            <if test="packAmount != null">#{packAmount},</if>
+            <if test="tablewareNumber != null">#{tablewareNumber},</if>
+            <if test="tablewareStatus != null">#{tablewareStatus},</if>
+        </trim>
+    </insert>
+    <insert id="insertOrderDetail">
+        insert into order_detail (order_id, name, image, dish_id, setmeal_id, dish_flavor, number, amount)
+        values
+        <foreach collection="orderDetailList" item="item" separator=",">
+            (#{item.orderId}, #{item.name}, #{item.image}, #{item.dishId}, #{item.setmealId}, #{item.dishFlavor}, #{item.number}, #{item.amount})
+        </foreach>
+    </insert>
+    <update id="paySuccess">
+        update orders
+        set checkout_time = now(),
+            pay_method    = #{payMethod},
+            status=2
+        where number = #{orderNumber}
+    </update>
+    <delete id="cancelOrder">
+        update orders
+        set status        = 7,
+            cancel_time   = now(),
+            cancel_reason = '用户取消',
+            pay_status    = 2
+        where id = #{id}
+          and user_id = #{userId}
+    </delete>
+    <select id="getHistoryOrders" resultType="com.dingdingcatering.vo.OrderVO">
+        select *
+        from orders
+        <where>
+            user_id = #{userId}
+            <if test="status != null">and status = #{status}</if>
+        </where>
+        order by order_time desc
+    </select>
+    <select id="getDetailList" resultType="com.dingdingcatering.entity.OrderDetail">
+        select *
+        from order_detail
+        where order_id in
+        <foreach collection="orderIds" item="orderId" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </select>
+    <select id="getOrdersById" resultType="com.dingdingcatering.entity.Orders">
+        select *
+        from orders
+        where id = #{id}
+        and user_id = #{userId}
+    </select>
 </mapper>

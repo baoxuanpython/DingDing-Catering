@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service("adminOrderServiceImpl")
@@ -41,6 +42,20 @@ public class OrderServiceImpl implements OrderService {
             Orders.CANCELLED             // 6 - 已取消
     );
 
+    public static void enrichOrderVOListFromAdmin(List<OrderVO> orderVOList, List<OrderDetail> orderDetailList, Function<OrderVO, Long> orderIdGetter) {
+        Map<Long, List<OrderDetail>> detailMap = orderDetailList.stream()
+                .collect(Collectors.groupingBy(OrderDetail::getOrderId));
+        Map<Long, List<String>> dishesMap = orderDetailList.stream()
+                .collect(Collectors.groupingBy(OrderDetail::getOrderId,
+                        Collectors.mapping(OrderDetail::getName, Collectors.toList())));
+
+        orderVOList.forEach(orderVO -> {
+            Long orderId = orderIdGetter.apply(orderVO);
+            orderVO.setOrderDetailList(detailMap.getOrDefault(orderId, Collections.emptyList()));
+            orderVO.setOrderDishes(String.join("、", dishesMap.getOrDefault(orderId, Collections.emptyList())));
+        });
+    }
+
     public OrderServiceImpl(OrderMapper orderMapper) {
         this.orderMapper = orderMapper;
     }
@@ -59,18 +74,8 @@ public class OrderServiceImpl implements OrderService {
                 List<Long> orderIds = orderList.stream().map(OrderVO::getId).collect(Collectors.toList());
                 //批量获取订单详情
                 List<OrderDetail> details = orderMapper.queryOrderDetails(orderIds);
-                // 按订单分组，组成详情Map（包含完整订单详情对象）
-                Map<Long, List<OrderDetail>> detailMap = details.stream().collect(Collectors.groupingBy(OrderDetail::getOrderId));
-
-                // 按订单分组，提取菜品列表（只保留name）
-                Map<Long, List<String>> orderDishesMap = details.stream()
-                        .collect(Collectors.groupingBy(OrderDetail::getOrderId, Collectors.mapping(OrderDetail::getName, Collectors.toList())));
-
-                // 分别将每个订单的详情列表和菜品ID列表设置到订单VO中
-                orderList.forEach(order -> {
-                    order.setOrderDetailList(detailMap.getOrDefault(order.getId(), Collections.emptyList()));
-                    order.setOrderDishes(String.join("、", orderDishesMap.getOrDefault(order.getId(), Collections.emptyList())));
-                });
+                // 使用工具类填充订单详情和菜品信息
+                enrichOrderVOListFromAdmin(orderList, details, OrderVO::getId);
             }
             log.debug("分页查询订单完成: total={}", page.getTotal());
             return new PageResult<>(page.getTotal(), orderList);
