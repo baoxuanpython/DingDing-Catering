@@ -7,21 +7,24 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * 菜品项视图对象（用于套餐详情展示）
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class DishItemVO implements Serializable {
 
-    //菜品名称
+    /** 菜品名称 */
     private String name;
 
-    //份数
+    /** 份数 */
     private Integer copies;
 
-    //菜品图片
+    /** 菜品图片URL */
     private String image;
 
-    //菜品描述
+    /** 菜品描述 */
     private String description;
 }

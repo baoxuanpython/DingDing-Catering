@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * C端分类控制器
+ */
 @RestController("userCategoryController")
 @RequestMapping("/user/category")
 public class CategoryController {
@@ -18,6 +21,12 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    /**
+     * 查询启用状态的分类列表接口。
+     *
+     * @param type 分类类型筛选（1-菜品分类，2-套餐分类，不传则返回全部）
+     * @return 启用状态的分类列表
+     */
     @GetMapping("/list")
     public Result<List<Category>> list(@RequestParam(required = false) Integer type) {
         return Result.success(categoryService.list(type));

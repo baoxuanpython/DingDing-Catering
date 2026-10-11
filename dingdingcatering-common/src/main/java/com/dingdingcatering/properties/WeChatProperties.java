@@ -4,6 +4,12 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * 微信小程序及支付配置属性类
+ * <p>
+ * 从配置文件中读取 dingding.wechat 前缀的配置项，
+ * 用于调用微信登录接口、发起支付请求和处理退款回调。
+ */
 @Component
 @ConfigurationProperties(prefix = "dingding.wechat")
 @Data

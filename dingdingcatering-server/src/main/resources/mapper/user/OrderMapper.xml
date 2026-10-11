@@ -92,4 +92,13 @@
         where id = #{id}
         and user_id = #{userId}
     </select>
+    <select id="getOrdersByNumber" resultType="com.dingdingcatering.vo.OrderVO">
+        select *
+        from orders
+        where number = #{number}
+        and user_id = #{userId}
+        <where>
+            <if test="status != null">and status = #{status}</if>
+        </where>
+    </select>
 </mapper>

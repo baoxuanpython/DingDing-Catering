@@ -28,15 +28,18 @@ import java.util.*;
 
 /**
  * 微信支付工具类
+ * <p>
+ * 封装微信支付相关操作，包括统一下单、申请退款、获取签名等。
+ * 使用微信官方 Java SDK 构建 V3 版本 API 请求。
  */
 @Slf4j
 @Component
 public class WeChatPayUtil {
 
-    //微信支付下单接口地址
+    /** 微信支付下单接口地址 */
     public static final String JSAPI = "https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi";
 
-    //申请退款接口地址
+    /** 申请退款接口地址 */
     public static final String REFUNDS = "https://api.mch.weixin.qq.com/v3/refund/domestic/refunds";
 
 

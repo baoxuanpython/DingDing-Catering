@@ -7,16 +7,28 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * 订单支付视图对象（用于微信支付调起）
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderPaymentVO implements Serializable {
 
-    private String nonceStr; //随机字符
-    private String paySign; //签名
-    private String timeStamp; //时间戳
-    private String signType; //签名算法
-    private String packageStr; //统一下单接口返回的prepay_id 参数值
+    /** 随机字符串 */
+    private String nonceStr;
+
+    /** 签名 */
+    private String paySign;
+
+    /** 时间戳 */
+    private String timeStamp;
+
+    /** 签名算法 */
+    private String signType;
+
+    /** 统一下单接口返回的prepay_id参数值 */
+    private String packageStr;
 
 }

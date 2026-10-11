@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 购物车
+ * 购物车实体类（对应数据库表：shopping_cart）
  */
 @Data
 @Builder
@@ -18,33 +19,36 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ShoppingCart implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
+    /** 购物车主键 */
     private Long id;
 
-    //名称
+    /** 商品名称 */
     private String name;
 
-    //用户id
+    /** 用户ID */
     private Long userId;
 
-    //菜品id
+    /** 菜品ID */
     private Long dishId;
 
-    //套餐id
+    /** 套餐ID */
     private Long setmealId;
 
-    //口味
+    /** 口味信息 */
     private String dishFlavor;
 
-    //数量
+    /** 数量 */
     private Integer number;
 
-    //金额
+    /** 金额 */
     private BigDecimal amount;
 
-    //图片
+    /** 图片URL */
     private String image;
 
+    /** 创建时间 */
     private LocalDateTime createTime;
 }

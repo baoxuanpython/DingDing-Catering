@@ -4,16 +4,19 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * 员工分页查询数据传输对象
+ */
 @Data
 public class EmployeePageQueryDTO implements Serializable {
 
-    //员工姓名
+    /** 员工姓名（模糊查询） */
     private String name;
 
-    //页码
+    /** 页码 */
     private int page;
 
-    //每页显示记录数
+    /** 每页显示记录数 */
     private int pageSize;
 
 }

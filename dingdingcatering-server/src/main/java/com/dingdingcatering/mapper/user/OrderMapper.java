@@ -27,4 +27,6 @@ public interface OrderMapper {
     Orders getOrdersById(Long id, Long userId);
 
     void cancelOrder(Long id, Long userId);
+
+    OrderVO getOrdersByNumber(Long number, Long userId, Integer status);
 }

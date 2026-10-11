@@ -22,13 +22,24 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Http工具类
+ * HTTP 请求工具类
+ * <p>
+ * 封装 Apache HttpClient，提供 GET、POST（表单）和 POST（JSON）三种请求方式，
+ * 统一超时配置为 5 秒，适用于调用微信 API 等外部 HTTP 接口。
  */
 @Slf4j
 public class HttpClientUtil {
 
+    /** 请求超时时间（毫秒） */
     static final int TIMEOUT_SEC = 5 * 1000;
 
+    /**
+     * 发送 GET 请求，参数拼接在 URL 后
+     *
+     * @param url      请求地址
+     * @param paramMap 请求参数映射
+     * @return 响应体内容，请求失败时返回空字符串
+     */
     public static String doGet(String url, Map<String, String> paramMap) {
         // 创建Httpclient对象
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -65,6 +76,14 @@ public class HttpClientUtil {
         return result;
     }
 
+    /**
+     * 发送 POST 请求，参数以表单形式编码（application/x-www-form-urlencoded）
+     *
+     * @param url      请求地址
+     * @param paramMap 请求参数映射
+     * @return 响应体内容
+     * @throws IOException 请求或读取失败时抛出
+     */
     public static String doPost(String url, Map<String, String> paramMap) throws IOException {
         // 创建Httpclient对象
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -96,6 +115,14 @@ public class HttpClientUtil {
         return resultString;
     }
 
+    /**
+     * 发送 POST 请求，参数以 JSON 格式编码（application/json）
+     *
+     * @param url      请求地址
+     * @param paramMap 请求参数映射，将被转换为 JSON 对象
+     * @return 响应体内容
+     * @throws IOException 请求或读取失败时抛出
+     */
     public static String doPost4Json(String url, Map<String, String> paramMap) throws IOException {
         // 创建Httpclient对象
         CloseableHttpClient httpClient = HttpClients.createDefault();

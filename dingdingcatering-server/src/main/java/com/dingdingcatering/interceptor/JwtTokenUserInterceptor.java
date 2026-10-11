@@ -20,6 +20,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/**
+ * C端JWT令牌校验拦截器
+ * <p>
+ * 职责：
+ * 1. 从请求Header中提取JWT令牌
+ * 2. 解析令牌获取用户ID和openid
+ * 3. 校验用户是否存在于数据库
+ * 4. 将用户ID存入ThreadLocal
+ */
 @Component
 @Slf4j
 public class JwtTokenUserInterceptor implements HandlerInterceptor {
@@ -31,6 +40,22 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
         this.userMapper = userMapper;
     }
 
+    /**
+     * 请求处理前校验JWT令牌。
+     * <p>
+     * 处理流程：
+     * 1. 检查请求是否为HandlerMethod
+     * 2. 从Header提取令牌
+     * 3. 解析令牌获取用户ID和openid
+     * 4. 查询数据库校验用户是否存在
+     * 5. 将用户ID存入ThreadLocal
+     *
+     * @param request  HTTP请求
+     * @param response HTTP响应
+     * @param handler  处理器
+     * @return 是否放行
+     */
+    @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
         if (!(handler instanceof HandlerMethod)) {
             return true;
@@ -61,4 +86,21 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
             throw new TokenInvalidException(ex.getMessage());
         }
     }
+
+    /**
+     * 请求完成后清理ThreadLocal。
+     *
+     * @param request  HTTP请求
+     * @param response HTTP响应
+     * @param handler  处理器
+     * @param ex       异常信息
+     */
+    @Override
+    public void afterCompletion(@NonNull HttpServletRequest request,
+                                @NonNull HttpServletResponse response,
+                                @NonNull Object handler,
+                                Exception ex) {
+        BaseContext.removeCurrentId();
+    }
+
 }

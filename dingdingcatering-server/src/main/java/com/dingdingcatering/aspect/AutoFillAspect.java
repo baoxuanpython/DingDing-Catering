@@ -18,14 +18,12 @@ import java.time.LocalDateTime;
 import static com.dingdingcatering.context.BaseContext.getCurrentId;
 
 /**
- * 自动填充切面（增强版）
+ * 公共字段自动填充切面
  * <p>
- * 支持两种模式：
- * 1. 标准模式：方法参数中包含带 @AutoFill 注解的实体类，自动填充公共字段
- * 2. 简洁模式：方法参数中没有实体类（如简单状态更新），优雅跳过，不报错
- *
- * @author baoxuanpython
- * @version 2.0
+ * 职责：
+ * 1. 拦截所有带 @AutoFill 注解的 Mapper 方法
+ * 2. 根据操作类型（INSERT/UPDATE）自动填充 createTime/updateTime/createUser/updateUser
+ * 3. 使用反射调用 setter 方法，缺失 setter 时优雅跳过
  */
 @Aspect
 @Component
@@ -55,11 +53,9 @@ public class AutoFillAspect {
     @Before("autoFillPointCut()")
     public void autoFillBefore(JoinPoint joinPoint) throws InvocationTargetException, IllegalAccessException {
         log.debug("AutoFill 切面触发 - 方法: {}", joinPoint.getSignature().getName());
-
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         AutoFill autoFill = signature.getMethod().getAnnotation(AutoFill.class);
         OperationType operationType = autoFill.value();
-
         Object[] args = joinPoint.getArgs();
         if (args == null || args.length == 0) {
             log.debug("方法 {} 无参数，跳过自动填充", signature.getName());
@@ -158,14 +154,13 @@ public class AutoFillAspect {
      */
     private void handleMissingEntity(MethodSignature signature, OperationType operationType) {
         String methodName = signature.getMethod().getName();
-
         log.info("""
-                   方法 [{}] 带有 @AutoFill({}) 注解，但参数中没有可填充的实体类对象。
-                   可能原因：
-                   1. 这是一个简单更新操作（如状态切换），时间字段由 SQL NOW() 处理
-                   2. 该方法的公共字段已在其他地方处理
-                   3. 此注解仅用于标记或未来扩展，不执行实际填充
-                   已自动跳过填充，不影响业务逻辑
-               """, methodName, operationType);
+                    方法 [{}] 带有 @AutoFill({}) 注解，但参数中没有可填充的实体类对象。
+                    可能原因：
+                    1. 这是一个简单更新操作（如状态切换），时间字段由 SQL NOW() 处理
+                    2. 该方法的公共字段已在其他地方处理
+                    3. 此注解仅用于标记或未来扩展，不执行实际填充
+                    已自动跳过填充，不影响业务逻辑
+                """, methodName, operationType);
     }
 }

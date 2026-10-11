@@ -5,10 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 地址本实体类
+ * 地址簿实体类（对应数据库表：address_book）
  */
 @Data
 @Builder
@@ -16,46 +17,48 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class AddressBook implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
+    /** 地址主键 */
     private Long id;
 
-    //用户id
+    /** 用户ID */
     private Long userId;
 
-    //收货人
+    /** 收货人 */
     private String consignee;
 
-    //手机号
+    /** 手机号 */
     private String phone;
 
-    //性别 0 男1女
+    /** 性别：0-男，1-女 */
     private String sex;
 
-    //省级区划编号
+    /** 省级区划编号 */
     private String provinceCode;
 
-    //省级名称
+    /** 省级名称 */
     private String provinceName;
 
-    //市级区划编号
+    /** 市级区划编号 */
     private String cityCode;
 
-    //市级名称
+    /** 市级名称 */
     private String cityName;
 
-    //区级区划编号
+    /** 区级区划编号 */
     private String districtCode;
 
-    //区级名称
+    /** 区级名称 */
     private String districtName;
 
-    //详细地址
+    /** 详细地址 */
     private String detail;
 
-    //标签
+    /** 标签 */
     private String label;
 
-    //是否默认 0 否1是
+    /** 是否默认地址：0-否，1-是 */
     private Integer isDefault;
 }

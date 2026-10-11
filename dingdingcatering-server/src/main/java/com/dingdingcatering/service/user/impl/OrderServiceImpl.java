@@ -1,5 +1,7 @@
 package com.dingdingcatering.service.user.impl;
 
+import com.alibaba.fastjson2.JSON;
+import com.dingdingcatering.constant.MessageConstant;
 import com.dingdingcatering.context.BaseContext;
 import com.dingdingcatering.dto.OrdersPaymentDTO;
 import com.dingdingcatering.dto.OrdersSubmitDTO;
@@ -7,6 +9,7 @@ import com.dingdingcatering.entity.AddressBook;
 import com.dingdingcatering.entity.OrderDetail;
 import com.dingdingcatering.entity.Orders;
 import com.dingdingcatering.entity.ShoppingCart;
+import com.dingdingcatering.exception.AddressBookBusinessException;
 import com.dingdingcatering.mapper.user.AddressBookMapper;
 import com.dingdingcatering.mapper.user.OrderMapper;
 import com.dingdingcatering.mapper.user.ShoppingCartMapper;
@@ -16,6 +19,7 @@ import com.dingdingcatering.service.user.OrderService;
 import com.dingdingcatering.vo.OrderSubmitVO;
 import com.dingdingcatering.vo.OrderVO;
 import com.dingdingcatering.vo.PaymentSuccessVO;
+import com.dingdingcatering.websocket.WebSocketServer;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.dingdingcatering.service.admin.impl.OrderServiceImpl.enrichOrderVOListFromAdmin;
 
@@ -37,18 +40,25 @@ public class OrderServiceImpl implements OrderService {
     private final AddressBookMapper addressBookMapper;
     private final UserMapper userMapper;
     private final ShoppingCartMapper shoppingCartMapper;
+    private final WebSocketServer webSocketServer;
 
-    public OrderServiceImpl(OrderMapper orderMapper, AddressBookMapper addressBookMapper, UserMapper userMapper, ShoppingCartMapper shoppingCartMapper) {
+    public OrderServiceImpl(OrderMapper orderMapper, AddressBookMapper addressBookMapper, UserMapper userMapper, ShoppingCartMapper shoppingCartMapper, WebSocketServer webSocketServer) {
         this.orderMapper = orderMapper;
         this.addressBookMapper = addressBookMapper;
         this.userMapper = userMapper;
         this.shoppingCartMapper = shoppingCartMapper;
+        this.webSocketServer = webSocketServer;
     }
 
     @Override
     public void sendReminder(Long id) {
         log.info("发送订单催单提醒: orderId={}", id);
         // TODO 使用WebSocket发送提醒
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", 2);
+        map.put("orderId", id);
+        map.put("content", "订单催单提醒");
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 
     @Override
@@ -56,11 +66,10 @@ public class OrderServiceImpl implements OrderService {
     public OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO) {
         Long userId = BaseContext.getCurrentId();
         log.info("开始提交订单: userId={}, addressBookId={}", userId, ordersSubmitDTO.getAddressBookId());
-
         AddressBook addressBook = addressBookMapper.selectById(ordersSubmitDTO.getAddressBookId(), userId);
         if (addressBook == null) {
             log.error("地址不存在: addressBookId={}, userId={}", ordersSubmitDTO.getAddressBookId(), userId);
-            throw new RuntimeException("地址不存在");
+            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
         String userName = userMapper.getUserName(userId);
 
@@ -76,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("购物车商品数量: {}", shoppingCarts.size());
 
         List<OrderDetail> orderDetailList = shoppingCarts.stream()
-                .map(cart -> buildOrderDetail(cart, Long.parseLong(orders.getNumber())))
+                .map(cart -> buildOrderDetail(cart, orders.getId()))
                 .toList();
         orderMapper.insertOrderDetail(orderDetailList);
         log.info("订单明细插入成功: 明细数量={}", orderDetailList.size());
@@ -120,6 +129,12 @@ public class OrderServiceImpl implements OrderService {
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         // TODO 此处忽略了调用微信支付接口，实际支付时需要调用微信支付接口，返回支付结果
         orderMapper.paySuccess(ordersPaymentDTO);
+        Map<String, Object> messageMap = new HashMap<>();
+        messageMap.put("type", 1);
+        messageMap.put("orderId", ordersPaymentDTO.getOrderNumber());
+        messageMap.put("content", "您有新的订单");
+        String json = JSON.toJSONString(messageMap);
+        webSocketServer.sendToAllClient(json);
         log.info("订单支付成功: orderNumber={}, 支付时间={}", ordersPaymentDTO.getOrderNumber(), time);
         return PaymentSuccessVO.builder().estimatedDeliveryTime(time).build();
     }
@@ -146,30 +161,22 @@ public class OrderServiceImpl implements OrderService {
     public OrderVO getOrderDetail(Long id) {
         Long userId = BaseContext.getCurrentId();
         log.info("查询订单详情: orderId={}, userId={}", id, userId);
-        List<OrderVO> orderVOList = orderMapper.getHistoryOrders(userId, null);
-        if (orderVOList.isEmpty()) {
+        OrderVO orderVO = orderMapper.getHistoryOrders(userId, null).get(0);
+        if (orderVO == null) {
             log.warn("订单不存在: orderId={}, userId={}", id, userId);
             return null;
         }
-        OrderVO targetOrder = orderVOList.stream()
-                .filter(orderVO -> Objects.equals(orderVO.getId(), id))
-                .findFirst()
-                .orElse(null);
-        if (targetOrder == null) {
-            log.warn("订单不属于当前用户: orderId={}, userId={}", id, userId);
-            return null;
-        }
-        enrichOrderVOList(List.of(targetOrder));
-        log.info("查询订单详情成功: orderId={}, orderNumber={}", id, targetOrder.getNumber());
-        return targetOrder;
+        enrichOrderVOList(List.of(orderVO));
+        log.info("查询订单详情成功: orderId={}", id);
+        return orderVO;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void repetition(Long id) {
         Long userId = BaseContext.getCurrentId();
-        Long orderId = Long.parseLong(orderMapper.getOrdersById(id, userId).getNumber());
-        List<OrderDetail> orderDetailList = orderMapper.getDetailList(List.of(orderId));
+
+        List<OrderDetail> orderDetailList = orderMapper.getDetailList(List.of(id));
         List<ShoppingCart> cartList = orderDetailList.stream().map(orderDetail -> {
             ShoppingCart cart = new ShoppingCart();
             BeanUtils.copyProperties(orderDetail, cart);
@@ -189,13 +196,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private void enrichOrderVOList(List<OrderVO> orderVOList) {
-        List<Long> orderIds = orderVOList.stream()
-                .map(orderVO -> Long.parseLong(orderVO.getNumber()))
-                .toList();
+        List<Long> orderIds = orderVOList.stream().map(OrderVO::getId).toList();
         List<OrderDetail> orderDetailList = orderMapper.getDetailList(orderIds);
         log.debug("查询订单明细: 订单数={}, 明细数={}", orderIds.size(), orderDetailList.size());
-
-        enrichOrderVOListFromAdmin(orderVOList, orderDetailList,
-                orderVO -> Long.parseLong(orderVO.getNumber()));
+        enrichOrderVOListFromAdmin(orderVOList, orderDetailList, OrderVO::getId);
     }
 }

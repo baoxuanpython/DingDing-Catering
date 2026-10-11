@@ -1,19 +1,19 @@
 package com.dingdingcatering.mapper.admin;
 
+import com.dingdingcatering.dto.DailyStatisticsDTO;
 import com.dingdingcatering.dto.DataOverViewQueryDTO;
-import com.dingdingcatering.vo.OrderReportVO;
-import com.dingdingcatering.vo.SalesTop10ReportVO;
-import com.dingdingcatering.vo.TurnoverReportVO;
-import com.dingdingcatering.vo.UserReportVO;
+import com.dingdingcatering.dto.DishSalesDTO;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 @Mapper
 public interface ReportMapper  {
-    SalesTop10ReportVO top10Dish(DataOverViewQueryDTO queryDTO);
+    List<DishSalesDTO> top10Dish(DataOverViewQueryDTO queryDTO);
 
-    UserReportVO userStatistics(DataOverViewQueryDTO queryDTO);
+    List<DailyStatisticsDTO> userStatistics(DataOverViewQueryDTO queryDTO);
 
-    TurnoverReportVO turnoverStatistics(DataOverViewQueryDTO queryDTO);
+    List<DailyStatisticsDTO> turnoverStatistics(DataOverViewQueryDTO queryDTO);
 
-    OrderReportVO ordersStatistics(DataOverViewQueryDTO queryDTO);
+    List<DailyStatisticsDTO> ordersStatistics(DataOverViewQueryDTO queryDTO);
 }

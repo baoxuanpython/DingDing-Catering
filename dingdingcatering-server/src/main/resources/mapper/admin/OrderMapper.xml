@@ -130,5 +130,4 @@
                          ${@com.dingdingcatering.entity.Orders@DELIVERY_IN_PROGRESS}
             )
     </select>
-
 </mapper>

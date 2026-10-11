@@ -31,6 +31,7 @@
         <jjwt>0.12.3</jjwt>
         <jakarta.xml.bind-api>4.0.2</jakarta.xml.bind-api>
         <poi>5.2.5</poi>
+        <jfreechart>1.5.4</jfreechart>
         <validx>1.0.1</validx>
         <wechatpay-apache-httpclient>0.4.8</wechatpay-apache-httpclient>
         <common-io>2.18.0</common-io>
@@ -128,6 +129,12 @@
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi}</version>
+            </dependency>
+            <!-- jfreechart -->
+            <dependency>
+                <groupId>org.jfree</groupId>
+                <artifactId>jfreechart</artifactId>
+                <version>${jfreechart}</version>
             </dependency>
             <!--微信支付-->
             <dependency>

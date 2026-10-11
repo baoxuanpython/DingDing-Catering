@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 
+/**
+ * 文件上传控制器
+ */
 @Slf4j
 @RestController
 @RequestMapping("/admin/common")
@@ -21,6 +24,18 @@ public class UploadController {
         this.aliOssUtil = aliOssUtil;
     }
 
+    /**
+     * 文件上传接口（阿里云OSS）。
+     * <p>
+     * 处理流程：
+     * 1. 接收前端上传的文件
+     * 2. 调用阿里云OSS SDK上传文件
+     * 3. 返回文件访问URL
+     *
+     * @param file 待上传的文件
+     * @return 文件访问URL
+     * @throws UploadFileFailException 当文件上传失败时抛出
+     */
     @PostMapping("/upload")
     public Result<String> upload(MultipartFile file) {
         // 上传文件到OSS

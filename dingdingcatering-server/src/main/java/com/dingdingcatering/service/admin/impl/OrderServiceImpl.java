@@ -84,18 +84,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public OrderVO queryOrderDetails(Long id) {
-        log.debug("查询订单详情: id={}", id);
-        OrderVO orderVO = orderMapper.queryById(id);
+    public OrderVO queryOrderDetails(Long number) {
+        log.debug("查询订单详情: number={}", number);
+        OrderVO orderVO = orderMapper.queryById(number);
         if (orderVO == null) {
-            log.warn("查询订单详情失败: 订单不存在, id={}", id);
+            log.warn("查询订单详情失败: 订单不存在, number={}", number);
             throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
         }
         if (!VALID_ORDER_STATUSES.contains(orderVO.getStatus())) {
-            log.warn("查询订单详情失败: 订单状态无效, id={}, status={}", id, orderVO.getStatus());
+            log.warn("查询订单详情失败: 订单状态无效, number={}, status={}", number, orderVO.getStatus());
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
-        List<OrderDetail> orderDetailList = orderMapper.queryOrderDetails(Collections.singletonList(id));
+        List<OrderDetail> orderDetailList = orderMapper.queryOrderDetails(Collections.singletonList(number));
         orderVO.setOrderDetailList(orderDetailList);
         orderVO.setOrderDishes(orderDetailList.stream().map(OrderDetail::getName).collect(Collectors.joining("、")));
         return orderVO;
@@ -117,8 +117,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void completeById(Long id) {
         log.info("完成订单: id={}", id);
-        OrderVO  orderVO = orderMapper.queryById(id);
-        if(!Objects.equals(orderVO.getPayStatus(), Orders.PAID)) {
+        OrderVO orderVO = orderMapper.queryById(id);
+        if (!Objects.equals(orderVO.getPayStatus(), Orders.PAID)) {
             log.warn("完成订单失败: 订单未支付, id={}, payStatus={}", id, orderVO.getPayStatus());
             throw new IllegalArgumentException("订单未支付，不能完成");
         }

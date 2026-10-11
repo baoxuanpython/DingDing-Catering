@@ -100,7 +100,6 @@
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
-
         <!-- poi -->
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -110,6 +109,12 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
         </dependency>
+        <!-- jfreechart -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+        </dependency>
+
         <!-- 校验框架 -->
         <dependency>
             <groupId>io.github.vipxieliang</groupId>

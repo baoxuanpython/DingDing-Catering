@@ -2,81 +2,66 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.dingdingcatering.mapper.admin.ReportMapper">
-    <select id="top10Dish" resultType="com.dingdingcatering.vo.SalesTop10ReportVO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
-        select GROUP_CONCAT(name order by sales desc separator ',')  as nameList,
-               GROUP_CONCAT(sales order by sales desc separator ',') as numberList
-        from (select d.name, sum(all_sales.sale_num) as sales
-              from dish d
-                       INNER JOIN (
-                  -- 1、获取单品销量
-                  select od.dish_id, od.number as sale_num
-                  from order_detail od
-                           INNER JOIN orders o on od.order_id = o.id
-                  where o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}
-                    and od.dish_id is not null
-                    and o.order_time between #{begin} and #{end}
-                  UNION ALL
-                  -- 2、套餐拆解销量：下单数量*套餐内菜品份数
-                  select sd.dish_id, od.number * sd.copies as sale_num
-                  from order_detail od
-                           INNER JOIN orders o ON od.order_id = o.id
-                           INNER JOIN setmeal_dish sd ON od.setmeal_id = sd.setmeal_id
-                  where o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}
-                    and od.setmeal_id is not null
-                    and o.order_time between #{begin} and #{end}) all_sales on d.id = all_sales.dish_id
-              group by d.id, d.name
-              order by sales desc
-              limit 10) t;
+    <select id="top10Dish" resultType="com.dingdingcatering.dto.DishSalesDTO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
+        select d.name, sum(all_sales.sale_num) as sales
+        from dish d
+                 INNER JOIN (
+            -- 1、获取单品销量
+            select od.dish_id, od.number as sale_num
+            from order_detail od
+                     INNER JOIN orders o on od.order_id = o.id
+            where o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}
+              and od.dish_id is not null
+              and o.order_time between #{begin} and #{end}
+            UNION ALL
+            -- 2、套餐拆解销量：下单数量*套餐内菜品份数
+            select sd.dish_id, od.number * sd.copies as sale_num
+            from order_detail od
+                     INNER JOIN orders o ON od.order_id = o.id
+                     INNER JOIN setmeal_dish sd ON od.setmeal_id = sd.setmeal_id
+            where o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}
+              and od.setmeal_id is not null
+              and o.order_time between #{begin} and #{end}) all_sales on d.id = all_sales.dish_id
+        group by d.id, d.name
+        order by sales desc
+        limit 10;
     </select>
-    <select id="userStatistics" resultType="com.dingdingcatering.vo.UserReportVO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
+    <select id="userStatistics" resultType="com.dingdingcatering.dto.DailyStatisticsDTO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
         WITH RECURSIVE date_series AS (SELECT #{begin} AS dt
                                        UNION ALL
                                        SELECT DATE_ADD(dt, INTERVAL 1 DAY)
                                        FROM date_series
                                        WHERE dt &lt;= #{end})
-        SELECT GROUP_CONCAT(DATE_FORMAT(dt, '%Y-%m-%d') ORDER BY dt ASC SEPARATOR ',')          AS dateList,
-               GROUP_CONCAT(daily_new ORDER BY dt ASC SEPARATOR ',')   AS newUserList,
-               GROUP_CONCAT(total_users ORDER BY dt ASC SEPARATOR ',') AS totalUserList
-        FROM (SELECT ds.dt,
-                     COUNT(u.id)                            AS daily_new,
-                     SUM(COUNT(u.id)) OVER (ORDER BY ds.dt) AS total_users
-              FROM date_series ds
-                       LEFT JOIN user u ON DATE(u.create_time) = ds.dt
-              GROUP BY ds.dt) t;
+        SELECT ds.dt AS date,
+               IFNULL(COUNT(u.id), 0) AS dailyNew,
+               IFNULL(SUM(COUNT(u.id)) OVER (ORDER BY ds.dt), 0) AS totalUsers
+        FROM date_series ds
+                 LEFT JOIN user u ON DATE(u.create_time) = ds.dt
+        GROUP BY ds.dt;
     </select>
-    <select id="turnoverStatistics" resultType="com.dingdingcatering.vo.TurnoverReportVO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
+    <select id="turnoverStatistics" resultType="com.dingdingcatering.dto.DailyStatisticsDTO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
         WITH RECURSIVE date_series AS (SELECT #{begin} AS dt
                                        UNION ALL
                                        SELECT DATE_ADD(dt, INTERVAL 1 DAY)
                                        FROM date_series
                                        WHERE dt &lt;= #{end})
-        SELECT GROUP_CONCAT(DATE_FORMAT(dt, '%Y-%m-%d') ORDER BY dt ASC SEPARATOR ',')             AS dateList,
-               GROUP_CONCAT(daily_turnover ORDER BY dt ASC SEPARATOR ',') AS turnoverList
-        FROM (SELECT ds.dt,
-                     IFNULL(SUM(o.amount), 0) AS daily_turnover
-              FROM date_series ds
-                       LEFT JOIN orders o ON DATE(o.order_time) = ds.dt AND o.status = 5
-              GROUP BY ds.dt) t;
+        SELECT ds.dt AS date,
+               IFNULL(SUM(o.amount), 0) AS dailyTurnover
+        FROM date_series ds
+                 LEFT JOIN orders o ON DATE(o.order_time) = ds.dt AND o.status = 5
+        GROUP BY ds.dt;
     </select>
-    <select id="ordersStatistics" resultType="com.dingdingcatering.vo.OrderReportVO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
+    <select id="ordersStatistics" resultType="com.dingdingcatering.dto.DailyStatisticsDTO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
         WITH RECURSIVE date_series AS (SELECT #{begin} AS dt
                                        UNION ALL
                                        SELECT DATE_ADD(dt, INTERVAL 1 DAY)
                                        FROM date_series
                                        WHERE dt &lt;= #{end})
-        SELECT GROUP_CONCAT(DATE_FORMAT(dt, '%Y-%m-%d') ORDER BY dt ASC SEPARATOR ',') AS dateList,
-               GROUP_CONCAT(total_cnt ORDER BY dt ASC SEPARATOR ',')                   AS orderCountList,
-               GROUP_CONCAT(valid_cnt ORDER BY dt ASC SEPARATOR ',')                   AS validOrderCountList,
-               SUM(total_cnt)                                                          AS totalOrderCount,
-               SUM(valid_cnt)                                                          AS validOrderCount,
-               IF(SUM(total_cnt) = 0, 0,
-                  ROUND(SUM(valid_cnt) / SUM(total_cnt), 2))                           AS orderCompletionRate
-        FROM (SELECT ds.dt,
-                     COUNT(o.id)                                                                     AS total_cnt,
-                     SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}) AS valid_cnt
-              FROM date_series ds
-                       LEFT JOIN orders o ON DATE(o.order_time) = ds.dt
-              GROUP BY ds.dt) t;
-
+        SELECT ds.dt AS date,
+               IFNULL(COUNT(o.id), 0) AS totalCnt,
+               IFNULL(SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}), 0) AS validCnt
+        FROM date_series ds
+                 LEFT JOIN orders o ON DATE(o.order_time) = ds.dt
+        GROUP BY ds.dt;
     </select>
 </mapper>
