@@ -17,4 +17,13 @@ public class OrderStatisticsVO implements Serializable {
 
     /** 派送中数量 */
     private Integer deliveryInProgress;
+
+    /** 已完成数量 */
+    private Integer completed;
+
+    /** 已取消数量 */
+    private Integer cancelled;
+
+    /** 已退款数量 */
+    private Integer refunded;
 }

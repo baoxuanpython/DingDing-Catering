@@ -1,7 +1,7 @@
 package com.dingdingcatering.interceptor;
 
 import com.dingdingcatering.constant.JwtClaimsConstant;
-import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.context.BaseContext;
 import com.dingdingcatering.entity.User;
 import com.dingdingcatering.exception.TokenExpiredException;
@@ -62,7 +62,7 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
         }
         String token = request.getHeader(jwtProperties.getUserTokenName());
         if (token == null) {
-            throw new UserNotLoginException(MessageConstant.USER_NOT_LOGIN);
+            throw new UserNotLoginException(ErrorCode.USER_NOT_LOGIN);
         }
         try {
             Claims claims = JwtUtil.parseJWT(jwtProperties.getUserSecretKey(), token);
@@ -72,18 +72,18 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
             User user = userMapper.getById(userId, openid);
             if (user == null) {
                 log.warn("用户不存在: {}, openid: {}", userId, openid);
-                throw new UserNotLoginException(MessageConstant.USER_NOT_FOUND);
+                throw new UserNotLoginException(ErrorCode.USER_NOT_FOUND);
             }
 
             BaseContext.setCurrentId(userId);
             log.debug("用户验证通过: {}, openid={}", userId, user.getOpenid());
             return true;
         } catch (ExpiredJwtException ex) {
-            throw new TokenExpiredException(ex.getMessage());
+            throw new TokenExpiredException(ErrorCode.TOKEN_EXPIRED);
         } catch (UserNotLoginException | TokenExpiredException | TokenInvalidException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new TokenInvalidException(ex.getMessage());
+            throw new TokenInvalidException(ErrorCode.TOKEN_INVALID);
         }
     }
 

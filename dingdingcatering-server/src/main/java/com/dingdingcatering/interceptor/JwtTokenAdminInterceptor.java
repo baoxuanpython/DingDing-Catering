@@ -1,7 +1,7 @@
 package com.dingdingcatering.interceptor;
 
 import com.dingdingcatering.constant.JwtClaimsConstant;
-import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.context.BaseContext;
 import com.dingdingcatering.exception.TokenExpiredException;
 import com.dingdingcatering.exception.TokenInvalidException;
@@ -57,7 +57,7 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
 
         String token = request.getHeader(jwtProperties.getAdminTokenName());
         if (token == null) {
-            throw new UserNotLoginException(MessageConstant.USER_NOT_LOGIN);
+            throw new UserNotLoginException(ErrorCode.USER_NOT_LOGIN);
         }
 
         try {
@@ -66,9 +66,9 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             BaseContext.setCurrentId(empId);
             return true;
         } catch (ExpiredJwtException ex) {
-            throw new TokenExpiredException(ex.getMessage());
+            throw new TokenExpiredException(ErrorCode.TOKEN_EXPIRED);
         } catch (Exception ex) {
-            throw new TokenInvalidException(ex.getMessage());
+            throw new TokenInvalidException(ErrorCode.TOKEN_INVALID);
         }
     }
 

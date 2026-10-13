@@ -1,6 +1,6 @@
 package com.dingdingcatering.service.user.impl;
 
-import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.context.BaseContext;
 import com.dingdingcatering.entity.AddressBook;
 import com.dingdingcatering.mapper.user.AddressBookMapper;
@@ -84,7 +84,7 @@ public class AddressBookServiceImpl implements AddressBookService {
     private void validateUserIdOwnership(Long requestUserId, Long currentUserId) {
         if (requestUserId != null && !Objects.equals(requestUserId, currentUserId)) {
             log.warn("用户身份校验失败: 请求userId={}, 当前登录userId={}", requestUserId, currentUserId);
-            throw new SecurityException(MessageConstant.SECURITY_ERROR);
+            throw new SecurityException(ErrorCode.SECURITY_ERROR.getMessage());
         }
     }
 }

@@ -2,9 +2,9 @@ package com.dingdingcatering.service.admin.impl;
 
 import com.dingdingcatering.annotation.AutoClearCache;
 import com.dingdingcatering.enumeration.CacheType;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.dingdingcatering.constant.MessageConstant;
 import com.dingdingcatering.dto.DishDTO;
 import com.dingdingcatering.dto.DishPageQueryDTO;
 import com.dingdingcatering.entity.Dish;
@@ -34,16 +34,18 @@ public class DishServiceImpl implements DishService {
         this.dishMapper = dishMapper;
     }
 
+    @SuppressWarnings("resource")
     @Override
     public PageResult<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO) {
         log.debug("分页查询菜品: page={}, pageSize={}, name={}, categoryId={}",
                 dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize(),
                 dishPageQueryDTO.getName(), dishPageQueryDTO.getCategoryId());
-        try (Page<DishVO> page = PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize())) {
-            List<DishVO> list = dishMapper.pageQuery(dishPageQueryDTO);
-            log.debug("分页查询菜品完成: total={}", page.getTotal());
-            return new PageResult<>(page.getTotal(), list);
-        }
+        PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
+        List<Long> ids = dishMapper.pageQueryIds(dishPageQueryDTO);
+        Page<Long> page = (Page<Long>) ids;
+        log.debug("分页查询菜品ID完成: total={}", page.getTotal());
+        List<DishVO> list = ids.isEmpty() ? Collections.emptyList() : dishMapper.pageQuery(ids);
+        return new PageResult<>(page.getTotal(), list);
     }
 
     @Override
@@ -97,7 +99,7 @@ public class DishServiceImpl implements DishService {
         List<String> nameList = dishMapper.queryStatusByIds(idList);
         if (!nameList.isEmpty()) {
             log.warn("删除菜品失败: 菜品已起售, names={}", nameList);
-            throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE + " " + String.join("、", nameList));
+            throw new DeletionNotAllowedException(ErrorCode.DISH_ON_SALE, String.join("、", nameList));
         }
         List<HashMap<String, String>> setmealList = dishMapper.querySetmealByIds(idList);
         if (!setmealList.isEmpty()) {
@@ -105,7 +107,7 @@ public class DishServiceImpl implements DishService {
                     .map(map -> map.get("name") + "：" + map.get("setmeal_names"))
                     .collect(Collectors.joining("、"));
             log.warn("删除菜品失败: 菜品被套餐关联, detail={}", detail);
-            throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL + " " + detail);
+            throw new DeletionNotAllowedException(ErrorCode.DISH_RELATED_BY_SETMEAL, detail);
         }
         dishMapper.deleteFlavorByDishIds(idList);
         dishMapper.deleteByIds(idList);

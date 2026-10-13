@@ -1,14 +1,17 @@
 package com.dingdingcatering.exception;
 
+import com.dingdingcatering.enumeration.ErrorCode;
+
 /**
  * 订单业务异常
- * <p>
- * 当订单相关操作违反业务规则时抛出（如订单状态错误、下单条件不满足等）
  */
 public class OrderBusinessException extends BaseException {
 
-    public OrderBusinessException(String msg) {
-        super(msg);
+    public OrderBusinessException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
+    public OrderBusinessException(ErrorCode errorCode, String detail) {
+        super(errorCode, detail);
+    }
 }

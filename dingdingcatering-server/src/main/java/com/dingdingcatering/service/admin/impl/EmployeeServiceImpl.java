@@ -1,9 +1,6 @@
 package com.dingdingcatering.service.admin.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.dingdingcatering.constant.JwtClaimsConstant;
-import com.dingdingcatering.constant.MessageConstant;
 import com.dingdingcatering.constant.PasswordConstant;
 import com.dingdingcatering.constant.StatusConstant;
 import com.dingdingcatering.context.BaseContext;
@@ -12,6 +9,7 @@ import com.dingdingcatering.dto.EmployeeLoginDTO;
 import com.dingdingcatering.dto.EmployeePageQueryDTO;
 import com.dingdingcatering.dto.PasswordEditDTO;
 import com.dingdingcatering.entity.Employee;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.exception.AccountLockedException;
 import com.dingdingcatering.exception.AccountNotFoundException;
 import com.dingdingcatering.exception.PasswordEditFailedException;
@@ -22,6 +20,8 @@ import com.dingdingcatering.result.PageResult;
 import com.dingdingcatering.service.admin.EmployeeService;
 import com.dingdingcatering.utils.JwtUtil;
 import com.dingdingcatering.vo.EmployeeLoginVO;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -56,7 +56,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employee == null) {
             log.warn("员工登录失败: 账号不存在, username={}", username);
             //账号不存在
-            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+            throw new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND);
         }
 
         //密码比对
@@ -64,20 +64,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (!md5Password.equals(employee.getPassword())) {
             log.warn("员工登录失败: 密码错误, username={}", username);
             //密码错误
-            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+            throw new PasswordErrorException(ErrorCode.PASSWORD_ERROR);
         }
 
         if (employee.getStatus().equals(StatusConstant.DISABLE)) {
             log.warn("员工登录失败: 账号被锁定, username={}, name={}", username, employee.getName());
             //账号被锁定
-            throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
+            throw new AccountLockedException(ErrorCode.ACCOUNT_LOCKED);
         }
         //登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.EMP_ID, employee.getId());
         claims.put(JwtClaimsConstant.USERNAME, employee.getUsername());
-        claims.put(JwtClaimsConstant.NAME, employee.getName());
-        claims.put(JwtClaimsConstant.PHONE, employee.getPhone());
+        claims.put(JwtClaimsConstant.ROLE, employee.getUsername().equals(JwtClaimsConstant.ADMIN) ? JwtClaimsConstant.ADMIN : JwtClaimsConstant.USER);
         String token = JwtUtil.createJWT(
                 jwtProperties.getAdminSecretKey(),
                 jwtProperties.getAdminTtl(),
@@ -163,12 +162,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeMapper.getById(passwordEditDTO.getEmpId());
         if (employee == null) {
             log.warn("修改密码失败: 账号不存在, empId={}", passwordEditDTO.getEmpId());
-            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+            throw new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND);
         }
         String newPassword = toMD5.apply(passwordEditDTO.getNewPassword());
         if (newPassword.equals(employee.getPassword())) {
             log.warn("修改密码失败: 新旧密码相同, empId={}", passwordEditDTO.getEmpId());
-            throw new PasswordEditFailedException(MessageConstant.PASSWORD_ERROR + "新旧密码不能相同");
+            throw new PasswordEditFailedException(ErrorCode.PASSWORD_EDIT_FAILED, "新旧密码不能相同");
         }
         employee.setPassword(toMD5.apply(passwordEditDTO.getNewPassword()));
         employeeMapper.updateEmployee(employee);

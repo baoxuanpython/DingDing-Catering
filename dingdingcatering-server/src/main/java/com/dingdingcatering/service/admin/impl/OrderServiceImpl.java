@@ -1,9 +1,7 @@
 package com.dingdingcatering.service.admin.impl;
 
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.dto.OrdersCancelDTO;
 import com.dingdingcatering.dto.OrdersConfirmDTO;
 import com.dingdingcatering.dto.OrdersPageQueryDTO;
@@ -16,6 +14,8 @@ import com.dingdingcatering.result.PageResult;
 import com.dingdingcatering.service.admin.OrderService;
 import com.dingdingcatering.vo.OrderStatisticsVO;
 import com.dingdingcatering.vo.OrderVO;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
 @Service("adminOrderServiceImpl")
 @Slf4j
 public class OrderServiceImpl implements OrderService {
-    private final OrderMapper orderMapper;
-
     /**
      * 所有有效的订单状态集合
      * <p>使用 Set.of() 创建不可变集合，查找效率 O(1)</p>
@@ -39,8 +37,14 @@ public class OrderServiceImpl implements OrderService {
             Orders.CONFIRMED,            // 3 - 已接单
             Orders.DELIVERY_IN_PROGRESS, // 4 - 派送中
             Orders.COMPLETED,            // 5 - 已完成
-            Orders.CANCELLED             // 6 - 已取消
+            Orders.CANCELLED,             // 6 - 已取消
+            Orders.REFUNDED             // 7 - 已退款
     );
+    private final OrderMapper orderMapper;
+
+    public OrderServiceImpl(OrderMapper orderMapper) {
+        this.orderMapper = orderMapper;
+    }
 
     public static void enrichOrderVOListFromAdmin(List<OrderVO> orderVOList, List<OrderDetail> orderDetailList, Function<OrderVO, Long> orderIdGetter) {
         Map<Long, List<OrderDetail>> detailMap = orderDetailList.stream()
@@ -56,13 +60,12 @@ public class OrderServiceImpl implements OrderService {
         });
     }
 
-    public OrderServiceImpl(OrderMapper orderMapper) {
-        this.orderMapper = orderMapper;
-    }
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PageResult<OrderVO> pageQueryOrders(OrdersPageQueryDTO ordersPageQueryDTO) {
+        if (ordersPageQueryDTO.getEndTime() != null) {
+            ordersPageQueryDTO.setEndTime(ordersPageQueryDTO.getEndTime().withHour(23).withMinute(59).withSecond(59));
+        }
         log.debug("分页查询订单: page={}, pageSize={}, number={}, status={}",
                 ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize(),
                 ordersPageQueryDTO.getNumber(), ordersPageQueryDTO.getStatus());
@@ -89,11 +92,11 @@ public class OrderServiceImpl implements OrderService {
         OrderVO orderVO = orderMapper.queryById(number);
         if (orderVO == null) {
             log.warn("查询订单详情失败: 订单不存在, number={}", number);
-            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+            throw new OrderBusinessException(ErrorCode.ORDER_NOT_FOUND);
         }
         if (!VALID_ORDER_STATUSES.contains(orderVO.getStatus())) {
             log.warn("查询订单详情失败: 订单状态无效, number={}, status={}", number, orderVO.getStatus());
-            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+            throw new OrderBusinessException(ErrorCode.ORDER_STATUS_ERROR);
         }
         List<OrderDetail> orderDetailList = orderMapper.queryOrderDetails(Collections.singletonList(number));
         orderVO.setOrderDetailList(orderDetailList);

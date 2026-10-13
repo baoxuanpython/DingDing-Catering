@@ -1,5 +1,7 @@
 package com.dingdingcatering.exception;
 
+import com.dingdingcatering.enumeration.ErrorCode;
+
 /**
  * 不允许删除异常
  * <p>
@@ -7,8 +9,11 @@ package com.dingdingcatering.exception;
  */
 public class DeletionNotAllowedException extends BaseException {
 
-    public DeletionNotAllowedException(String msg) {
-        super(msg);
+    public DeletionNotAllowedException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
+    public DeletionNotAllowedException(ErrorCode errorCode, String detail) {
+        super(errorCode, detail);
+    }
 }

@@ -10,13 +10,28 @@ import java.io.Serializable;
 @Data
 public class EmployeePageQueryDTO implements Serializable {
 
-    /** 员工姓名（模糊查询） */
+    /**
+     * 员工姓名（模糊查询）
+     */
     private String name;
 
-    /** 页码 */
+    /**
+     * 页码
+     */
     private int page;
 
-    /** 每页显示记录数 */
+    /**
+     * 每页显示记录数
+     */
     private int pageSize;
+
+    /**
+     * 员工手机号（模糊查询）
+     */
+    private String phone;
+    /**
+     * 员工状态
+     */
+    private String status;
 
 }

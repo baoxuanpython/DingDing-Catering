@@ -66,7 +66,7 @@ public class CategoryController {
      * @return 该类型下的分类列表
      */
     @GetMapping("/list")
-    public Result<List<Category>> listCategory(@RequestParam Integer type) {
+    public Result<List<Category>> listCategory(@RequestParam(required = false) Integer type) {
         return Result.success(categoryService.listQuery(type));
     }
 

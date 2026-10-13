@@ -1,13 +1,17 @@
 package com.dingdingcatering.exception;
 
+import com.dingdingcatering.enumeration.ErrorCode;
+
 /**
  * 文件上传失败异常
- * <p>
- * 当文件上传到 OSS 或其他存储服务失败时抛出
  */
 public class UploadFileFailException extends BaseException {
 
-    public UploadFileFailException(String message) {
-        super(message);
+    public UploadFileFailException(ErrorCode errorCode) {
+        super(errorCode);
+    }
+
+    public UploadFileFailException(ErrorCode errorCode, String detail) {
+        super(errorCode, detail);
     }
 }

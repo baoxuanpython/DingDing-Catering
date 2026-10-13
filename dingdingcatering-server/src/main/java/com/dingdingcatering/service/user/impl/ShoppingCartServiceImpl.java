@@ -1,6 +1,6 @@
 package com.dingdingcatering.service.user.impl;
 
-import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.context.BaseContext;
 import com.dingdingcatering.dto.ShoppingCartDTO;
 import com.dingdingcatering.entity.Dish;
@@ -37,7 +37,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Transactional(rollbackFor = Exception.class)
     public void editShoppingCart(ShoppingCartDTO shoppingCartDTO, boolean isAddOrSub) {
         if (shoppingCartDTO.getDishId() == null && shoppingCartDTO.getSetmealId() == null) {
-            throw new ShoppingCartBusinessException(MessageConstant.SHOPPING_CART_IS_NULL);
+            throw new ShoppingCartBusinessException(ErrorCode.SHOPPING_CART_IS_NULL);
         }
 
         Long userId = BaseContext.getCurrentId();
@@ -61,7 +61,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 }
                 return;
             }else {
-                throw new ShoppingCartBusinessException(MessageConstant.SHOPPING_CART_IS_NULL);
+                throw new ShoppingCartBusinessException(ErrorCode.SHOPPING_CART_IS_NULL);
             }
         }
 
@@ -72,7 +72,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             if (isDish) {
                 Dish dish = dishMapper.getById(dishId);
                 if (dish == null) {
-                    throw new ShoppingCartBusinessException(MessageConstant.DISH_IS_NULL);
+                    throw new ShoppingCartBusinessException(ErrorCode.DISH_IS_NULL);
                 }
                 shoppingCart = new ShoppingCart();
                 shoppingCart.setUserId(userId);
@@ -83,7 +83,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             } else {
                 Setmeal setmeal = setMealMapper.getById(setmealId);
                 if (setmeal == null) {
-                    throw new ShoppingCartBusinessException(MessageConstant.SETMEAL_IS_NULL);
+                    throw new ShoppingCartBusinessException(ErrorCode.SETMEAL_IS_NULL);
                 }
                 shoppingCart = new ShoppingCart();
                 shoppingCart.setUserId(userId);

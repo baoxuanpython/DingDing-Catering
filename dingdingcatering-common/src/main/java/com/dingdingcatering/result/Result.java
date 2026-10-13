@@ -1,5 +1,6 @@
 package com.dingdingcatering.result;
 
+import com.dingdingcatering.enumeration.ErrorCode;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,11 +16,17 @@ import java.io.Serializable;
 @Data
 public class Result<T> implements Serializable {
 
-    /** 状态码：1 表示成功，0 表示失败，其他为自定义错误码 */
+    /**
+     * 状态码：1 表示成功，0 表示失败，其他为自定义错误码
+     */
     private Integer code;
-    /** 错误信息或提示语 */
+    /**
+     * 错误信息或提示语
+     */
     private String msg;
-    /** 业务数据 */
+    /**
+     * 业务数据
+     */
     private T data;
 
     /**
@@ -51,7 +58,9 @@ public class Result<T> implements Serializable {
      *
      * @param msg 错误信息
      * @return 失败结果对象
+     * @deprecated 使用 {@link #error(ErrorCode, String)} 代替，错误码 0 无法区分具体错误类型
      */
+    @Deprecated
     public static <T> Result<T> error(String msg) {
         Result<T> result = new Result<>();
         result.msg = msg;
@@ -64,13 +73,28 @@ public class Result<T> implements Serializable {
      * <p>
      * 用于区分不同类型的错误（如认证失败、业务失败等）
      *
-     * @param code 错误码（建议使用 ErrorCode 常量）
+     * @param code 错误码（建议使用 ErrorCode 枚举）
      * @param msg  错误信息
      * @return 统一结果对象
      */
     public static <T> Result<T> error(Integer code, String msg) {
         Result<T> result = new Result<>();
         result.code = code;
+        result.msg = msg;
+        return result;
+    }
+
+    /**
+     * 返回带错误码枚举的错误结果
+     * <p>
+     * 推荐使用此方法，错误码和错误信息统一管理，避免硬编码
+     *
+     * @param errorCode 错误码枚举
+     * @return 统一结果对象
+     */
+    public static <T> Result<T> error(ErrorCode errorCode, String msg) {
+        Result<T> result = new Result<>();
+        result.code = errorCode.getCode();
         result.msg = msg;
         return result;
     }

@@ -41,6 +41,18 @@
         left join category dc on di.category_id = dc.id
         left join dish_flavor df on di.id = df.dish_id
         <where>
+            di.id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+        order by di.id desc
+    </select>
+
+    <select id="pageQueryIds" resultType="java.lang.Long">
+        select di.id
+        from dish di
+        <where>
             <if test="name != null and name != ''">
                 and di.name like concat('%', #{name}, '%')
             </if>

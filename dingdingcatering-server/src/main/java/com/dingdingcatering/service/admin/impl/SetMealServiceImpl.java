@@ -2,9 +2,9 @@ package com.dingdingcatering.service.admin.impl;
 
 import com.dingdingcatering.annotation.AutoClearCache;
 import com.dingdingcatering.enumeration.CacheType;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.dingdingcatering.constant.MessageConstant;
 import com.dingdingcatering.constant.StatusConstant;
 import com.dingdingcatering.dto.SetMealDTO;
 import com.dingdingcatering.dto.SetMealPageQueryDTO;
@@ -75,7 +75,7 @@ public class SetMealServiceImpl implements SetmealService {
         List<String> nameList = setmealMapper.queryStatusByIds(idList);
         if (!nameList.isEmpty()) {
             log.warn("删除套餐失败: 套餐已起售, names={}", nameList);
-            throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE + "：" + String.join("、", nameList));
+            throw new DeletionNotAllowedException(ErrorCode.SETMEAL_ON_SALE, String.join("、", nameList));
         }
         setmealMapper.deleteSetMeal(idList);
         setmealMapper.deleteSetMealDishes(idList);
@@ -103,8 +103,7 @@ public class SetMealServiceImpl implements SetmealService {
             } else {
                 String dishNames = String.join("、", disableDishNames);
                 log.warn("更新套餐状态失败: 包含停售菜品, id={}, dishNames={}", id, dishNames);
-                throw new SetMealEnableFailedException(
-                        MessageConstant.SETMEAL_ENABLE_FAILED + "：" + dishNames);
+                throw new SetMealEnableFailedException(ErrorCode.SETMEAL_ENABLE_FAILED, dishNames);
             }
         } else {
             setmealMapper.updateStatus(status, id);

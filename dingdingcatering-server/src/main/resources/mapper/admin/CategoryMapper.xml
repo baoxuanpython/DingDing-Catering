@@ -39,6 +39,11 @@
     <select id="listQuery" resultType="com.dingdingcatering.entity.Category">
         select *
         from category
-        where type = #{type}
+        <where>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+        </where>
+        order by id desc
     </select>
 </mapper>

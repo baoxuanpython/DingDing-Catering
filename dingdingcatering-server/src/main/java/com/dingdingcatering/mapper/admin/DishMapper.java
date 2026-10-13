@@ -16,7 +16,9 @@ import java.util.List;
 @Mapper
 public interface DishMapper {
 
-    List<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
+    List<DishVO> pageQuery(@Param("ids") List<Long> ids);
+
+    List<Long> pageQueryIds(DishPageQueryDTO dishPageQueryDTO);
 
     List<DishVO> getById(Long id);
 

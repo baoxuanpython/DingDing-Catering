@@ -1,8 +1,8 @@
 package com.dingdingcatering.service.admin.impl;
 
 import com.dingdingcatering.annotation.AutoClearCache;
-import com.dingdingcatering.constant.MessageConstant;
 import com.dingdingcatering.enumeration.CacheType;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.dingdingcatering.dto.CategoryDTO;
@@ -64,11 +64,11 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("删除分类: id={}", id);
         if (setMealMapper.queryByCategoryId(id) > 0) {
             log.warn("删除分类失败: 分类被套餐关联, id={}", id);
-            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL);
+            throw new DeletionNotAllowedException(ErrorCode.CATEGORY_RELATED_BY_SETMEAL);
         }
         if (dishMapper.queryByCategoryId(id) > 0) {
             log.warn("删除分类失败: 分类被菜品关联, id={}", id);
-            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_DISH);
+            throw new DeletionNotAllowedException(ErrorCode.CATEGORY_RELATED_BY_DISH);
         }
         categoryMapper.deleteCategory(id);
         log.info("删除分类成功: id={}", id);
@@ -76,7 +76,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> listQuery(Integer type) {
-        log.debug("查询分类列表: type={}", type);
+        log.info("查询分类列表: type={}", type);
         return categoryMapper.listQuery(type);
     }
 

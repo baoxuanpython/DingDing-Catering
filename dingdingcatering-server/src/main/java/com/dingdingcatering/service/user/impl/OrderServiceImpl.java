@@ -1,7 +1,7 @@
 package com.dingdingcatering.service.user.impl;
 
 import com.alibaba.fastjson2.JSON;
-import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.context.BaseContext;
 import com.dingdingcatering.dto.OrdersPaymentDTO;
 import com.dingdingcatering.dto.OrdersSubmitDTO;
@@ -69,7 +69,7 @@ public class OrderServiceImpl implements OrderService {
         AddressBook addressBook = addressBookMapper.selectById(ordersSubmitDTO.getAddressBookId(), userId);
         if (addressBook == null) {
             log.error("地址不存在: addressBookId={}, userId={}", ordersSubmitDTO.getAddressBookId(), userId);
-            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
+            throw new AddressBookBusinessException(ErrorCode.ADDRESS_BOOK_IS_NULL);
         }
         String userName = userMapper.getUserName(userId);
 

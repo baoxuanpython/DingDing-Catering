@@ -1,12 +1,17 @@
 package com.dingdingcatering.exception;
 
-/**
- * 登录失败
- */
-public class LoginFailedException extends BaseException{
+import com.dingdingcatering.enumeration.ErrorCode;
 
-    public LoginFailedException(String msg){
-        super(msg);
+/**
+ * 登录失败异常
+ */
+public class LoginFailedException extends BaseException {
+
+    public LoginFailedException(ErrorCode errorCode) {
+        super(errorCode);
     }
 
+    public LoginFailedException(ErrorCode errorCode, String detail) {
+        super(errorCode, detail);
+    }
 }

@@ -1,6 +1,6 @@
 package com.dingdingcatering.controller.admin;
 
-import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.exception.UploadFileFailException;
 import com.dingdingcatering.result.Result;
 import com.dingdingcatering.utils.AliOssUtil;
@@ -43,7 +43,7 @@ public class UploadController {
             String fileName = aliOssUtil.upload(file.getBytes(), file.getOriginalFilename());
             return Result.success(fileName);
         } catch (Exception e) {
-            throw new UploadFileFailException(MessageConstant.UPLOAD_FAILED);
+            throw new UploadFileFailException(ErrorCode.UPLOAD_FAILED);
         }
     }
 }

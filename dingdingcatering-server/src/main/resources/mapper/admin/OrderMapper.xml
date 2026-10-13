@@ -118,16 +118,22 @@
         from orders
         where id = #{id}
     </select>
-    <!-- 订单统计：待接单、待派送、派送中 -->
+    <!-- 订单统计：待接单、待派送、派送中、已完成、已取消 -->
     <select id="statistics" resultType="com.dingdingcatering.vo.OrderStatisticsVO">
         select sum(status = ${@com.dingdingcatering.entity.Orders@TO_BE_CONFIRMED}) as toBeConfirmed,
                sum(status = ${@com.dingdingcatering.entity.Orders@CONFIRMED}) as confirmed,
-               sum(status = ${@com.dingdingcatering.entity.Orders@DELIVERY_IN_PROGRESS}) as deliveryInProgress
+               sum(status = ${@com.dingdingcatering.entity.Orders@DELIVERY_IN_PROGRESS}) as deliveryInProgress,
+               sum(status = ${@com.dingdingcatering.entity.Orders@COMPLETED}) as completed,
+               sum(status = ${@com.dingdingcatering.entity.Orders@CANCELLED}) as cancelled,
+               sum(status = ${@com.dingdingcatering.entity.Orders@REFUNDED}) as refunded
         from orders
         where status in (
                          ${@com.dingdingcatering.entity.Orders@TO_BE_CONFIRMED},
                          ${@com.dingdingcatering.entity.Orders@CONFIRMED},
-                         ${@com.dingdingcatering.entity.Orders@DELIVERY_IN_PROGRESS}
+                         ${@com.dingdingcatering.entity.Orders@DELIVERY_IN_PROGRESS},
+                         ${@com.dingdingcatering.entity.Orders@COMPLETED},
+                         ${@com.dingdingcatering.entity.Orders@CANCELLED},
+                         ${@com.dingdingcatering.entity.Orders@REFUNDED}
             )
     </select>
 </mapper>

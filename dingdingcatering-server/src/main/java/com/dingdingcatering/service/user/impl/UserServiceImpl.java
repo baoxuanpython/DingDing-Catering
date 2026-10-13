@@ -1,7 +1,7 @@
 package com.dingdingcatering.service.user.impl;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.dingdingcatering.constant.MessageConstant;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.constant.WechatApiConstant;
 import com.dingdingcatering.dto.UserLoginDTO;
 import com.dingdingcatering.entity.User;
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
         String openid = getOpenId(userLoginDTO.getCode());
         if (openid == null) {
             log.warn("用户登录失败: 获取openid失败, code={}", userLoginDTO.getCode());
-            throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
+            throw new LoginFailedException(ErrorCode.LOGIN_FAILED);
         }
         User user = userMapper.login(openid);
         if (user == null) {

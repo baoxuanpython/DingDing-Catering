@@ -7,16 +7,26 @@ package com.dingdingcatering.constant;
  */
 public class JwtClaimsConstant {
 
-    /** 员工 ID 字段 */
+    /**
+     * 员工 ID 字段
+     */
     public static final String EMP_ID = "empId";
-    /** 用户 ID 字段 */
+    /**
+     * 用户 ID 字段
+     */
     public static final String USER_ID = "id";
-    /** 手机号字段 */
-    public static final String PHONE = "phone";
-    /** 用户名字段 */
+    /**
+     * 角色字段
+     */
+    public static final String ROLE = "role";
+    public static final String ADMIN = "admin";
+    public static final String USER = "user";
+    /**
+     * 用户名字段
+     */
     public static final String USERNAME = "username";
-    /** 姓名字段 */
-    public static final String NAME = "name";
-    /** 微信 OpenID 字段 */
+    /**
+     * 微信 OpenID 字段
+     */
     public static final String OPENID = "openid";
 }

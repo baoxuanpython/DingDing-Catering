@@ -4,7 +4,7 @@
 <mapper namespace="com.dingdingcatering.mapper.admin.WorkspaceMapper">
 
     <select id="getBusinessData" resultType="com.dingdingcatering.vo.BusinessDataVO">
-        SELECT IFNULL(SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}),
+        SELECT IFNULL(SUM(IF(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}, o.amount, 0)),
                       0)                                                       AS turnover,
                IFNULL(SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}),
                       0)                                                       AS validOrderCount,
@@ -15,7 +15,7 @@
                        0)                                                      AS orderCompletionRate,
                IFNULL(
                        IF(SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}) = 0, 0,
-                          ROUND(SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED})
+                          ROUND(SUM(IF(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}, o.amount, 0))
                                     / SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}),
                                 2)),
                        0)                                                      AS unitPrice,
