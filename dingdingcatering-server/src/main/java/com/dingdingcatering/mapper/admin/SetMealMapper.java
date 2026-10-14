@@ -1,6 +1,7 @@
 package com.dingdingcatering.mapper.admin;
 
 import com.dingdingcatering.annotation.AutoFill;
+import com.dingdingcatering.dto.DishFlavorUpdateDTO;
 import com.dingdingcatering.dto.SetMealPageQueryDTO;
 import com.dingdingcatering.entity.Setmeal;
 import com.dingdingcatering.entity.SetMealDish;
@@ -11,6 +12,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 @Component("adminSetMealMapper")
@@ -38,5 +40,11 @@ public interface SetMealMapper {
     List<Long> queryDishesId(Long id);
 
     List<String> queryStatusByIds(List<Long> idList);
+
+    void batchUpdateDishFlavors(@Param("dishFlavors") List<DishFlavorUpdateDTO> dishFlavors);
+
+    List<SetMealVO> pageQueryBasic(SetMealPageQueryDTO setmealPageQueryDTO);
+
+    List<SetMealDish> queryDishesBySetmealIds(@Param("setmealIds") List<Long> setmealIds);
 
 }

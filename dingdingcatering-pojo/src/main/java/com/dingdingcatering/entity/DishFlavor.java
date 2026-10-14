@@ -26,10 +26,10 @@ public class DishFlavor implements Serializable {
     /** 菜品ID */
     private Long dishId;
 
-    /** 口味名称 */
-    private String name;
+    /** 口味ID */
+    private Integer flavorId;
 
-    /** 口味数据JSON列表 */
-    private String value;
+    /** 口味数据值 */
+    private String flavorVal;
 
 }

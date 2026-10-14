@@ -20,9 +20,9 @@ public interface DishMapper {
 
     List<Long> pageQueryIds(DishPageQueryDTO dishPageQueryDTO);
 
-    List<DishVO> getById(Long id);
+    DishVO getById(Long id);
 
-    List<DishVO> getListByCategoryId(Long categoryId);
+    List<Dish> getListByCategoryId(Long categoryId);
 
     @AutoFill
     void addDish(Dish dish);
@@ -45,4 +45,6 @@ public interface DishMapper {
     List<String> queryStatusByIds(List<Long> idList);
 
     List<HashMap<String, String>> querySetmealByIds(List<Long> idList);
+
+    List<DishFlavor> queryFlavorByDishId(Long id);
 }

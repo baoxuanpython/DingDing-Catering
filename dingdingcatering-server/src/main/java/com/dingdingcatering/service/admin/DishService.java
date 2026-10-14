@@ -2,6 +2,7 @@ package com.dingdingcatering.service.admin;
 
 import com.dingdingcatering.dto.DishDTO;
 import com.dingdingcatering.dto.DishPageQueryDTO;
+import com.dingdingcatering.entity.Dish;
 import com.dingdingcatering.result.PageResult;
 import com.dingdingcatering.vo.DishVO;
 
@@ -34,7 +35,7 @@ public interface DishService {
      * @param categoryId 分类ID
      * @return 菜品列表
      */
-    List<DishVO> getList(Long categoryId);
+    List<Dish> getList(Long categoryId);
 
     /**
      * 新增菜品（含口味）。

@@ -85,7 +85,7 @@ public class SetmealController {
     }
 
     /**
-     * 更新套餐信息接口。
+     * 修改套餐信息接口。
      *
      * @param setmealDTO 待更新的套餐及关联菜品信息
      * @return 更新成功提示

@@ -110,8 +110,8 @@ public class EmployeeController {
      * @return 员工信息DTO
      */
     @GetMapping("/{id}")
-    public Result<EmployeeDTO> getEmployee(@PathVariable Long id) {
-        return Result.success(employeeService.getEmployeeDTO(id));
+    public Result<Employee> getEmployee(@PathVariable Long id) {
+        return Result.success(employeeService.getEmployee(id));
     }
 
     /**

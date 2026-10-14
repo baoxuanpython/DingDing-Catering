@@ -51,15 +51,19 @@ public class DishServiceImpl implements DishService {
     @Override
     public DishVO getById(Long id) {
         log.debug("根据ID查询菜品: id={}", id);
-        List<DishVO> list = dishMapper.getById(id);
-        if (list == null || list.isEmpty()) {
-            return null;
+        DishVO dishVO = dishMapper.getById(id);
+        if (dishVO == null) {
+            throw new DeletionNotAllowedException(ErrorCode.DISH_IS_NULL);
         }
-        return list.get(0);
+        List<DishFlavor> flavors = dishMapper.queryFlavorByDishId(id);
+        if (flavors != null && !flavors.isEmpty()) {
+            dishVO.setFlavors(flavors);
+        }
+        return dishVO;
     }
 
     @Override
-    public List<DishVO> getList(Long categoryId) {
+    public List<Dish> getList(Long categoryId) {
         log.debug("根据分类ID查询菜品列表: categoryId={}", categoryId);
         return dishMapper.getListByCategoryId(categoryId);
     }
@@ -94,7 +98,7 @@ public class DishServiceImpl implements DishService {
                 .collect(Collectors.toList());
         if (idList.isEmpty()) {
             log.warn("删除菜品: ID列表为空");
-            return;
+            throw new DeletionNotAllowedException(ErrorCode.DISH_IS_NULL);
         }
         List<String> nameList = dishMapper.queryStatusByIds(idList);
         if (!nameList.isEmpty()) {

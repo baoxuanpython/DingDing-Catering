@@ -143,12 +143,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDTO getEmployeeDTO(Long id) {
+    public Employee getEmployee(Long id) {
         log.debug("查询员工详情: id={}", id);
-        Employee employee = employeeMapper.getById(id);
-        EmployeeDTO employeeDTO = new EmployeeDTO();
-        BeanUtils.copyProperties(employee, employeeDTO);
-        return employeeDTO;
+        return employeeMapper.getById(id);
     }
 
 

@@ -8,7 +8,7 @@ spring:
     allow-circular-references: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${dingding.datasource.host}:${dingding.datasource.port}/${dingding.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${dingding.datasource.host}:${dingding.datasource.port}/${dingding.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true
     username: ${dingding.datasource.username}
     password: ${dingding.datasource.password}
     type: com.alibaba.druid.pool.DruidDataSource

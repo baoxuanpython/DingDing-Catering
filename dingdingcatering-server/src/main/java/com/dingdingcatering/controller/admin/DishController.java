@@ -3,6 +3,7 @@ package com.dingdingcatering.controller.admin;
 
 import com.dingdingcatering.dto.DishDTO;
 import com.dingdingcatering.dto.DishPageQueryDTO;
+import com.dingdingcatering.entity.Dish;
 import com.dingdingcatering.result.PageResult;
 import com.dingdingcatering.result.Result;
 import com.dingdingcatering.service.admin.DishService;
@@ -94,8 +95,8 @@ public class DishController {
      * @return 该分类下的菜品列表
      */
     @GetMapping("/list")
-    public Result<List<DishVO>> getList(@RequestParam Long categoryId) {
-        List<DishVO> list = dishService.getList(categoryId);
+    public Result<List<Dish>> getList(@RequestParam Long categoryId) {
+        List<Dish> list = dishService.getList(categoryId);
         return Result.success(list);
     }
 

@@ -54,6 +54,7 @@ public enum ErrorCode {
     SETMEAL_ON_SALE(5001, "起售中的套餐不能删除"),
     SETMEAL_ENABLE_FAILED(5002, "套餐内包含未启售菜品，无法启用"),
     SETMEAL_IS_NULL(5003, "套餐不存在"),
+    SETMEAL_NO_DISHES(5004, "套餐未关联任何菜品"),
 
     // ========== 订单模块 6xxx ==========
     ORDER_STATUS_ERROR(6001, "订单状态错误"),

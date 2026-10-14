@@ -19,8 +19,20 @@
             <result column="dish_name" property="name"/>
             <result column="dish_price" property="price"/>
             <result column="copies" property="copies"/>
+            <result column="flavors" property="flavors" typeHandler="com.dingdingcatering.handler.LongListTypeHandler"/>
         </collection>
     </resultMap>
+
+    <resultMap id="setMealDishMap" type="com.dingdingcatering.entity.SetMealDish">
+        <id column="id" property="id"/>
+        <result column="setmeal_id" property="setmealId"/>
+        <result column="dish_id" property="dishId"/>
+        <result column="dish_name" property="name"/>
+        <result column="dish_price" property="price"/>
+        <result column="copies" property="copies"/>
+        <result column="flavors" property="flavors" typeHandler="com.dingdingcatering.handler.LongListTypeHandler"/>
+    </resultMap>
+
     <insert id="addSetMeal" parameterType="com.dingdingcatering.entity.Setmeal" useGeneratedKeys="true" keyProperty="id">
         insert into setmeal (category_id, name, price, description, image, create_time, update_time, create_user,
                              update_user)
@@ -66,16 +78,20 @@
         </foreach>
     </delete>
 
-    <select id="pageQuery" resultType="com.dingdingcatering.vo.SetMealVO">
-        select s.id,s.category_id,s.name,s.price,s.status,s.description,s.image,s.update_time,c.name as categoryName
+    <select id="pageQuery" resultMap="setMealResultMap">
+        select s.id,s.category_id,s.name,s.price,s.status,s.description,s.image,s.update_time,c.name as categoryName,
+               sd.id as setmeal_dish_id, sd.setmeal_id, sd.dish_id, sd.name as dish_name, sd.price as dish_price, sd.copies,
+               d.flavors
         from setmeal s left
         join category c on c.id = s.category_id
+        left join setmeal_dish sd on sd.setmeal_id = s.id
+        left join dish d on sd.dish_id = d.id
         <where>
             <if test="name!=null and name!=''">and s.name like concat('%',#{name},'%')</if>
             <if test="status!=null">and s.status=#{status}</if>
             <if test="categoryId!=null">and s.category_id =#{categoryId}</if>
         </where>
-        order by s.update_time desc
+        order by s.update_time desc, sd.id
     </select>
     <select id="getSetMealById" resultMap="setMealResultMap">
         select s.id,
@@ -92,10 +108,12 @@
                sd.dish_id,
                sd.name  as dish_name,
                sd.price as dish_price,
-               sd.copies
+               sd.copies,
+               d.flavors
         from setmeal s
-                 left join setmeal_dish sd on sd.setmeal_id = s.id
-                 left join category c on c.id = s.category_id
+                 inner join setmeal_dish sd on sd.setmeal_id = s.id
+                 inner join category c on c.id = s.category_id
+                 inner join dish d on sd.dish_id = d.id
         where s.id = #{id}
         order by sd.id
     </select>
@@ -115,6 +133,39 @@
             #{id}
         </foreach>
         and status = ${@com.dingdingcatering.constant.StatusConstant@ENABLE}
+    </select>
+
+    <update id="batchUpdateDishFlavors">
+        <foreach collection="dishFlavors" item="item" separator=";">
+            update dish
+            set flavors = #{item.flavors},
+                update_time = NOW(),
+                update_user = ${@com.dingdingcatering.context.BaseContext@getCurrentId()}
+            where id = #{item.dishId}
+        </foreach>
+    </update>
+
+    <select id="pageQueryBasic" resultType="com.dingdingcatering.vo.SetMealVO">
+        select s.id, s.category_id, s.name, s.price, s.status, s.description, s.image, s.update_time, c.name as categoryName
+        from setmeal s
+        left join category c on c.id = s.category_id
+        <where>
+            <if test="name!=null and name!=''">and s.name like concat('%',#{name},'%')</if>
+            <if test="status!=null">and s.status=#{status}</if>
+            <if test="categoryId!=null">and s.category_id =#{categoryId}</if>
+        </where>
+        order by s.update_time desc
+    </select>
+
+    <select id="queryDishesBySetmealIds" resultMap="setMealDishMap">
+        select sd.setmeal_id, sd.id, sd.dish_id, sd.name as dish_name, sd.price as dish_price, sd.copies, d.flavors
+        from setmeal_dish sd
+        inner join dish d on sd.dish_id = d.id
+        where sd.setmeal_id in
+        <foreach collection="setmealIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        order by sd.setmeal_id, sd.id
     </select>
 
 </mapper>

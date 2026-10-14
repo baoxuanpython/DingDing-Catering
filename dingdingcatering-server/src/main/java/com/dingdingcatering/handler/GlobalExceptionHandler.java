@@ -204,6 +204,19 @@ public class GlobalExceptionHandler {
         return Result.error(ex.getErrorCode(), ex.getMessage());
     }
 
+    /**
+     * 处理套餐无菜品异常。
+     *
+     * @param ex 套餐无菜品异常
+     * @return 错误响应（HTTP 409）
+     */
+    @ExceptionHandler(SetMealNoDishesException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Result<String> handleSetMealNoDishesException(SetMealNoDishesException ex) {
+        log.error("套餐无菜品：{}", ex.getMessage());
+        return Result.error(ex.getErrorCode(), ex.getMessage());
+    }
+
     // ==================== 业务规则不满足（HTTP 422） ====================
 
     /**

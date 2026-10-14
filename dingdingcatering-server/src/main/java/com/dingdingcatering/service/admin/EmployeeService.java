@@ -59,7 +59,7 @@ public interface EmployeeService {
      * @param id 员工ID
      * @return 员工DTO
      */
-    EmployeeDTO getEmployeeDTO(Long id);
+    Employee getEmployee(Long id);
 
     /**
      * 修改密码。
