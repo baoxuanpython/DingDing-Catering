@@ -13,33 +13,35 @@
         <result property="status" column="status"/>
         <result property="updateTime" column="update_time"/>
         <result property="categoryName" column="categoryName"/>
-        <collection property="flavors" ofType="com.dingdingcatering.entity.DishFlavor">
+        <collection property="flavors" ofType="com.dingdingcatering.entity.Flavor">
             <id property="id" column="flavor_id"/>
-            <result property="dishId" column="dish_id"/>
-            <result property="flavorId" column="flavor_id"/>
-            <result property="flavorVal" column="flavor_val"/>
+            <result property="flavorName" column="flavor_name"/>
+            <result property="valueList" column="value_list"/>
         </collection>
     </resultMap>
+
     <insert id="addDish" parameterType="com.dingdingcatering.entity.Dish" useGeneratedKeys="true" keyProperty="id">
         insert into dish (name, category_id, price, image, description, status, create_time, update_time, create_user,
                           update_user)
         values (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{updateTime},
                 #{createUser}, #{updateUser})
     </insert>
+
     <insert id="addDishFlavor" parameterType="java.util.List">
-        insert into dish_flavor (dish_id, flavor_id, flavor_val) values
+        insert into dish_flavor (dish_id, flavor_id, flavor_name, value_list) values
         <foreach collection="flavors" item="flavor" separator=",">
-            (#{flavor.dishId}, #{flavor.flavorId}, #{flavor.flavorVal})
+            (#{flavor.dishId}, #{flavor.flavorId}, #{flavor.flavorName}, #{flavor.valueList})
         </foreach>
     </insert>
 
     <select id="pageQuery" resultMap="dishVOResultMap">
         select di.id, di.name, di.category_id, di.price, di.image, di.description,
         di.status, di.update_time, dc.name as categoryName,
-        df.id as flavor_id, df.dish_id, df.flavor_id, df.flavor_val as flavor_val
+        f.id as flavor_id, f.flavor_name, f.value_list
         from dish di
         left join category dc on di.category_id = dc.id
         left join dish_flavor df on di.id = df.dish_id
+        left join flavor f on df.flavor_id = f.id
         <where>
             di.id in
             <foreach collection="ids" item="id" open="(" separator="," close=")">
@@ -75,8 +77,8 @@
 
     <delete id="deleteFlavorByDishIds" parameterType="java.util.List">
         delete from dish_flavor where dish_id in
-        <foreach collection="dishIds" item="dishId" open="(" separator="," close=")">
-            #{dishId}
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
         </foreach>
     </delete>
 
@@ -94,6 +96,7 @@
         </set>
         where id = #{id}
     </update>
+
     <update id="updateStatus">
         update dish
         set status = #{status}
@@ -109,29 +112,30 @@
                di.description,
                di.status,
                di.update_time,
-               dc.name     as categoryName,
-               df.id       as flavor_id,
-               df.dish_id,
-               flavor.name as flavor_name,
-               df.flavor_val
+               dc.name      as categoryName,
+               f.id         as flavor_id,
+               f.flavor_name,
+               f.value_list
         from dish di
                  left join category dc on di.category_id = dc.id
                  left join dish_flavor df on di.id = df.dish_id
-                 left join flavor on df.flavor_id = flavor.id
+                 left join flavor f on df.flavor_id = f.id
         where di.id = #{id}
     </select>
 
-    <select id="getListByCategoryId">
+    <select id="getListByCategoryId" resultType="com.dingdingcatering.entity.Dish">
         select *
         from dish
         where category_id = #{categoryId}
         order by name desc
     </select>
+
     <select id="queryByCategoryId" resultType="java.lang.Integer">
         select count(*)
         from dish
         where category_id = #{categoryId}
     </select>
+
     <select id="queryByStatus" resultType="java.lang.String">
         select name
         from dish
@@ -141,6 +145,7 @@
         </foreach>
         and status = ${@com.dingdingcatering.constant.StatusConstant@DISABLE}
     </select>
+
     <select id="queryStatusByIds" resultType="java.lang.String">
         select name from dish where id in
         <foreach collection="idList" item="id" open="(" separator="," close=")">
@@ -148,6 +153,7 @@
         </foreach>
         and status = ${@com.dingdingcatering.constant.StatusConstant@ENABLE}
     </select>
+
     <select id="querySetmealByIds" resultType="java.util.HashMap">
         select d.name, group_concat(s.name order by s.name asc separator ',') as setmeal_names
         from dish d
@@ -160,9 +166,11 @@
         and d.status = 0
         group by d.id, d.name
     </select>
-    <select id="queryFlavorByDishId" resultType="com.dingdingcatering.entity.DishFlavor">
-        select id, dish_id, flavor_id, flavor_val
-        from dish_flavor
-        where dish_id = #{id}
+
+    <select id="queryFlavorByDishId" resultType="com.dingdingcatering.entity.Flavor">
+        select f.id, f.flavor_name, f.value_list
+        from dish_flavor df
+                 inner join flavor f on df.flavor_id = f.id
+        where df.dish_id = #{id}
     </select>
 </mapper>

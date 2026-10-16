@@ -1,19 +1,20 @@
 package com.dingdingcatering.service.admin.impl;
 
 import com.dingdingcatering.annotation.AutoClearCache;
-import com.dingdingcatering.enumeration.CacheType;
-import com.dingdingcatering.enumeration.ErrorCode;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.dingdingcatering.dto.DishDTO;
 import com.dingdingcatering.dto.DishPageQueryDTO;
 import com.dingdingcatering.entity.Dish;
 import com.dingdingcatering.entity.DishFlavor;
+import com.dingdingcatering.entity.Flavor;
+import com.dingdingcatering.enumeration.CacheType;
+import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.exception.DeletionNotAllowedException;
 import com.dingdingcatering.mapper.admin.DishMapper;
 import com.dingdingcatering.result.PageResult;
 import com.dingdingcatering.service.admin.DishService;
 import com.dingdingcatering.vo.DishVO;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -55,7 +56,7 @@ public class DishServiceImpl implements DishService {
         if (dishVO == null) {
             throw new DeletionNotAllowedException(ErrorCode.DISH_IS_NULL);
         }
-        List<DishFlavor> flavors = dishMapper.queryFlavorByDishId(id);
+        List<Flavor> flavors = dishMapper.queryFlavorByDishId(id);
         if (flavors != null && !flavors.isEmpty()) {
             dishVO.setFlavors(flavors);
         }
@@ -76,14 +77,22 @@ public class DishServiceImpl implements DishService {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
         dishMapper.addDish(dish);
-        Long dishId = dish.getId();
-        List<DishFlavor> flavors = dishDTO.getFlavors();
-        if (flavors != null && !flavors.isEmpty()) {
-            flavors.forEach(flavor -> flavor.setDishId(dishId));
-            dishMapper.addDishFlavor(flavors);
-            log.info("新增菜品口味: dishId={}, flavorCount={}", dishId, flavors.size());
+        addAllDishFlavor(dishDTO, dish.getId());
+        log.info("新增菜品成功: id={}", dish.getId());
+    }
+
+    private void addAllDishFlavor(DishDTO dishDTO, Long id) {
+        List<DishFlavor> dishFlavors = dishDTO.getFlavors().stream()
+                .map(flavor -> DishFlavor.builder()
+                        .dishId(id)
+                        .flavorId(flavor.getId())
+                        .flavorName(flavor.getFlavorName())
+                        .valueList(flavor.getValueList())
+                        .build())
+                .collect(Collectors.toList());
+        if (!dishFlavors.isEmpty()) {
+            dishMapper.addDishFlavor(dishFlavors);
         }
-        log.info("新增菜品成功: id={}", dishId);
     }
 
     @Override
@@ -126,15 +135,10 @@ public class DishServiceImpl implements DishService {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
         dishMapper.updateDish(dish);
-        Long dishId = dish.getId();
-        dishMapper.deleteFlavorByDishIds(Collections.singletonList(dishId));
-        List<DishFlavor> flavors = dishDTO.getFlavors();
-        if (flavors != null && !flavors.isEmpty()) {
-            flavors.forEach(flavor -> flavor.setDishId(dishId));
-            dishMapper.addDishFlavor(flavors);
-            log.info("更新菜品口味: dishId={}, flavorCount={}", dishId, flavors.size());
-        }
-        log.info("更新菜品成功: id={}", dishId);
+
+        dishMapper.deleteFlavorByDishIds(List.of(dishDTO.getId()));
+        addAllDishFlavor(dishDTO, dishDTO.getId());
+        log.info("更新菜品成功: id={}", dish.getId());
     }
 
     @Override

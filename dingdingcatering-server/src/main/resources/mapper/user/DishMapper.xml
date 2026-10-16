@@ -14,8 +14,9 @@
         <collection property="flavors" ofType="com.dingdingcatering.entity.DishFlavor">
             <id property="id" column="flavor_id"/>
             <result property="dishId" column="dish_id"/>
-            <result property="name" column="flavor_name"/>
-            <result property="value" column="flavor_value"/>
+            <result property="flavorId" column="flavor_type_id"/>
+            <result property="flavorName" column="flavor_name"/>
+            <result property="valueList" column="value_list"/>
         </collection>
     </resultMap>
     <select id="getListByCategoryId" resultMap="dishVOResultMap">
@@ -27,11 +28,12 @@
                di.description,
                di.status,
                di.update_time,
-               dc.name  as categoryName,
-               df.id    as flavor_id,
+               dc.name       as categoryName,
+               df.id         as flavor_id,
                df.dish_id,
-               df.name  as flavor_name,
-               df.value as flavor_value
+               df.flavor_id  as flavor_type_id,
+               df.flavor_name,
+               df.value_list
         from dish di
                  left join category dc on di.category_id = dc.id
                  left join dish_flavor df on di.id = df.dish_id

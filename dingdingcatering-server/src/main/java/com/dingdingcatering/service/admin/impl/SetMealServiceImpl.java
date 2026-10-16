@@ -168,14 +168,15 @@ public class SetMealServiceImpl implements SetmealService {
 
     private void batchUpdateDishFlavors(List<SetMealDish> setMealDishes) {
         List<DishFlavorUpdateDTO> dishFlavorUpdates = setMealDishes.stream()
+                .filter(dish -> dish.getFlavors() != null && !dish.getFlavors().isEmpty())
                 .map(dish -> DishFlavorUpdateDTO.builder()
                         .dishId(dish.getDishId())
-                        .flavors(dish.getFlavors() == null || dish.getFlavors().isEmpty()
-                                ? ""
-                                : dish.getFlavors().stream().map(String::valueOf).collect(Collectors.joining(",")))
+                        .flavors(dish.getFlavors())
                         .build())
                 .collect(Collectors.toList());
-        log.debug("批量更新菜品口味: dishCount={}", dishFlavorUpdates.size());
-        setmealMapper.batchUpdateDishFlavors(dishFlavorUpdates);
+        if (!dishFlavorUpdates.isEmpty()) {
+            log.debug("批量更新菜品口味: dishCount={}", dishFlavorUpdates.size());
+            setmealMapper.batchUpdateDishFlavors(dishFlavorUpdates);
+        }
     }
 }

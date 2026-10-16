@@ -4,6 +4,7 @@ import com.dingdingcatering.annotation.AutoFill;
 import com.dingdingcatering.dto.DishPageQueryDTO;
 import com.dingdingcatering.entity.Dish;
 import com.dingdingcatering.entity.DishFlavor;
+import com.dingdingcatering.entity.Flavor;
 import com.dingdingcatering.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,7 +32,7 @@ public interface DishMapper {
 
     void deleteByIds(@Param("ids") List<Long> ids);
 
-    void deleteFlavorByDishIds(@Param("dishIds") List<Long> dishIds);
+    void deleteFlavorByDishIds(@Param("ids") List<Long> ids);
 
     @AutoFill
     void updateDish(Dish dish);
@@ -46,5 +47,5 @@ public interface DishMapper {
 
     List<HashMap<String, String>> querySetmealByIds(List<Long> idList);
 
-    List<DishFlavor> queryFlavorByDishId(Long id);
+    List<Flavor> queryFlavorByDishId(Long id);
 }

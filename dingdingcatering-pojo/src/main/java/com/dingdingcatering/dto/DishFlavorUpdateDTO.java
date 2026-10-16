@@ -1,5 +1,6 @@
 package com.dingdingcatering.dto;
 
+import com.dingdingcatering.entity.Flavor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,9 +8,10 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * 菜品口味更新数据传输对象
+ * 菜品口味批量更新数据传输对象
  */
 @Data
 @Builder
@@ -23,6 +25,6 @@ public class DishFlavorUpdateDTO implements Serializable {
     /** 菜品ID */
     private Long dishId;
 
-    /** 口味类型ID列表（逗号分隔字符串） */
-    private String flavors;
+    /** 口味类型列表 */
+    private List<Flavor> flavors;
 }

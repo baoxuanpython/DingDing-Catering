@@ -2,7 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.dingdingcatering.mapper.admin.SetMealMapper">
-    <resultMap id="setMealResultMap" type="com.dingdingcatering.vo.SetMealVO">
+
+    <resultMap id="setMealDishResultMap" type="com.dingdingcatering.entity.SetMealDish">
+        <id column="setmeal_dish_id" property="id"/>
+        <result column="setmeal_id" property="setmealId"/>
+        <result column="dish_id" property="dishId"/>
+        <result column="dish_name" property="name"/>
+        <result column="dish_price" property="price"/>
+        <result column="copies" property="copies"/>
+        <collection property="flavors" ofType="com.dingdingcatering.entity.Flavor">
+            <id property="id" column="flavor_id"/>
+            <result property="flavorName" column="flavor_name"/>
+            <result property="valueList" column="value_list"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="setMealResultMap" type="com.dingdingcatering.vo.SetMealVO" extends="setMealDishResultMapBase">
         <id column="id" property="id"/>
         <result column="category_id" property="categoryId"/>
         <result column="name" property="name"/>
@@ -12,15 +27,16 @@
         <result column="update_time" property="updateTime"/>
         <result column="category_name" property="categoryName"/>
         <result column="status" property="status"/>
-        <collection property="setmealDishes" ofType="com.dingdingcatering.entity.SetMealDish">
-            <id column="setmeal_dish_id" property="id"/>
-            <result column="setmeal_id" property="setmealId"/>
-            <result column="dish_id" property="dishId"/>
-            <result column="dish_name" property="name"/>
-            <result column="dish_price" property="price"/>
-            <result column="copies" property="copies"/>
-            <result column="flavors" property="flavors" typeHandler="com.dingdingcatering.handler.LongListTypeHandler"/>
-        </collection>
+        <collection property="setmealDishes" ofType="com.dingdingcatering.entity.SetMealDish" resultMap="setMealDishResultMap"/>
+    </resultMap>
+
+    <resultMap id="setMealDishResultMapBase" type="com.dingdingcatering.entity.SetMealDish">
+        <id column="setmeal_dish_id" property="id"/>
+        <result column="setmeal_id" property="setmealId"/>
+        <result column="dish_id" property="dishId"/>
+        <result column="dish_name" property="name"/>
+        <result column="dish_price" property="price"/>
+        <result column="copies" property="copies"/>
     </resultMap>
 
     <resultMap id="setMealDishMap" type="com.dingdingcatering.entity.SetMealDish">
@@ -30,7 +46,11 @@
         <result column="dish_name" property="name"/>
         <result column="dish_price" property="price"/>
         <result column="copies" property="copies"/>
-        <result column="flavors" property="flavors" typeHandler="com.dingdingcatering.handler.LongListTypeHandler"/>
+        <collection property="flavors" ofType="com.dingdingcatering.entity.Flavor">
+            <id property="id" column="flavor_id"/>
+            <result property="flavorName" column="flavor_name"/>
+            <result property="valueList" column="value_list"/>
+        </collection>
     </resultMap>
 
     <insert id="addSetMeal" parameterType="com.dingdingcatering.entity.Setmeal" useGeneratedKeys="true" keyProperty="id">
@@ -81,11 +101,12 @@
     <select id="pageQuery" resultMap="setMealResultMap">
         select s.id,s.category_id,s.name,s.price,s.status,s.description,s.image,s.update_time,c.name as categoryName,
                sd.id as setmeal_dish_id, sd.setmeal_id, sd.dish_id, sd.name as dish_name, sd.price as dish_price, sd.copies,
-               d.flavors
-        from setmeal s left
-        join category c on c.id = s.category_id
+               f.id as flavor_id, f.flavor_name, f.value_list
+        from setmeal s
+        left join category c on c.id = s.category_id
         left join setmeal_dish sd on sd.setmeal_id = s.id
-        left join dish d on sd.dish_id = d.id
+        left join dish_flavor df on sd.dish_id = df.dish_id
+        left join flavor f on df.flavor_id = f.id
         <where>
             <if test="name!=null and name!=''">and s.name like concat('%',#{name},'%')</if>
             <if test="status!=null">and s.status=#{status}</if>
@@ -93,6 +114,7 @@
         </where>
         order by s.update_time desc, sd.id
     </select>
+
     <select id="getSetMealById" resultMap="setMealResultMap">
         select s.id,
                s.category_id,
@@ -109,24 +131,30 @@
                sd.name  as dish_name,
                sd.price as dish_price,
                sd.copies,
-               d.flavors
+               f.id     as flavor_id,
+               f.flavor_name,
+               f.value_list
         from setmeal s
                  inner join setmeal_dish sd on sd.setmeal_id = s.id
                  inner join category c on c.id = s.category_id
-                 inner join dish d on sd.dish_id = d.id
+                 left join dish_flavor df on sd.dish_id = df.dish_id
+                 left join flavor f on df.flavor_id = f.id
         where s.id = #{id}
         order by sd.id
     </select>
+
     <select id="queryByCategoryId" resultType="java.lang.Integer">
         select count(*)
         from setmeal
         where category_id = #{categoryId}
     </select>
+
     <select id="queryDishesId" resultType="java.lang.Long">
         select dish_id
         from setmeal_dish
         where setmeal_id = #{id};
     </select>
+
     <select id="queryStatusByIds" resultType="java.lang.String">
         select s.name from setmeal s where s.id in
         <foreach collection="idList" item="id" separator="," open="(" close=")">
@@ -137,11 +165,11 @@
 
     <update id="batchUpdateDishFlavors">
         <foreach collection="dishFlavors" item="item" separator=";">
-            update dish
-            set flavors = #{item.flavors},
-                update_time = NOW(),
-                update_user = ${@com.dingdingcatering.context.BaseContext@getCurrentId()}
-            where id = #{item.dishId}
+            delete from dish_flavor where dish_id = #{item.dishId};
+            insert into dish_flavor (dish_id, flavor_id, flavor_name, value_list) values
+            <foreach collection="item.flavors" item="flavor" separator=",">
+                (#{item.dishId}, #{flavor.id}, #{flavor.flavorName}, #{flavor.valueList})
+            </foreach>
         </foreach>
     </update>
 
@@ -158,9 +186,11 @@
     </select>
 
     <select id="queryDishesBySetmealIds" resultMap="setMealDishMap">
-        select sd.setmeal_id, sd.id, sd.dish_id, sd.name as dish_name, sd.price as dish_price, sd.copies, d.flavors
+        select sd.setmeal_id, sd.id, sd.dish_id, sd.name as dish_name, sd.price as dish_price, sd.copies,
+               f.id as flavor_id, f.flavor_name, f.value_list
         from setmeal_dish sd
-        inner join dish d on sd.dish_id = d.id
+        left join dish_flavor df on sd.dish_id = df.dish_id
+        left join flavor f on df.flavor_id = f.id
         where sd.setmeal_id in
         <foreach collection="setmealIds" item="id" open="(" separator="," close=")">
             #{id}

@@ -65,10 +65,10 @@ public class DishController {
     }
 
     /**
-     * 更新菜品信息接口。
+     * 修改菜品信息接口。
      *
-     * @param dishDTO 待更新的菜品及口味信息
-     * @return 更新成功提示
+     * @param dishDTO 待修改的菜品及口味信息
+     * @return 修改成功提示
      */
     @PutMapping
     public Result<Void> updateDish(@RequestBody DishDTO dishDTO) {

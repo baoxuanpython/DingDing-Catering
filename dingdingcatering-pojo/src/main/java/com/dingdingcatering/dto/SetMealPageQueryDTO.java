@@ -20,9 +20,9 @@ public class SetMealPageQueryDTO implements Serializable {
     private String name;
 
     /** 分类ID */
-    private Integer categoryId;
+    private Long categoryId;
 
-    /** 状态：0-禁用，1-启用 */
+    /** 状态：0-停用，1-启用 */
     private Integer status;
 
 }

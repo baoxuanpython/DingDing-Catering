@@ -21,11 +21,17 @@ public class OrderOverViewVO implements Serializable {
     //待派送数
     private Integer deliveredOrders;
 
+    //派送中数
+    private Integer deliveryInProgress;
+
     //已完成数
     private Integer completedOrders;
 
     //已取消数
     private Integer cancelledOrders;
+
+    //已退款数
+    private Integer refunded;
 
     //全部订单
     private Integer allOrders;

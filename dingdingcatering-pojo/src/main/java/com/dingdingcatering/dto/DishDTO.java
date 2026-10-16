@@ -1,11 +1,10 @@
 package com.dingdingcatering.dto;
 
+import com.dingdingcatering.entity.Flavor;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.dingdingcatering.entity.DishFlavor;
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +36,6 @@ public class DishDTO implements Serializable {
     private Integer status;
 
     /** 口味列表 */
-    private List<DishFlavor> flavors = new ArrayList<>();
+    private List<Flavor> flavors;
 
 }

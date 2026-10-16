@@ -30,8 +30,8 @@ public class EmployeePageQueryDTO implements Serializable {
      */
     private String phone;
     /**
-     * 员工状态
+     * 员工状态：0-禁用，1-启用
      */
-    private String status;
+    private Integer status;
 
 }
