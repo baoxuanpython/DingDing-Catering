@@ -49,4 +49,10 @@ public class Category implements Serializable {
 
     /** 修改人ID */
     private Long updateUser;
+
+    /** 创建人姓名（冗余字段） */
+    private String createEmployeeName;
+
+    /** 修改人姓名（冗余字段） */
+    private String updateEmployeeName;
 }

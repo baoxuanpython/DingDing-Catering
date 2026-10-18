@@ -259,6 +259,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理口味类型业务异常。
+     *
+     * @param ex 口味类型业务异常
+     * @return 错误响应（HTTP 422）
+     */
+    @ExceptionHandler(FlavorException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public Result<String> handleFlavorException(FlavorException ex) {
+        log.error("口味类型业务异常：{}", ex.getMessage());
+        return Result.error(ex.getErrorCode(), ex.getMessage());
+    }
+
+    /**
      * 处理地址簿业务异常。
      *
      * @param ex 地址簿业务异常

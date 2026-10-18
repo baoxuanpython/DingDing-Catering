@@ -53,17 +53,7 @@ public class SetMealDish implements Serializable {
     private Integer copies;
 
     /**
-     * 口味类型ID列表（逗号分隔，如"1,2,3"）
+     * 套餐菜品口味列表（关联查询字段，非数据库字段）
      */
-    private String flavorId;
-
-    /**
-     * 套餐菜品默认口味值（逗号分隔，如"微辣,少盐"）
-     */
-    private String flavorVal;
-
-    /**
-     * 口味列表（关联查询字段，非数据库字段）
-     */
-    private List<Flavor> flavors;
+    private List<SetMealDishFlavor> setmealDishFlavors;
 }

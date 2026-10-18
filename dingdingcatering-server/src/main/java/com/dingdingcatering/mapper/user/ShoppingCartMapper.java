@@ -11,7 +11,7 @@ public interface ShoppingCartMapper {
 
     ShoppingCart findByUserIdAndDishId(@Param("userId") Long userId,
                                        @Param("dishId") Long dishId,
-                                       @Param("dishFlavor") String dishFlavor);
+                                       @Param("flavorId") String flavorId);
 
     ShoppingCart findByUserIdAndSetmealId(@Param("userId") Long userId,
                                           @Param("setmealId") Long setmealId);
@@ -26,4 +26,6 @@ public interface ShoppingCartMapper {
     void cleanByUserId(Long userId);
 
     void deleteOne(Long id);
+
+    ShoppingCart findById(Long id);
 }

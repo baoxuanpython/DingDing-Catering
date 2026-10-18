@@ -14,4 +14,8 @@ public class AutoFillConstant {
     public static final String SET_CREATE_USER = "setCreateUser";
     /** 设置更新人的方法名 */
     public static final String SET_UPDATE_USER = "setUpdateUser";
+    /** 设置创建人姓名的方法名 */
+    public static final String SET_CREATE_EMPLOYEE_NAME = "setCreateEmployeeName";
+    /** 设置更新人姓名的方法名 */
+    public static final String SET_UPDATE_EMPLOYEE_NAME = "setUpdateEmployeeName";
 }

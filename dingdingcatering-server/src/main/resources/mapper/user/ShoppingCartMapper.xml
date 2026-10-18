@@ -17,11 +17,11 @@
         FROM shopping_cart
         WHERE user_id = #{userId}
         AND dish_id = #{dishId}
-        <if test="dishFlavor != null">
-            AND dish_flavor = #{dishFlavor}
+        <if test="flavorId != null">
+            AND flavor_id = #{flavorId}
         </if>
-        <if test="dishFlavor == null">
-            AND dish_flavor IS NULL
+        <if test="flavorId == null">
+            AND flavor_id IS NULL
         </if>
         LIMIT 1
     </select>
@@ -47,9 +47,15 @@
     </update>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO shopping_cart (name, user_id, dish_id, setmeal_id, dish_flavor, number, amount, image, create_time)
-        VALUES (#{name}, #{userId}, #{dishId}, #{setmealId}, #{dishFlavor}, #{number}, #{amount}, #{image},
+        INSERT INTO shopping_cart (name, user_id, dish_id, setmeal_id, flavor_id, flavor_val, number, amount, image, create_time)
+        VALUES (#{name}, #{userId}, #{dishId}, #{setmealId}, #{flavorId}, #{flavorVal}, #{number}, #{amount}, #{image},
                 #{createTime})
     </insert>
+
+    <select id="findById" resultType="com.dingdingcatering.entity.ShoppingCart">
+        SELECT *
+        FROM shopping_cart
+        WHERE id = #{id}
+    </select>
 
 </mapper>

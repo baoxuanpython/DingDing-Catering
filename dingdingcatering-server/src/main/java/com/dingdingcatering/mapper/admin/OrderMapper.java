@@ -22,6 +22,8 @@ public interface OrderMapper {
 
     OrderVO queryById(Long id);
 
+    OrderVO queryByNumber(@Param("number") String number);
+
     void cancelById(OrdersCancelDTO ordersCancelDTO);
 
     OrderStatisticsVO statistics();

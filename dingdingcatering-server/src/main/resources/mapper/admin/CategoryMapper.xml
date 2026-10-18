@@ -3,8 +3,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.dingdingcatering.mapper.admin.CategoryMapper">
     <insert id="addCategory">
-        insert into category (name, type, sort, status, create_time, update_time, create_user, update_user)
-        values (#{name}, #{type}, #{sort}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
+        insert into category (name, type, sort, status, create_time, update_time, create_user, update_user,
+                              create_employee_name, update_employee_name)
+        values (#{name}, #{type}, #{sort}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser},
+                #{createEmployeeName}, #{updateEmployeeName})
     </insert>
     <update id="updateCategory">
         update category
@@ -14,7 +16,8 @@
             <if test="sort != null">sort = #{sort},</if>
             <if test="status != null">status = #{status},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="updateUser != null">update_user = #{updateUser}</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateEmployeeName != null">update_employee_name = #{updateEmployeeName},</if>
         </set>
         where id = #{id}
     </update>
@@ -25,7 +28,9 @@
     </delete>
 
     <select id="pageQuery" resultType="com.dingdingcatering.entity.Category">
-        select * from category
+        select id, name, type, sort, status, create_time, update_time, create_user, update_user,
+               create_employee_name, update_employee_name
+        from category
         <where>
             <if test="name != null and name != ''">
                 and name like concat('%', #{name}, '%')
@@ -34,16 +39,17 @@
                 and type = #{type}
             </if>
         </where>
-        order by id desc
+        order by id
     </select>
     <select id="listQuery" resultType="com.dingdingcatering.entity.Category">
-        select *
+        select id, name, type, sort, status, create_time, update_time, create_user, update_user,
+               create_employee_name, update_employee_name
         from category
         <where>
             <if test="type != null and type != ''">
                 and type = #{type}
             </if>
         </where>
-        order by id desc
+        order by id
     </select>
 </mapper>

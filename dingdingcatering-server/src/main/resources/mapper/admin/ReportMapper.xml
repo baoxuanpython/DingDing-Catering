@@ -7,15 +7,15 @@
         from dish d
                  INNER JOIN (
             -- 1、获取单品销量
-            select od.dish_id, od.number as sale_num
+            select od.dish_id, od.dish_copies as sale_num
             from order_detail od
                      INNER JOIN orders o on od.order_id = o.id
             where o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}
               and od.dish_id is not null
               and o.order_time between #{begin} and #{end}
             UNION ALL
-            -- 2、套餐拆解销量：下单数量*套餐内菜品份数
-            select sd.dish_id, od.number * sd.copies as sale_num
+            -- 2、套餐拆解销量：套餐内菜品份数（dish_copies 已是计算后的值）
+            select sd.dish_id, od.dish_copies as sale_num
             from order_detail od
                      INNER JOIN orders o ON od.order_id = o.id
                      INNER JOIN setmeal_dish sd ON od.setmeal_id = sd.setmeal_id

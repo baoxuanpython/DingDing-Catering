@@ -68,17 +68,24 @@ public enum ErrorCode {
     // ========== 地址簿模块 8xxx ==========
     ADDRESS_BOOK_IS_NULL(8001, "用户地址为空，不能下单"),
     ADDRESS_BOOK_ERROR(8002, "地址业务异常"),
+    // ========== 口味类型模块 9xxx ==========
+    FLAVOR_NAME_EXIST(9001, "口味类型名称已存在"),
+    FLAVOR_DELETE_FAILED(9006, "口味类型关联了菜品，不能删除"),
+    // ========== 通用/系统模块 99xxx ==========
+    PARAM_ERROR(99001, "参数校验失败"),
+    DATA_EXIST(99002, "数据已存在"),
+    UPLOAD_FAILED(99003, "文件上传失败"),
+    JSON_PROCESSING_ERROR(99004, "JSON 序列化/反序列化异常"),
+    DELETION_NOT_ALLOWED(99005, "不允许删除"),
+    UNKNOWN_ERROR(99999, "未知错误");
 
-    // ========== 通用/系统模块 9xxx ==========
-    PARAM_ERROR(9001, "参数校验失败"),
-    DATA_EXIST(9002, "数据已存在"),
-    UPLOAD_FAILED(9003, "文件上传失败"),
-    JSON_PROCESSING_ERROR(9004, "JSON 序列化/反序列化异常"),
-    DELETION_NOT_ALLOWED(9005, "不允许删除"),
-    UNKNOWN_ERROR(9999, "未知错误");
 
-    /** 业务错误码 */
+    /**
+     * 业务错误码
+     */
     private final Integer code;
-    /** 错误描述 */
+    /**
+     * 错误描述
+     */
     private final String message;
 }

@@ -32,6 +32,9 @@ public class DishFlavor implements Serializable {
     /** 口味类型名称（冗余字段） */
     private String flavorName;
 
+    /** 默认口味值（冗余字段） */
+    private String flavorValue;
+
     /** 口味值列表（冗余字段，逗号分隔） */
     private String valueList;
 }

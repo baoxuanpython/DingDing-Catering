@@ -27,7 +27,7 @@ public interface OrderService {
      * @param number 订单号
      * @return 订单详情
      */
-    OrderVO queryOrderDetails(Long number);
+    OrderVO queryOrderDetails(String number);
 
     /**
      * 取消订单。

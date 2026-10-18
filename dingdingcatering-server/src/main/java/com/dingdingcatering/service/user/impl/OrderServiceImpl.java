@@ -10,12 +10,15 @@ import com.dingdingcatering.entity.OrderDetail;
 import com.dingdingcatering.entity.Orders;
 import com.dingdingcatering.entity.ShoppingCart;
 import com.dingdingcatering.exception.AddressBookBusinessException;
+import com.dingdingcatering.mapper.admin.DishMapper;
+import com.dingdingcatering.mapper.admin.SetMealMapper;
 import com.dingdingcatering.mapper.user.AddressBookMapper;
 import com.dingdingcatering.mapper.user.OrderMapper;
 import com.dingdingcatering.mapper.user.ShoppingCartMapper;
 import com.dingdingcatering.mapper.user.UserMapper;
 import com.dingdingcatering.result.PageResult;
 import com.dingdingcatering.service.user.OrderService;
+import com.dingdingcatering.util.OrderDetailEnrichUtil;
 import com.dingdingcatering.vo.OrderSubmitVO;
 import com.dingdingcatering.vo.OrderVO;
 import com.dingdingcatering.vo.PaymentSuccessVO;
@@ -41,13 +44,17 @@ public class OrderServiceImpl implements OrderService {
     private final UserMapper userMapper;
     private final ShoppingCartMapper shoppingCartMapper;
     private final WebSocketServer webSocketServer;
+    private final DishMapper dishMapper;
+    private final SetMealMapper setMealMapper;
 
-    public OrderServiceImpl(OrderMapper orderMapper, AddressBookMapper addressBookMapper, UserMapper userMapper, ShoppingCartMapper shoppingCartMapper, WebSocketServer webSocketServer) {
+    public OrderServiceImpl(OrderMapper orderMapper, AddressBookMapper addressBookMapper, UserMapper userMapper, ShoppingCartMapper shoppingCartMapper, WebSocketServer webSocketServer, DishMapper dishMapper, SetMealMapper setMealMapper) {
         this.orderMapper = orderMapper;
         this.addressBookMapper = addressBookMapper;
         this.userMapper = userMapper;
         this.shoppingCartMapper = shoppingCartMapper;
         this.webSocketServer = webSocketServer;
+        this.dishMapper = dishMapper;
+        this.setMealMapper = setMealMapper;
     }
 
     @Override
@@ -94,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("购物车已清空: userId={}", userId);
         log.info("订单提交完成: orderNumber={}, 总金额={}", orders.getNumber(), orders.getAmount());
         return OrderSubmitVO.builder()
-                .id(Long.parseLong(orders.getNumber()))
+                .id(orders.getId())
                 .orderNumber(orders.getNumber())
                 .orderTime(orders.getOrderTime())
                 .orderAmount(orders.getAmount())
@@ -104,7 +111,9 @@ public class OrderServiceImpl implements OrderService {
     private Orders buildOrder(OrdersSubmitDTO dto, AddressBook addressBook, String userName, Long userId) {
         Orders orders = new Orders();
         BeanUtils.copyProperties(dto, orders);
-        orders.setNumber(String.valueOf(System.currentTimeMillis()) + userId);
+        String dateTimeStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String randomNum = String.valueOf((int) (Math.random() * 10000) + 10000).substring(1);
+        orders.setNumber("DD" + dateTimeStr + randomNum);
         orders.setUserId(userId);
         orders.setOrderTime(LocalDateTime.now());
         orders.setPayStatus(Orders.UN_PAID);
@@ -118,8 +127,15 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderDetail buildOrderDetail(ShoppingCart cart, Long orderId) {
         OrderDetail detail = new OrderDetail();
-        BeanUtils.copyProperties(cart, detail);
         detail.setOrderId(orderId);
+        detail.setName(cart.getName());
+        detail.setImage(cart.getImage());
+        detail.setDishId(cart.getDishId());
+        detail.setSetmealId(cart.getSetmealId());
+        detail.setFlavorId(cart.getFlavorId());
+        detail.setFlavorVal(cart.getFlavorVal());
+        detail.setDishCopies(cart.getNumber());
+        detail.setAmount(cart.getAmount());
         return detail;
     }
 
@@ -161,11 +177,13 @@ public class OrderServiceImpl implements OrderService {
     public OrderVO getOrderDetail(Long id) {
         Long userId = BaseContext.getCurrentId();
         log.info("查询订单详情: orderId={}, userId={}", id, userId);
-        OrderVO orderVO = orderMapper.getHistoryOrders(userId, null).get(0);
-        if (orderVO == null) {
+        Orders orders = orderMapper.getOrdersById(id, userId);
+        if (orders == null) {
             log.warn("订单不存在: orderId={}, userId={}", id, userId);
             return null;
         }
+        OrderVO orderVO = new OrderVO();
+        org.springframework.beans.BeanUtils.copyProperties(orders, orderVO);
         enrichOrderVOList(List.of(orderVO));
         log.info("查询订单详情成功: orderId={}", id);
         return orderVO;
@@ -179,7 +197,14 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDetail> orderDetailList = orderMapper.getDetailList(List.of(id));
         List<ShoppingCart> cartList = orderDetailList.stream().map(orderDetail -> {
             ShoppingCart cart = new ShoppingCart();
-            BeanUtils.copyProperties(orderDetail, cart);
+            cart.setName(orderDetail.getName());
+            cart.setImage(orderDetail.getImage());
+            cart.setDishId(orderDetail.getDishId());
+            cart.setSetmealId(orderDetail.getSetmealId());
+            cart.setFlavorId(orderDetail.getFlavorId());
+            cart.setFlavorVal(orderDetail.getFlavorVal());
+            cart.setNumber(orderDetail.getDishCopies());
+            cart.setAmount(orderDetail.getAmount());
             cart.setUserId(userId);
             cart.setCreateTime(LocalDateTime.now());
             return cart;
@@ -199,6 +224,9 @@ public class OrderServiceImpl implements OrderService {
         List<Long> orderIds = orderVOList.stream().map(OrderVO::getId).toList();
         List<OrderDetail> orderDetailList = orderMapper.getDetailList(orderIds);
         log.debug("查询订单明细: 订单数={}, 明细数={}", orderIds.size(), orderDetailList.size());
+        // 填充订单明细中的菜品/套餐完整信息
+        OrderDetailEnrichUtil.enrichOrderDetails(orderDetailList, dishMapper, setMealMapper);
         enrichOrderVOListFromAdmin(orderVOList, orderDetailList, OrderVO::getId);
     }
+
 }

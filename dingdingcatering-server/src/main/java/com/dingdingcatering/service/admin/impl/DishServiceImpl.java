@@ -82,11 +82,15 @@ public class DishServiceImpl implements DishService {
     }
 
     private void addAllDishFlavor(DishDTO dishDTO, Long id) {
+        if (dishDTO.getFlavors() == null || dishDTO.getFlavors().isEmpty()) {
+            return;
+        }
         List<DishFlavor> dishFlavors = dishDTO.getFlavors().stream()
                 .map(flavor -> DishFlavor.builder()
                         .dishId(id)
                         .flavorId(flavor.getId())
                         .flavorName(flavor.getFlavorName())
+                        .flavorValue(flavor.getValueList())
                         .valueList(flavor.getValueList())
                         .build())
                 .collect(Collectors.toList());

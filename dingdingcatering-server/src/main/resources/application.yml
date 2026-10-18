@@ -41,7 +41,8 @@ spring:
     redis:
       host: ${dingding.redis.host}
       port: ${dingding.redis.port}
-      database: 0
+      password: ${dingding.redis.password}
+      database: ${dingding.redis.database}
 
 mybatis:
   #mapper配置文件

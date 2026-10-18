@@ -65,4 +65,10 @@ public class Employee implements Serializable {
     /** 更新人ID */
     private Long updateUser;
 
+    /** 创建人姓名（冗余字段） */
+    private String createEmployeeName;
+
+    /** 更新人姓名（冗余字段） */
+    private String updateEmployeeName;
+
 }

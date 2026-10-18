@@ -38,8 +38,11 @@
         <result column="order_id" property="orderId"/>
         <result column="dish_id" property="dishId"/>
         <result column="setmeal_id" property="setmealId"/>
-        <result column="dish_flavor" property="dishFlavor"/>
-        <result column="number" property="number"/>
+        <result column="flavor_id" property="flavorId"/>
+        <result column="flavor_name" property="flavorName"/>
+        <result column="flavor_val" property="flavorVal"/>
+        <result column="dish_copies" property="dishCopies"/>
+        <result column="setmeal_copies" property="setmealCopies"/>
         <result column="amount" property="amount"/>
         <result column="image" property="image"/>
     </resultMap>
@@ -97,26 +100,46 @@
 
     <!-- 查询2：批量查询订单详情 -->
     <select id="queryOrderDetails" resultMap="orderDetailMap">
-        select id,
-        name,
-        order_id,
-        dish_id,
-        setmeal_id,
-        dish_flavor,
-        number,
-        amount,
-        image
-        from order_detail
-        where order_id in
+        select od.id,
+               od.name,
+               od.order_id,
+               od.dish_id,
+               od.setmeal_id,
+               od.flavor_id,
+               (SELECT GROUP_CONCAT(f.flavor_name)
+                FROM flavor f
+                WHERE FIND_IN_SET(f.id, od.flavor_id)) AS flavor_name,
+               od.flavor_val,
+               od.dish_copies,
+               od.setmeal_copies,
+               od.amount,
+               od.image
+        from order_detail od
+        where od.order_id in
         <foreach collection="list" item="orderId" separator="," open="(" close=")">
             #{orderId}
         </foreach>
-        order by id
+        order by od.id
     </select>
     <select id="queryById" resultMap="orderBaseMap">
-        select *
-        from orders
-        where id = #{id}
+        select o.id, o.number, o.status, o.user_id, o.address_book_id, o.order_time, o.checkout_time,
+               o.pay_method, o.pay_status, o.amount, o.remark, o.consignee, o.phone, o.address,
+               o.cancel_reason, o.rejection_reason, o.cancel_time, o.estimated_delivery_time,
+               o.delivery_status, o.delivery_time, o.pack_amount, o.tableware_number, o.tableware_status,
+               u.name as user_name
+        from orders o
+        left join `user` u on u.id = o.user_id
+        where o.id = #{id}
+    </select>
+    <select id="queryByNumber" resultMap="orderBaseMap">
+        select o.id, o.number, o.status, o.user_id, o.address_book_id, o.order_time, o.checkout_time,
+               o.pay_method, o.pay_status, o.amount, o.remark, o.consignee, o.phone, o.address,
+               o.cancel_reason, o.rejection_reason, o.cancel_time, o.estimated_delivery_time,
+               o.delivery_status, o.delivery_time, o.pack_amount, o.tableware_number, o.tableware_status,
+               u.name as user_name
+        from orders o
+        left join `user` u on u.id = o.user_id
+        where o.number = #{number}
     </select>
     <!-- 订单统计：待接单、待派送、派送中、已完成、已取消 -->
     <select id="statistics" resultType="com.dingdingcatering.vo.OrderStatisticsVO">

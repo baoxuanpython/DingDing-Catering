@@ -28,7 +28,7 @@ public class DishController {
      * @return 该分类下已起售的菜品列表
      */
     @GetMapping("/list")
-    public Result<List<Dish>> list(@RequestParam Integer categoryId) {
+    public Result<List<Dish>> list(@RequestParam Long categoryId) {
         return Result.success(dishService.list(categoryId));
     }
 }

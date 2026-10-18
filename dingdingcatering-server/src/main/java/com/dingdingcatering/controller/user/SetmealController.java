@@ -28,7 +28,7 @@ public class SetmealController {
      * @return 该分类下已启用的套餐列表
      */
     @GetMapping("/list")
-    public Result<List<Setmeal>> list(@RequestParam Integer categoryId) {
+    public Result<List<Setmeal>> list(@RequestParam Long categoryId) {
         return Result.success(setmealService.list(categoryId));
     }
 

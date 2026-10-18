@@ -66,6 +66,16 @@ public class DishVO implements Serializable {
     private String categoryName;
 
     /**
+     * 创建人姓名（冗余字段）
+     */
+    private String createEmployeeName;
+
+    /**
+     * 更新人姓名（冗余字段）
+     */
+    private String updateEmployeeName;
+
+    /**
      * 菜品关联的口味类型列表
      */
     private List<Flavor> flavors;

@@ -65,4 +65,29 @@ public class ShoppingCartController {
         shoppingCartService.editShoppingCart(shoppingCartDTO, false);
         return Result.success();
     }
+
+    /**
+     * 修改购物车商品数量接口。
+     *
+     * @param id     购物车记录ID
+     * @param number 目标数量（必须大于0）
+     * @return 操作成功提示
+     */
+    @PutMapping
+    public Result<Void> updateCartNumber(@RequestParam Long id, @RequestParam Integer number) {
+        shoppingCartService.updateCartNumber(id, number);
+        return Result.success();
+    }
+
+    /**
+     * 删除购物车单个商品接口。
+     *
+     * @param id 购物车记录ID
+     * @return 操作成功提示
+     */
+    @DeleteMapping
+    public Result<Void> deleteCartItem(@RequestParam Long id) {
+        shoppingCartService.deleteCartItem(id);
+        return Result.success();
+    }
 }

@@ -22,7 +22,7 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Override
     @Cacheable(value = "setmeal:category", key = "#categoryId", unless = "#result == null ||# result.isEmpty()")
-    public List<Setmeal> list(Integer categoryId) {
+    public List<Setmeal> list(Long categoryId) {
         log.debug("缓存未命中，查询套餐列表: categoryId={}", categoryId);
         List<Setmeal> result = setmealMapper.list(categoryId);
         log.debug("查询套餐列表完成: categoryId={}, count={}", categoryId, result.size());

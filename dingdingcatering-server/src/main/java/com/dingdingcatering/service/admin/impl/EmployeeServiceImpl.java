@@ -76,6 +76,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.EMP_ID, employee.getId());
         claims.put(JwtClaimsConstant.USERNAME, employee.getUsername());
+        claims.put(JwtClaimsConstant.EMP_NAME, employee.getName());
         claims.put(JwtClaimsConstant.ROLE, employee.getUsername().equals(JwtClaimsConstant.ADMIN) ? JwtClaimsConstant.ADMIN : JwtClaimsConstant.USER);
         String token = JwtUtil.createJWT(
                 jwtProperties.getAdminSecretKey(),

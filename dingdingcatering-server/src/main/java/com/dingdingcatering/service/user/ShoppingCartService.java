@@ -29,4 +29,19 @@ public interface ShoppingCartService {
      */
     void clean();
 
+    /**
+     * 修改购物车商品数量。
+     *
+     * @param id     购物车记录ID
+     * @param number 目标数量（必须大于0）
+     */
+    void updateCartNumber(Long id, Integer number);
+
+    /**
+     * 删除购物车单个商品。
+     *
+     * @param id 购物车记录ID
+     */
+    void deleteCartItem(Long id);
+
 }

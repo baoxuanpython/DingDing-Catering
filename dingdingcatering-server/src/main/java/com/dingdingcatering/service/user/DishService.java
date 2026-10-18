@@ -14,5 +14,5 @@ public interface DishService {
      * @param categoryId 分类ID
      * @return 已起售的菜品列表
      */
-    List<Dish> list(Integer categoryId);
+    List<Dish> list(Long categoryId);
 }

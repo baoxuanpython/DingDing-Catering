@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 
 import static com.dingdingcatering.context.BaseContext.getCurrentId;
+import static com.dingdingcatering.context.BaseContext.getCurrentName;
 
 /**
  * 公共字段自动填充切面
@@ -62,11 +63,12 @@ public class AutoFillAspect {
             return;
         }
         Long currentId = getCurrentId();
+        String currentName = getCurrentName();
         boolean foundEntity = false;
         for (Object arg : args) {
             if (arg != null && isAutoFillableEntity(arg)) {
                 foundEntity = true;
-                fillEntityFields(arg, operationType, currentId);
+                fillEntityFields(arg, operationType, currentId, currentName);
                 log.info("已为 [{}] 自动填充公共字段 - 操作类型: {}",
                         arg.getClass().getSimpleName(), operationType);
             }
@@ -92,14 +94,15 @@ public class AutoFillAspect {
      * 填充实体类的公共字段
      * <p>
      * 根据操作类型填充不同的字段：
-     * - INSERT 操作：填充 createTime, updateTime, createUser, updateUser
-     * - UPDATE 操作：只填充 updateTime, updateUser
+     * - INSERT 操作：填充 createTime, updateTime, createUser, updateUser, createEmployeeName, updateEmployeeName
+     * - UPDATE 操作：只填充 updateTime, updateUser, updateEmployeeName
      *
      * @param entity        待填充的实体类对象
      * @param operationType 操作类型（INSERT/UPDATE）
      * @param currentId     当前登录用户ID
+     * @param currentName   当前登录用户姓名
      */
-    private void fillEntityFields(Object entity, OperationType operationType, Long currentId)
+    private void fillEntityFields(Object entity, OperationType operationType, Long currentId, String currentName)
             throws InvocationTargetException, IllegalAccessException {
 
         Class<?> clazz = entity.getClass();
@@ -109,10 +112,13 @@ public class AutoFillAspect {
             invokeSetter(clazz, entity, AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class, LocalDateTime.now());
             invokeSetter(clazz, entity, AutoFillConstant.SET_CREATE_USER, Long.class, currentId);
             invokeSetter(clazz, entity, AutoFillConstant.SET_UPDATE_USER, Long.class, currentId);
+            invokeSetter(clazz, entity, AutoFillConstant.SET_CREATE_EMPLOYEE_NAME, String.class, currentName);
+            invokeSetter(clazz, entity, AutoFillConstant.SET_UPDATE_EMPLOYEE_NAME, String.class, currentName);
 
         } else if (operationType == OperationType.UPDATE) {
             invokeSetter(clazz, entity, AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class, LocalDateTime.now());
             invokeSetter(clazz, entity, AutoFillConstant.SET_UPDATE_USER, Long.class, currentId);
+            invokeSetter(clazz, entity, AutoFillConstant.SET_UPDATE_EMPLOYEE_NAME, String.class, currentName);
         }
     }
 

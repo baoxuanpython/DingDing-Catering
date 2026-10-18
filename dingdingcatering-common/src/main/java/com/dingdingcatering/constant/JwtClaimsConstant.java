@@ -29,4 +29,8 @@ public class JwtClaimsConstant {
      * 微信 OpenID 字段
      */
     public static final String OPENID = "openid";
+    /**
+     * 员工姓名字段
+     */
+    public static final String EMP_NAME = "empName";
 }

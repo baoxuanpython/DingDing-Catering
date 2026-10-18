@@ -10,14 +10,17 @@
         <result column="dish_name" property="name"/>
         <result column="dish_price" property="price"/>
         <result column="copies" property="copies"/>
-        <collection property="flavors" ofType="com.dingdingcatering.entity.Flavor">
-            <id property="id" column="flavor_id"/>
-            <result property="flavorName" column="flavor_name"/>
-            <result property="valueList" column="value_list"/>
+        <collection property="setmealDishFlavors" ofType="com.dingdingcatering.entity.SetMealDishFlavor">
+            <id column="sdf_id" property="id"/>
+            <result column="sdf_setmeal_dish_id" property="setmealDishId"/>
+            <result column="sdf_flavor_id" property="flavorId"/>
+            <result column="sdf_flavor_value" property="flavorValue"/>
+            <result column="sdf_flavor_name" property="flavorName"/>
+            <result column="sdf_value_list" property="valueList"/>
         </collection>
     </resultMap>
 
-    <resultMap id="setMealResultMap" type="com.dingdingcatering.vo.SetMealVO" extends="setMealDishResultMapBase">
+    <resultMap id="setMealResultMap" type="com.dingdingcatering.vo.SetMealVO">
         <id column="id" property="id"/>
         <result column="category_id" property="categoryId"/>
         <result column="name" property="name"/>
@@ -27,6 +30,8 @@
         <result column="update_time" property="updateTime"/>
         <result column="category_name" property="categoryName"/>
         <result column="status" property="status"/>
+        <result column="create_employee_name" property="createEmployeeName"/>
+        <result column="update_employee_name" property="updateEmployeeName"/>
         <collection property="setmealDishes" ofType="com.dingdingcatering.entity.SetMealDish" resultMap="setMealDishResultMap"/>
     </resultMap>
 
@@ -46,23 +51,33 @@
         <result column="dish_name" property="name"/>
         <result column="dish_price" property="price"/>
         <result column="copies" property="copies"/>
-        <collection property="flavors" ofType="com.dingdingcatering.entity.Flavor">
-            <id property="id" column="flavor_id"/>
-            <result property="flavorName" column="flavor_name"/>
-            <result property="valueList" column="value_list"/>
+        <collection property="setmealDishFlavors" ofType="com.dingdingcatering.entity.SetMealDishFlavor">
+            <id column="sdf_id" property="id"/>
+            <result column="sdf_setmeal_dish_id" property="setmealDishId"/>
+            <result column="sdf_flavor_id" property="flavorId"/>
+            <result column="sdf_flavor_value" property="flavorValue"/>
+            <result column="sdf_flavor_name" property="flavorName"/>
+            <result column="sdf_value_list" property="valueList"/>
         </collection>
     </resultMap>
 
     <insert id="addSetMeal" parameterType="com.dingdingcatering.entity.Setmeal" useGeneratedKeys="true" keyProperty="id">
         insert into setmeal (category_id, name, price, description, image, create_time, update_time, create_user,
-                             update_user)
+                             update_user, create_employee_name, update_employee_name)
         values (#{categoryId}, #{name}, #{price}, #{description}, #{image}, #{createTime}, #{updateTime},
-                #{createUser}, #{updateUser})
+                #{createUser}, #{updateUser}, #{createEmployeeName}, #{updateEmployeeName})
     </insert>
-    <insert id="addSetMealDishes" parameterType="java.util.List">
+    <insert id="addSetMealDishes" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
         insert into setmeal_dish (setmeal_id,dish_id, name, price,copies) values
         <foreach collection="setMealDishes" item="dish" separator=",">
             (#{dish.setmealId}, #{dish.dishId}, #{dish.name}, #{dish.price}, #{dish.copies})
+        </foreach>
+    </insert>
+
+    <insert id="addSetMealDishFlavors" parameterType="java.util.List">
+        insert into setmeal_dish_flavor (setmeal_dish_id, flavor_id, flavor_value, flavor_name, value_list) values
+        <foreach collection="setMealDishFlavors" item="flavor" separator=",">
+            (#{flavor.setmealDishId}, #{flavor.flavorId}, #{flavor.flavorValue}, #{flavor.flavorName}, #{flavor.valueList})
         </foreach>
     </insert>
     <update id="updateStatus">
@@ -81,7 +96,9 @@
             <if test="image!=null">image=#{image},</if>
             <if test="price!=null">price=#{price},</if>
             <if test="status!=null">status=#{status},</if>
-            update_time=#{updateTime},update_user=#{updateUser}
+            <if test="updateTime!=null">update_time=#{updateTime},</if>
+            <if test="updateUser!=null">update_user=#{updateUser},</if>
+            <if test="updateEmployeeName!=null">update_employee_name=#{updateEmployeeName},</if>
         </set>
         where id = #{id}
     </update>
@@ -90,6 +107,19 @@
         <foreach collection="idList" item="id" separator="," open="(" close=")">
             #{id}
         </foreach>
+    </delete>
+
+    <delete id="deleteSetMealDishFlavorsBySetmealDishIds" parameterType="java.util.List">
+        delete from setmeal_dish_flavor where setmeal_dish_id in
+        <foreach collection="setmealDishIds" item="setmealDishId" separator="," open="(" close=")">
+            #{setmealDishId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSetMealDishFlavorsBySetmealId" parameterType="java.lang.Long">
+        delete sdf from setmeal_dish_flavor sdf
+        inner join setmeal_dish sd on sdf.setmeal_dish_id = sd.id
+        where sd.setmeal_id = #{setmealId}
     </delete>
     <delete id="deleteSetMeal" parameterType="java.util.List">
         delete from setmeal where id in
@@ -100,13 +130,14 @@
 
     <select id="pageQuery" resultMap="setMealResultMap">
         select s.id,s.category_id,s.name,s.price,s.status,s.description,s.image,s.update_time,c.name as categoryName,
+               s.create_employee_name, s.update_employee_name,
                sd.id as setmeal_dish_id, sd.setmeal_id, sd.dish_id, sd.name as dish_name, sd.price as dish_price, sd.copies,
-               f.id as flavor_id, f.flavor_name, f.value_list
+               sdf.id as sdf_id, sdf.setmeal_dish_id as sdf_setmeal_dish_id, sdf.flavor_id as sdf_flavor_id,
+               sdf.flavor_value as sdf_flavor_value, sdf.flavor_name as sdf_flavor_name, sdf.value_list as sdf_value_list
         from setmeal s
         left join category c on c.id = s.category_id
         left join setmeal_dish sd on sd.setmeal_id = s.id
-        left join dish_flavor df on sd.dish_id = df.dish_id
-        left join flavor f on df.flavor_id = f.id
+        left join setmeal_dish_flavor sdf on sd.id = sdf.setmeal_dish_id
         <where>
             <if test="name!=null and name!=''">and s.name like concat('%',#{name},'%')</if>
             <if test="status!=null">and s.status=#{status}</if>
@@ -125,26 +156,30 @@
                s.update_time,
                c.name   as category_name,
                s.status,
+               s.create_employee_name,
+               s.update_employee_name,
                sd.id    as setmeal_dish_id,
                sd.setmeal_id,
                sd.dish_id,
                sd.name  as dish_name,
                sd.price as dish_price,
                sd.copies,
-               f.id     as flavor_id,
-               f.flavor_name,
-               f.value_list
+               sdf.id   as sdf_id,
+               sdf.setmeal_dish_id as sdf_setmeal_dish_id,
+               sdf.flavor_id as sdf_flavor_id,
+               sdf.flavor_value as sdf_flavor_value,
+               sdf.flavor_name as sdf_flavor_name,
+               sdf.value_list as sdf_value_list
         from setmeal s
                  inner join setmeal_dish sd on sd.setmeal_id = s.id
                  inner join category c on c.id = s.category_id
-                 left join dish_flavor df on sd.dish_id = df.dish_id
-                 left join flavor f on df.flavor_id = f.id
+                 left join setmeal_dish_flavor sdf on sd.id = sdf.setmeal_dish_id
         where s.id = #{id}
         order by sd.id
     </select>
 
-    <select id="queryByCategoryId" resultType="java.lang.Integer">
-        select count(*)
+    <select id="queryByCategoryId" resultType="java.lang.String">
+        select name
         from setmeal
         where category_id = #{categoryId}
     </select>
@@ -163,18 +198,22 @@
         and status = ${@com.dingdingcatering.constant.StatusConstant@ENABLE}
     </select>
 
-    <update id="batchUpdateDishFlavors">
-        <foreach collection="dishFlavors" item="item" separator=";">
-            delete from dish_flavor where dish_id = #{item.dishId};
-            insert into dish_flavor (dish_id, flavor_id, flavor_name, value_list) values
-            <foreach collection="item.flavors" item="flavor" separator=",">
-                (#{item.dishId}, #{flavor.id}, #{flavor.flavorName}, #{flavor.valueList})
-            </foreach>
+    <select id="queryDishesBySetmealIds" resultMap="setMealDishMap">
+        select sd.setmeal_id, sd.id, sd.dish_id, sd.name as dish_name, sd.price as dish_price, sd.copies,
+               sdf.id as sdf_id, sdf.setmeal_dish_id as sdf_setmeal_dish_id, sdf.flavor_id as sdf_flavor_id,
+               sdf.flavor_value as sdf_flavor_value, sdf.flavor_name as sdf_flavor_name, sdf.value_list as sdf_value_list
+        from setmeal_dish sd
+        left join setmeal_dish_flavor sdf on sd.id = sdf.setmeal_dish_id
+        where sd.setmeal_id in
+        <foreach collection="setmealIds" item="id" open="(" separator="," close=")">
+            #{id}
         </foreach>
-    </update>
+        order by sd.setmeal_id, sd.id
+    </select>
 
     <select id="pageQueryBasic" resultType="com.dingdingcatering.vo.SetMealVO">
-        select s.id, s.category_id, s.name, s.price, s.status, s.description, s.image, s.update_time, c.name as categoryName
+        select s.id, s.category_id, s.name, s.price, s.status, s.description, s.image, s.update_time, c.name as categoryName,
+               s.create_employee_name as createEmployeeName, s.update_employee_name as updateEmployeeName
         from setmeal s
         left join category c on c.id = s.category_id
         <where>
@@ -185,17 +224,21 @@
         order by s.update_time desc
     </select>
 
-    <select id="queryDishesBySetmealIds" resultMap="setMealDishMap">
-        select sd.setmeal_id, sd.id, sd.dish_id, sd.name as dish_name, sd.price as dish_price, sd.copies,
-               f.id as flavor_id, f.flavor_name, f.value_list
-        from setmeal_dish sd
-        left join dish_flavor df on sd.dish_id = df.dish_id
-        left join flavor f on df.flavor_id = f.id
-        where sd.setmeal_id in
-        <foreach collection="setmealIds" item="id" open="(" separator="," close=")">
+    <select id="getByIds" resultMap="setMealResultMap">
+        select s.id, s.category_id, s.name, s.price, s.status, s.description, s.image, s.update_time,
+               c.name as category_name, s.create_employee_name, s.update_employee_name,
+               sd.id as setmeal_dish_id, sd.setmeal_id, sd.dish_id, sd.name as dish_name,
+               sd.price as dish_price, sd.copies,
+               sdf.id as sdf_id, sdf.setmeal_dish_id as sdf_setmeal_dish_id, sdf.flavor_id as sdf_flavor_id,
+               sdf.flavor_value as sdf_flavor_value, sdf.flavor_name as sdf_flavor_name, sdf.value_list as sdf_value_list
+        from setmeal s
+                 left join category c on c.id = s.category_id
+                 left join setmeal_dish sd on sd.setmeal_id = s.id
+                 left join setmeal_dish_flavor sdf on sd.id = sdf.setmeal_dish_id
+        where s.id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
-        order by sd.setmeal_id, sd.id
+        order by s.id, sd.id
     </select>
-
 </mapper>

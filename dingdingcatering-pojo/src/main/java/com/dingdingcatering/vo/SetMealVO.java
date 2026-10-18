@@ -66,6 +66,16 @@ public class SetMealVO implements Serializable {
     private String categoryName;
 
     /**
+     * 创建人姓名（冗余字段）
+     */
+    private String createEmployeeName;
+
+    /**
+     * 更新人姓名（冗余字段）
+     */
+    private String updateEmployeeName;
+
+    /**
      * 套餐与菜品的关联关系列表
      */
     private List<SetMealDish> setmealDishes;

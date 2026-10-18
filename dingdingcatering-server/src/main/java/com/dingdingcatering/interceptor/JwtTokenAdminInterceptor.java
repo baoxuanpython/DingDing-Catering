@@ -23,8 +23,9 @@ import jakarta.servlet.http.HttpServletResponse;
  * <p>
  * 职责：
  * 1. 从请求Header中提取JWT令牌
- * 2. 解析令牌获取员工ID并存入ThreadLocal
- * 3. 请求完成后清理ThreadLocal防止内存泄漏
+ * 2. 解析令牌获取员工ID和姓名（从JWT claims中直接获取，无需查库）
+ * 3. 将员工ID和姓名存入ThreadLocal
+ * 4. 请求完成后清理ThreadLocal防止内存泄漏
  */
 @Component
 @Slf4j
@@ -41,8 +42,8 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
      * 处理流程：
      * 1. 检查请求是否为HandlerMethod
      * 2. 从Header提取令牌
-     * 3. 解析令牌获取员工ID
-     * 4. 将员工ID存入ThreadLocal
+     * 3. 解析令牌获取员工ID和姓名
+     * 4. 将员工ID和姓名存入ThreadLocal
      *
      * @param request  HTTP请求
      * @param response HTTP响应
@@ -63,7 +64,10 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
         try {
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
             Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
+            String empName = claims.get(JwtClaimsConstant.EMP_NAME).toString();
             BaseContext.setCurrentId(empId);
+            BaseContext.setCurrentName(empName);
+
             return true;
         } catch (ExpiredJwtException ex) {
             throw new TokenExpiredException(ErrorCode.TOKEN_EXPIRED);

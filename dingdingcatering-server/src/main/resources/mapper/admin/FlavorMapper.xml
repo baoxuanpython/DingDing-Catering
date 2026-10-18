@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dingdingcatering.mapper.admin.FlavorMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into flavor (flavor_name, value_list, create_time, update_time, create_user, update_user,
+                            create_employee_name, update_employee_name)
+        values (#{flavorName}, #{valueList}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser},
+                #{createEmployeeName}, #{updateEmployeeName})
+    </insert>
+    <update id="update">
+        update flavor
+        <set>
+            <if test="flavorName != null">flavor_name = #{flavorName},</if>
+            <if test="valueList != null">value_list = #{valueList},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+            <if test="updateEmployeeName != null">update_employee_name = #{updateEmployeeName},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleteById">
+        delete
+        from flavor
+        where id = #{id}
+    </delete>
+    <select id="getByName" resultType="com.dingdingcatering.dto.FlavorDTO">
+        select id, flavor_name, value_list, create_time, update_time, create_user, update_user,
+               create_employee_name, update_employee_name
+        from flavor
+        where flavor_name = #{flavorName}
+    </select>
+    <select id="pageQuery" resultType="com.dingdingcatering.dto.FlavorDTO">
+        select id, flavor_name, value_list, create_time, update_time, create_user, update_user,
+               create_employee_name, update_employee_name
+        from flavor
+        <where>
+            <if test="flavorName != null">
+                flavor_name like concat('%', #{flavorName}, '%')
+            </if>
+        </where>
+        order by id
+    </select>
+    <select id="getById" resultType="com.dingdingcatering.dto.FlavorDTO">
+        select id, flavor_name, value_list, create_time, update_time, create_user, update_user,
+               create_employee_name, update_employee_name
+        from flavor
+        where id = #{id}
+    </select>
+    <select id="listFlavor" resultType="com.dingdingcatering.dto.FlavorDTO">
+        select id, flavor_name, value_list, create_time, update_time, create_user, update_user,
+               create_employee_name, update_employee_name
+        from flavor
+    </select>
+    <select id="getDishFlavorById" resultType="java.lang.String">
+        select d.name
+        from dish_flavor df
+        inner join dish d on df.dish_id = d.id
+        where df.flavor_id = #{id}
+    </select>
+</mapper>

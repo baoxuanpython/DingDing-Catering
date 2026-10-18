@@ -47,10 +47,10 @@
         </trim>
     </insert>
     <insert id="insertOrderDetail">
-        insert into order_detail (order_id, name, image, dish_id, setmeal_id, dish_flavor, number, amount)
+        insert into order_detail (order_id, name, image, dish_id, setmeal_id, flavor_id, flavor_val, dish_copies, setmeal_copies, amount)
         values
         <foreach collection="orderDetailList" item="item" separator=",">
-            (#{item.orderId}, #{item.name}, #{item.image}, #{item.dishId}, #{item.setmealId}, #{item.dishFlavor}, #{item.number}, #{item.amount})
+            (#{item.orderId}, #{item.name}, #{item.image}, #{item.dishId}, #{item.setmealId}, #{item.flavorId}, #{item.flavorVal}, #{item.dishCopies}, #{item.setmealCopies}, #{item.amount})
         </foreach>
     </insert>
     <update id="paySuccess">
@@ -79,9 +79,22 @@
         order by order_time desc
     </select>
     <select id="getDetailList" resultType="com.dingdingcatering.entity.OrderDetail">
-        select *
-        from order_detail
-        where order_id in
+        select od.id,
+               od.name,
+               od.image,
+               od.order_id,
+               od.dish_id,
+               od.setmeal_id,
+               od.flavor_id,
+               (SELECT GROUP_CONCAT(f.flavor_name)
+                FROM flavor f
+                WHERE FIND_IN_SET(f.id, od.flavor_id)) AS flavor_name,
+               od.flavor_val,
+               od.dish_copies,
+               od.setmeal_copies,
+               od.amount
+        from order_detail od
+        where od.order_id in
         <foreach collection="orderIds" item="orderId" open="(" separator="," close=")">
             #{orderId}
         </foreach>

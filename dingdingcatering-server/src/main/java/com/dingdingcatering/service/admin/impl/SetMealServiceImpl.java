@@ -2,10 +2,10 @@ package com.dingdingcatering.service.admin.impl;
 
 import com.dingdingcatering.annotation.AutoClearCache;
 import com.dingdingcatering.constant.StatusConstant;
-import com.dingdingcatering.dto.DishFlavorUpdateDTO;
 import com.dingdingcatering.dto.SetMealDTO;
 import com.dingdingcatering.dto.SetMealPageQueryDTO;
 import com.dingdingcatering.entity.SetMealDish;
+import com.dingdingcatering.entity.SetMealDishFlavor;
 import com.dingdingcatering.entity.Setmeal;
 import com.dingdingcatering.enumeration.CacheType;
 import com.dingdingcatering.enumeration.ErrorCode;
@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -63,10 +64,6 @@ public class SetMealServiceImpl implements SetmealService {
 
             for (SetMealVO setmealVO : setmealList) {
                 List<SetMealDish> dishes = dishesMap.getOrDefault(setmealVO.getId(), List.of());
-                if (dishes.isEmpty()) {
-                    log.warn("套餐无菜品: setmealId ={}", setmealVO.getId());
-                    throw new SetMealNoDishesException(ErrorCode.SETMEAL_NO_DISHES, "套餐[" + setmealVO.getName() + "]未关联任何菜品");
-                }
                 setmealVO.setSetmealDishes(dishes);
             }
 
@@ -84,12 +81,12 @@ public class SetMealServiceImpl implements SetmealService {
         setmealMapper.addSetMeal(setmeal);
         List<SetMealDish> setMealDishes = setmealDTO.getSetmealDishes();
         if (setMealDishes == null || setMealDishes.isEmpty()) {
-            log.warn("新增套餐: 套餐菜品为空, setmealId={}", setmeal.getId());
-            return;
+            log.warn("新增套餐失败: 套餐菜品为空, setmealId={}", setmeal.getId());
+            throw new SetMealNoDishesException(ErrorCode.SETMEAL_NO_DISHES, "套餐[" + setmeal.getName() + "]未关联任何菜品");
         }
         setMealDishes.forEach(setMealDish -> setMealDish.setSetmealId(setmeal.getId()));
         setmealMapper.addSetMealDishes(setMealDishes);
-        batchUpdateDishFlavors(setMealDishes);
+        batchInsertSetMealDishFlavors(setMealDishes);
         log.info("新增套餐成功: id={}, dishCount={}", setmeal.getId(), setMealDishes.size());
     }
 
@@ -104,8 +101,11 @@ public class SetMealServiceImpl implements SetmealService {
             log.warn("删除套餐失败: 套餐已起售, names={}", nameList);
             throw new DeletionNotAllowedException(ErrorCode.SETMEAL_ON_SALE, String.join("、", nameList));
         }
-        setmealMapper.deleteSetMeal(idList);
+        for (Long setmealId : idList) {
+            setmealMapper.deleteSetMealDishFlavorsBySetmealId(setmealId);
+        }
         setmealMapper.deleteSetMealDishes(idList);
+        setmealMapper.deleteSetMeal(idList);
         log.info("删除套餐成功: idCount={}", idList.size());
     }
 
@@ -116,11 +116,6 @@ public class SetMealServiceImpl implements SetmealService {
         if (setmealVO == null) {
             log.warn("查询套餐详情失败: 套餐不存在, id={}", id);
             throw new SetMealNoDishesException(ErrorCode.SETMEAL_IS_NULL, "套餐不存在");
-        }
-        List<SetMealDish> dishes = setmealVO.getSetmealDishes();
-        if (dishes == null || dishes.isEmpty()) {
-            log.warn("套餐无菜品: setmealId={}", id);
-            throw new SetMealNoDishesException(ErrorCode.SETMEAL_NO_DISHES, "套餐[" + setmealVO.getName() + "]未关联任何菜品");
         }
         return setmealVO;
     }
@@ -157,26 +152,31 @@ public class SetMealServiceImpl implements SetmealService {
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO, setmeal);
         setmealMapper.updateSetMeal(setmeal);
+        setmealMapper.deleteSetMealDishFlavorsBySetmealId(setmeal.getId());
         setmealMapper.deleteSetMealDishes(List.of(setmeal.getId()));
         List<SetMealDish> setMealDishes = setmealDTO.getSetmealDishes();
-        setMealDishes.forEach(setMealDish -> setMealDish.setSetmealId(setmeal.getId()));
-        log.debug("更新套餐菜品: setmealId={}, dishCount={}", setmeal.getId(), setMealDishes.size());
-        setmealMapper.addSetMealDishes(setMealDishes);
-        batchUpdateDishFlavors(setMealDishes);
-        log.info("更新套餐成功: id={}, dishCount={}", setmeal.getId(), setMealDishes.size());
+        if (setMealDishes != null && !setMealDishes.isEmpty()) {
+            setMealDishes.forEach(setMealDish -> setMealDish.setSetmealId(setmeal.getId()));
+            log.debug("更新套餐菜品: setmealId={}, dishCount={}", setmeal.getId(), setMealDishes.size());
+            setmealMapper.addSetMealDishes(setMealDishes);
+            batchInsertSetMealDishFlavors(setMealDishes);
+        }
+        log.info("更新套餐成功: id={}, dishCount={}", setmeal.getId(), setMealDishes != null ? setMealDishes.size() : 0);
     }
 
-    private void batchUpdateDishFlavors(List<SetMealDish> setMealDishes) {
-        List<DishFlavorUpdateDTO> dishFlavorUpdates = setMealDishes.stream()
-                .filter(dish -> dish.getFlavors() != null && !dish.getFlavors().isEmpty())
-                .map(dish -> DishFlavorUpdateDTO.builder()
-                        .dishId(dish.getDishId())
-                        .flavors(dish.getFlavors())
-                        .build())
-                .collect(Collectors.toList());
-        if (!dishFlavorUpdates.isEmpty()) {
-            log.debug("批量更新菜品口味: dishCount={}", dishFlavorUpdates.size());
-            setmealMapper.batchUpdateDishFlavors(dishFlavorUpdates);
+    private void batchInsertSetMealDishFlavors(List<SetMealDish> setMealDishes) {
+        List<SetMealDishFlavor> allFlavors = new ArrayList<>();
+        for (SetMealDish dish : setMealDishes) {
+            if (dish.getSetmealDishFlavors() != null && !dish.getSetmealDishFlavors().isEmpty()) {
+                for (SetMealDishFlavor flavor : dish.getSetmealDishFlavors()) {
+                    flavor.setSetmealDishId(dish.getId());
+                    allFlavors.add(flavor);
+                }
+            }
+        }
+        if (!allFlavors.isEmpty()) {
+            log.debug("批量插入套餐菜品口味: flavorCount={}", allFlavors.size());
+            setmealMapper.addSetMealDishFlavors(allFlavors);
         }
     }
 }

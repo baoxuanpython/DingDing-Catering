@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper
 @Component("userSetMealMapper")
 public interface SetMealMapper {
-    List<Setmeal> list(Integer categoryId);
+    List<Setmeal> list(Long categoryId);
 
     List<DishItemVO> dish(Long id);
 

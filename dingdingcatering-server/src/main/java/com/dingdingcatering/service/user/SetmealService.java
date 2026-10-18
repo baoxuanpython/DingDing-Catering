@@ -15,7 +15,7 @@ public interface SetmealService {
      * @param categoryId 分类ID
      * @return 已启用的套餐列表
      */
-    List<Setmeal> list(Integer categoryId);
+    List<Setmeal> list(Long categoryId);
 
     /**
      * 查询套餐内菜品列表。

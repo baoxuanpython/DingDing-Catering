@@ -30,7 +30,7 @@ public class ReportServiceImpl implements ReportService {
     public SalesTop10ReportVO top10Dish(DataOverViewQueryDTO queryDTO) {
         log.debug("查询销量Top10菜品: begin={}, end={}", queryDTO.getBegin(), queryDTO.getEnd());
         List<DishSalesDTO> dishSalesList = reportMapper.top10Dish(queryDTO);
-        log.warn("top10Dish详细信息: {}", dishSalesList);
+        log.debug("top10Dish详细信息: {}", dishSalesList);
         
         String nameList = dishSalesList.stream()
                 .map(DishSalesDTO::getName)
@@ -125,6 +125,5 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public void exportReport(HttpServletResponse response) {
         log.debug("导出报表");
-
     }
 }

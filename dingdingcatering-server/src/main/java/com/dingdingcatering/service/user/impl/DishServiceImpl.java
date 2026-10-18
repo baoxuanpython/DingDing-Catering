@@ -20,7 +20,7 @@ public class DishServiceImpl implements DishService {
 
     @Override
     @Cacheable(value = "dish",key = "#categoryId" ,unless = "#result == null || #result.isEmpty()")
-    public List<Dish> list(Integer categoryId) {
+    public List<Dish> list(Long categoryId) {
         log.debug("缓存未命中，查询菜品列表: categoryId={}", categoryId);
         List<Dish> result = dishMapper.getListByCategoryId(categoryId);
         log.debug("查询菜品列表完成: categoryId={}, count={}", categoryId, result.size());

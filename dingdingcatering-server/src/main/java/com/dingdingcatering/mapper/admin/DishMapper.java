@@ -39,7 +39,7 @@ public interface DishMapper {
 
     void updateStatus(Integer status, Long id);
 
-    Integer queryByCategoryId(@Param("categoryId") Long categoryId);
+    List<String> queryByCategoryId(@Param("categoryId") Long categoryId);
 
     List<String> queryByStatus(@Param("dishIds") List<Long> dishIds);
 
@@ -48,4 +48,6 @@ public interface DishMapper {
     List<HashMap<String, String>> querySetmealByIds(List<Long> idList);
 
     List<Flavor> queryFlavorByDishId(Long id);
+
+    List<DishVO> getByIds(@Param("ids") List<Long> ids);
 }

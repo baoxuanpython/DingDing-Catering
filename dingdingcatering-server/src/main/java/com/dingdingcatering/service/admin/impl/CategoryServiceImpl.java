@@ -62,13 +62,17 @@ public class CategoryServiceImpl implements CategoryService {
     @AutoClearCache(CacheType.CATEGORY)
     public void deleteCategory(Long id) {
         log.info("删除分类: id={}", id);
-        if (setMealMapper.queryByCategoryId(id) > 0) {
-            log.warn("删除分类失败: 分类被套餐关联, id={}", id);
-            throw new DeletionNotAllowedException(ErrorCode.CATEGORY_RELATED_BY_SETMEAL);
+        List<String> setmealNames = setMealMapper.queryByCategoryId(id);
+        if (!setmealNames.isEmpty()) {
+            String detail = "分类被以下套餐关联：" + String.join("、", setmealNames);
+            log.warn("删除分类失败: 分类被套餐关联, id={}, setmeals={}", id, detail);
+            throw new DeletionNotAllowedException(ErrorCode.CATEGORY_RELATED_BY_SETMEAL, detail);
         }
-        if (dishMapper.queryByCategoryId(id) > 0) {
-            log.warn("删除分类失败: 分类被菜品关联, id={}", id);
-            throw new DeletionNotAllowedException(ErrorCode.CATEGORY_RELATED_BY_DISH);
+        List<String> dishNames = dishMapper.queryByCategoryId(id);
+        if (!dishNames.isEmpty()) {
+            String detail = "分类被以下菜品关联：" + String.join("、", dishNames);
+            log.warn("删除分类失败: 分类被菜品关联, id={}, dishes={}", id, detail);
+            throw new DeletionNotAllowedException(ErrorCode.CATEGORY_RELATED_BY_DISH, detail);
         }
         categoryMapper.deleteCategory(id);
         log.info("删除分类成功: id={}", id);

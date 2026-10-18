@@ -10,7 +10,7 @@ import java.util.List;
 @Component("userDishMapper")
 @Mapper
 public interface DishMapper {
-    List<Dish> getListByCategoryId(Integer categoryId);
+    List<Dish> getListByCategoryId(Long categoryId);
 
     Dish getById(Long id);
 

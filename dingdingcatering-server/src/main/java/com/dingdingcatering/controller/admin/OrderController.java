@@ -44,7 +44,7 @@ public class OrderController {
      * @return 订单详情（含菜品列表）
      */
     @GetMapping("/details/{number}")
-    public Result<OrderVO> queryOrderDetails(@PathVariable Long number) {
+    public Result<OrderVO> queryOrderDetails(@PathVariable String number) {
         OrderVO orderVO = orderService.queryOrderDetails(number);
         return Result.success(orderVO);
     }
@@ -64,7 +64,7 @@ public class OrderController {
     /**
      * 订单统计接口。
      * <p>
-     * 返回待接单、待派送、派送中的订单数量。
+     * 返回待接单、待派送、派送中、已完成、已取消、已退款的订单数量。
      *
      * @return 订单统计数据
      */
