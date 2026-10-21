@@ -139,7 +139,12 @@ public class GlobalExceptionHandler {
         log.error("参数校验失败：{}", message);
         return Result.error(ErrorCode.PARAM_ERROR, message);
     }
-
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("日期参数校验失败：{}", ex.getMessage());
+        return Result.error(ErrorCode.PARAM_ERROR, ex.getMessage());
+    }
     // ==================== 权限不足（HTTP 403） ====================
 
     /**

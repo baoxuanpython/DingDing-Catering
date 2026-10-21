@@ -3,6 +3,7 @@ package com.dingdingcatering.mapper.admin;
 import com.dingdingcatering.dto.DailyStatisticsDTO;
 import com.dingdingcatering.dto.DataOverViewQueryDTO;
 import com.dingdingcatering.dto.DishSalesDTO;
+import com.dingdingcatering.dto.HourlyStatisticsDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -13,7 +14,13 @@ public interface ReportMapper  {
 
     List<DailyStatisticsDTO> userStatistics(DataOverViewQueryDTO queryDTO);
 
+    List<HourlyStatisticsDTO> userStatisticsHourly(DataOverViewQueryDTO queryDTO);
+
     List<DailyStatisticsDTO> turnoverStatistics(DataOverViewQueryDTO queryDTO);
 
+    List<HourlyStatisticsDTO> turnoverStatisticsHourly(DataOverViewQueryDTO queryDTO);
+
     List<DailyStatisticsDTO> ordersStatistics(DataOverViewQueryDTO queryDTO);
+
+    List<HourlyStatisticsDTO> ordersStatisticsHourly(DataOverViewQueryDTO queryDTO);
 }

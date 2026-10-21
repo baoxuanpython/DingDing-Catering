@@ -26,6 +26,9 @@
         order by sales desc
         limit 10;
     </select>
+
+    <!-- ==================== 用户统计 ==================== -->
+
     <select id="userStatistics" resultType="com.dingdingcatering.dto.DailyStatisticsDTO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
         WITH RECURSIVE date_series AS (SELECT #{begin} AS dt
                                        UNION ALL
@@ -39,6 +42,24 @@
                  LEFT JOIN user u ON DATE(u.create_time) = ds.dt
         GROUP BY ds.dt;
     </select>
+
+    <select id="userStatisticsHourly" resultType="com.dingdingcatering.dto.HourlyStatisticsDTO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
+        WITH RECURSIVE hour_series AS (SELECT 0 AS hr
+                                       UNION ALL
+                                       SELECT hr + 1
+                                       FROM hour_series
+                                       WHERE hr &lt; 23)
+        SELECT hs.hr AS hour,
+               IFNULL(COUNT(u.id), 0) AS dailyNew,
+               IFNULL(SUM(COUNT(u.id)) OVER (ORDER BY hs.hr), 0) AS totalUsers
+        FROM hour_series hs
+                 LEFT JOIN user u ON DATE(u.create_time) = DATE(#{begin}) AND HOUR(u.create_time) = hs.hr
+        GROUP BY hs.hr
+        ORDER BY hs.hr;
+    </select>
+
+    <!-- ==================== 营业额统计 ==================== -->
+
     <select id="turnoverStatistics" resultType="com.dingdingcatering.dto.DailyStatisticsDTO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
         WITH RECURSIVE date_series AS (SELECT #{begin} AS dt
                                        UNION ALL
@@ -51,6 +72,25 @@
                  LEFT JOIN orders o ON DATE(o.order_time) = ds.dt AND o.status = 5
         GROUP BY ds.dt;
     </select>
+
+    <select id="turnoverStatisticsHourly" resultType="com.dingdingcatering.dto.HourlyStatisticsDTO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
+        WITH RECURSIVE hour_series AS (SELECT 0 AS hr
+                                       UNION ALL
+                                       SELECT hr + 1
+                                       FROM hour_series
+                                       WHERE hr &lt; 23)
+        SELECT hs.hr AS hour,
+               IFNULL(SUM(o.amount), 0) AS dailyTurnover
+        FROM hour_series hs
+                 LEFT JOIN orders o ON DATE(o.order_time) = DATE(#{begin})
+                     AND HOUR(o.order_time) = hs.hr
+                     AND o.status = 5
+        GROUP BY hs.hr
+        ORDER BY hs.hr;
+    </select>
+
+    <!-- ==================== 订单统计 ==================== -->
+
     <select id="ordersStatistics" resultType="com.dingdingcatering.dto.DailyStatisticsDTO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
         WITH RECURSIVE date_series AS (SELECT #{begin} AS dt
                                        UNION ALL
@@ -63,5 +103,20 @@
         FROM date_series ds
                  LEFT JOIN orders o ON DATE(o.order_time) = ds.dt
         GROUP BY ds.dt;
+    </select>
+
+    <select id="ordersStatisticsHourly" resultType="com.dingdingcatering.dto.HourlyStatisticsDTO" parameterType="com.dingdingcatering.dto.DataOverViewQueryDTO">
+        WITH RECURSIVE hour_series AS (SELECT 0 AS hr
+                                       UNION ALL
+                                       SELECT hr + 1
+                                       FROM hour_series
+                                       WHERE hr &lt; 23)
+        SELECT hs.hr AS hour,
+               IFNULL(COUNT(o.id), 0) AS totalCnt,
+               IFNULL(SUM(o.status = ${@com.dingdingcatering.entity.Orders@COMPLETED}), 0) AS validCnt
+        FROM hour_series hs
+                 LEFT JOIN orders o ON DATE(o.order_time) = DATE(#{begin}) AND HOUR(o.order_time) = hs.hr
+        GROUP BY hs.hr
+        ORDER BY hs.hr;
     </select>
 </mapper>
