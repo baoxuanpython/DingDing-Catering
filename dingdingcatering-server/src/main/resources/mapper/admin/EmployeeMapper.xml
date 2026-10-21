@@ -44,9 +44,17 @@
         </set>
         where id = #{id}
     </update>
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete
+        from employee
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
     <select id="list" resultType="com.dingdingcatering.entity.Employee">
         select id, name, username, phone, sex, id_number, status, create_time, update_time,
-               create_user, update_user, create_employee_name, update_employee_name
+        create_user, update_user, create_employee_name, update_employee_name
         from employee
         <where>
             <if test="name != null and name != ''">
@@ -59,11 +67,22 @@
                 and status = #{status}
             </if>
         </where>
-        order by update_time desc
+        order by id
     </select>
     <select id="getById" resultType="com.dingdingcatering.entity.Employee">
-        select id, name, username, phone, sex, id_number, status, create_time, update_time,
-               create_user, update_user, create_employee_name, update_employee_name
+        select id,
+               name,
+               username,
+               phone,
+               sex,
+               id_number,
+               status,
+               create_time,
+               update_time,
+               create_user,
+               update_user,
+               create_employee_name,
+               update_employee_name
         from employee
         where id = #{id}
     </select>

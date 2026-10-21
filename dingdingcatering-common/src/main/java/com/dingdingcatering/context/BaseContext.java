@@ -15,6 +15,7 @@ public class BaseContext {
 
     private static final ThreadLocal<Long> threadLocal = new ThreadLocal<>();
     private static final ThreadLocal<String> nameThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<String> userNameThreadLocal = new ThreadLocal<>();
 
     /**
      * 将当前用户 ID 存入 ThreadLocal
@@ -53,12 +54,31 @@ public class BaseContext {
     }
 
     /**
+     * 将当前用户姓名存入 ThreadLocal
+     *
+     * @param name 用户姓名
+     */
+    public static void setCurrentUserName(String name) {
+        userNameThreadLocal.set(name);
+    }
+
+    /**
+     * 获取当前线程中存储的用户姓名
+     *
+     * @return 用户姓名，若未设置则返回 null
+     */
+    public static String getCurrentUserName() {
+        return userNameThreadLocal.get();
+    }
+
+    /**
      * 移除当前线程中存储的用户 ID
      * 必须在请求结束时调用，防止 ThreadLocal 内存泄漏
      */
     public static void removeCurrentId() {
         threadLocal.remove();
         nameThreadLocal.remove();
+        userNameThreadLocal.remove();
     }
 
 }

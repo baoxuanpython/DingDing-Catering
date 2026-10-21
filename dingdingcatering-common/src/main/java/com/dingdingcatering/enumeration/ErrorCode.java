@@ -32,9 +32,9 @@ public enum ErrorCode {
     TOKEN_INVALID(1002, "令牌无效"),
     USER_NOT_LOGIN(1003, "用户未登录"),
     USER_NOT_FOUND(1004, "用户不存在或已被删除"),
-    ACCOUNT_NOT_FOUND(1005, "账号不存在"),
-    ACCOUNT_LOCKED(1006, "账号已被锁定"),
-    PASSWORD_ERROR(1007, "密码错误"),
+    ACCOUNT_NOT_FOUND(1005, "账号或密码错误"),
+    ACCOUNT_DISABLED(1006, "账号已被禁用"),
+    PASSWORD_ERROR(1007, "账号或密码错误"),
     LOGIN_FAILED(1008, "登录失败"),
 
     // ========== 员工模块 2xxx ==========

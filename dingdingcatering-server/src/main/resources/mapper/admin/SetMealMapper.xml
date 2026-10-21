@@ -3,6 +3,21 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.dingdingcatering.mapper.admin.SetMealMapper">
 
+    <resultMap id="setMealResultMap" type="com.dingdingcatering.vo.SetMealVO">
+        <id column="id" property="id"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="name" property="name"/>
+        <result column="price" property="price"/>
+        <result column="description" property="description"/>
+        <result column="image" property="image"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="status" property="status"/>
+        <result column="create_employee_name" property="createEmployeeName"/>
+        <result column="update_employee_name" property="updateEmployeeName"/>
+        <collection property="setmealDishes" ofType="com.dingdingcatering.entity.SetMealDish" resultMap="setMealDishResultMap"/>
+    </resultMap>
+
     <resultMap id="setMealDishResultMap" type="com.dingdingcatering.entity.SetMealDish">
         <id column="setmeal_dish_id" property="id"/>
         <result column="setmeal_id" property="setmealId"/>
@@ -18,21 +33,6 @@
             <result column="sdf_flavor_name" property="flavorName"/>
             <result column="sdf_value_list" property="valueList"/>
         </collection>
-    </resultMap>
-
-    <resultMap id="setMealResultMap" type="com.dingdingcatering.vo.SetMealVO">
-        <id column="id" property="id"/>
-        <result column="category_id" property="categoryId"/>
-        <result column="name" property="name"/>
-        <result column="price" property="price"/>
-        <result column="description" property="description"/>
-        <result column="image" property="image"/>
-        <result column="update_time" property="updateTime"/>
-        <result column="category_name" property="categoryName"/>
-        <result column="status" property="status"/>
-        <result column="create_employee_name" property="createEmployeeName"/>
-        <result column="update_employee_name" property="updateEmployeeName"/>
-        <collection property="setmealDishes" ofType="com.dingdingcatering.entity.SetMealDish" resultMap="setMealDishResultMap"/>
     </resultMap>
 
     <resultMap id="setMealDishResultMapBase" type="com.dingdingcatering.entity.SetMealDish">

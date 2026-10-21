@@ -5,7 +5,6 @@ import com.dingdingcatering.dto.EmployeeLoginDTO;
 import com.dingdingcatering.dto.EmployeePageQueryDTO;
 import com.dingdingcatering.dto.PasswordEditDTO;
 import com.dingdingcatering.entity.Employee;
-import com.dingdingcatering.properties.JwtProperties;
 import com.dingdingcatering.result.PageResult;
 import com.dingdingcatering.result.Result;
 import com.dingdingcatering.service.admin.EmployeeService;
@@ -27,7 +26,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
 
-    public EmployeeController(EmployeeService employeeService, JwtProperties jwtProperties) {
+    public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 
@@ -123,6 +122,11 @@ public class EmployeeController {
     @PutMapping("editPassword")
     public Result<Void> editPassword(@RequestBody PasswordEditDTO passwordEditDTO) {
         employeeService.editPassword(passwordEditDTO);
+        return Result.success();
+    }
+    @DeleteMapping("/batch")
+    public Result<Void> deleteEmployee(@RequestParam String ids) {
+        employeeService.deleteEmployee(ids);
         return Result.success();
     }
 }

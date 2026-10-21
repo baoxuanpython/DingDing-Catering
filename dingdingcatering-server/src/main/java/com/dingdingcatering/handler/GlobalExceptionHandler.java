@@ -91,10 +91,10 @@ public class GlobalExceptionHandler {
      * @param ex 账号锁定异常
      * @return 错误响应（HTTP 401）
      */
-    @ExceptionHandler(AccountLockedException.class)
+    @ExceptionHandler(AccountDisabledException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Result<String> handleAccountLockedException(AccountLockedException ex) {
-        log.error("账号被锁定：{}", ex.getMessage());
+    public Result<String> handleAccountDisabledException(AccountDisabledException ex) {
+        log.error("账号被禁用：{}", ex.getMessage());
         return Result.error(ex.getErrorCode(), ex.getMessage());
     }
 
@@ -153,6 +153,13 @@ public class GlobalExceptionHandler {
     public Result<String> handleSecurityException(SecurityException ex) {
         log.error("安全异常：{}", ex.getMessage());
         return Result.error(ErrorCode.SECURITY_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedOperationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Result<String> handleUnauthorizedOperationException(UnauthorizedOperationException ex) {
+        log.error("无权操作：{}", ex.getMessage());
+        return Result.error(ex.getErrorCode(), ex.getMessage());
     }
 
     // ==================== 资源冲突（HTTP 409） ====================

@@ -63,10 +63,13 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
 
         try {
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
-            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            String empName = claims.get(JwtClaimsConstant.EMP_NAME).toString();
+            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMPID).toString());
+            String empName = claims.get(JwtClaimsConstant.EMPNAME).toString();
+            String userName = claims.get(JwtClaimsConstant.USERNAME).toString();
+
             BaseContext.setCurrentId(empId);
             BaseContext.setCurrentName(empName);
+            BaseContext.setCurrentUserName(userName);
 
             return true;
         } catch (ExpiredJwtException ex) {

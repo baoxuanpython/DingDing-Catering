@@ -68,4 +68,5 @@ public interface EmployeeService {
      */
     void editPassword(@Valid PasswordEditDTO passwordEditDTO);
 
+    void deleteEmployee(String ids);
 }

@@ -24,4 +24,6 @@ public interface EmployeeMapper {
     void updateEmployee(Employee employee);
 
     Employee getById(Long id);
+
+    void deleteBatch(List<Long> ids);
 }

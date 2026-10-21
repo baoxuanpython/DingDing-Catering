@@ -10,10 +10,7 @@ import com.dingdingcatering.dto.EmployeePageQueryDTO;
 import com.dingdingcatering.dto.PasswordEditDTO;
 import com.dingdingcatering.entity.Employee;
 import com.dingdingcatering.enumeration.ErrorCode;
-import com.dingdingcatering.exception.AccountLockedException;
-import com.dingdingcatering.exception.AccountNotFoundException;
-import com.dingdingcatering.exception.PasswordEditFailedException;
-import com.dingdingcatering.exception.PasswordErrorException;
+import com.dingdingcatering.exception.*;
 import com.dingdingcatering.mapper.admin.EmployeeMapper;
 import com.dingdingcatering.properties.JwtProperties;
 import com.dingdingcatering.result.PageResult;
@@ -28,9 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Slf4j
@@ -68,15 +63,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         if (employee.getStatus().equals(StatusConstant.DISABLE)) {
-            log.warn("员工登录失败: 账号被锁定, username={}, name={}", username, employee.getName());
-            //账号被锁定
-            throw new AccountLockedException(ErrorCode.ACCOUNT_LOCKED);
+            log.warn("员工登录失败: 账号被禁用, username={}, name={}", username, employee.getName());
+            //账号被禁用
+            throw new AccountDisabledException(ErrorCode.ACCOUNT_DISABLED);
         }
         //登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
-        claims.put(JwtClaimsConstant.EMP_ID, employee.getId());
+        claims.put(JwtClaimsConstant.EMPID, employee.getId());
         claims.put(JwtClaimsConstant.USERNAME, employee.getUsername());
-        claims.put(JwtClaimsConstant.EMP_NAME, employee.getName());
+        claims.put(JwtClaimsConstant.EMPNAME, employee.getName());
         claims.put(JwtClaimsConstant.ROLE, employee.getUsername().equals(JwtClaimsConstant.ADMIN) ? JwtClaimsConstant.ADMIN : JwtClaimsConstant.USER);
         String token = JwtUtil.createJWT(
                 jwtProperties.getAdminSecretKey(),
@@ -95,6 +90,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void addEmployee(EmployeeDTO employeeDTO) {
+        if (!Objects.equals(BaseContext.getCurrentUserName(), JwtClaimsConstant.ADMIN)) {
+            throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR);
+        }
         log.info("新增员工: username={}, name={}", employeeDTO.getUsername(), employeeDTO.getName());
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
@@ -113,6 +111,12 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employeePageQueryDTO.getPageSize())) {
 
             List<Employee> list = employeeMapper.list(employeePageQueryDTO);
+            list.forEach(employee -> {
+                if (!Objects.equals(BaseContext.getCurrentUserName(), JwtClaimsConstant.ADMIN)) {
+                    employee.setPhone(employee.getPhone().substring(0, 3) + "****" + employee.getPhone().substring(7));
+                    employee.setIdNumber(employee.getIdNumber().substring(0, 4) + "****" + employee.getIdNumber().substring(14));
+                }
+            });
             log.debug("分页查询员工完成: total={}", employeePage.getTotal());
             return new PageResult<>(employeePage.getTotal(), list);
         }
@@ -120,6 +124,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void updateStatus(Integer status, Long id) {
+        if (!Objects.equals(BaseContext.getCurrentName(), JwtClaimsConstant.ADMIN)) {
+            throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR);
+        }
         log.info("更新员工状态: id={}, status={}", id, status);
         Employee employee = Employee.builder()
                 .id(id)
@@ -145,14 +152,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee getEmployee(Long id) {
+        Employee employee = employeeMapper.getById(id);
+        if (!Objects.equals(BaseContext.getCurrentUserName(), JwtClaimsConstant.ADMIN)) {
+            employee.setPhone(employee.getPhone().substring(0, 3) + "****" + employee.getPhone().substring(7));
+            employee.setIdNumber(employee.getIdNumber().substring(0, 4) + "****" + employee.getIdNumber().substring(14));
+        }
         log.debug("查询员工详情: id={}", id);
-        return employeeMapper.getById(id);
+        return employee;
     }
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void editPassword(PasswordEditDTO passwordEditDTO) {
+        if (!Objects.equals(BaseContext.getCurrentId(), passwordEditDTO.getEmpId())) {
+            throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR);
+        }
         log.info("修改密码: empId={}", BaseContext.getCurrentId());
         Function<String, String> toMD5 = password -> DigestUtils.md5DigestAsHex(password.getBytes());
 
@@ -170,5 +185,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setPassword(toMD5.apply(passwordEditDTO.getNewPassword()));
         employeeMapper.updateEmployee(employee);
         log.info("修改密码成功: empId={}", passwordEditDTO.getEmpId());
+    }
+
+    @Override
+    public void deleteEmployee(String ids) {
+        if (!Objects.equals(BaseContext.getCurrentUserName(), JwtClaimsConstant.ADMIN)) {
+            throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR);
+        }
+        List<Long> idList = Arrays.stream(ids.split(",")).map(Long::valueOf).toList();
+        if (idList.contains(BaseContext.getCurrentId())) {
+            throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR, "不能删除当前登录用户");
+        }
+        log.info("删除员工: ids={}", idList);
+        employeeMapper.deleteBatch(idList);
+        log.info("删除员工成功: ids={}", idList);
     }
 }

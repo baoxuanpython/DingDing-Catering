@@ -10,7 +10,7 @@ public class JwtClaimsConstant {
     /**
      * 员工 ID 字段
      */
-    public static final String EMP_ID = "empId";
+    public static final String EMPID = "empId";
     /**
      * 用户 ID 字段
      */
@@ -32,5 +32,5 @@ public class JwtClaimsConstant {
     /**
      * 员工姓名字段
      */
-    public static final String EMP_NAME = "empName";
+    public static final String EMPNAME = "empName";
 }

@@ -51,7 +51,7 @@
                 #{id}
             </foreach>
         </where>
-        order by di.id desc
+        order by di.status desc, di.id
     </select>
 
     <select id="pageQueryIds" resultType="java.lang.Long">
@@ -68,7 +68,7 @@
                 and di.status = #{status}
             </if>
         </where>
-        order by di.id desc
+        order by di.status desc, di.id
     </select>
 
     <delete id="deleteByIds" parameterType="java.util.List">
