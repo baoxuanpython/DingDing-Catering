@@ -1,8 +1,8 @@
 package com.dingdingcatering.service.user.impl;
 
-import com.dingdingcatering.entity.Dish;
 import com.dingdingcatering.mapper.user.DishMapper;
 import com.dingdingcatering.service.user.DishService;
+import com.dingdingcatering.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -20,9 +20,9 @@ public class DishServiceImpl implements DishService {
 
     @Override
     @Cacheable(value = "dish",key = "#categoryId" ,unless = "#result == null || #result.isEmpty()")
-    public List<Dish> list(Long categoryId) {
+    public List<DishVO> list(Long categoryId) {
         log.debug("缓存未命中，查询菜品列表: categoryId={}", categoryId);
-        List<Dish> result = dishMapper.getListByCategoryId(categoryId);
+        List<DishVO> result = dishMapper.getListByCategoryId(categoryId);
         log.debug("查询菜品列表完成: categoryId={}, count={}", categoryId, result.size());
         return result;
     }

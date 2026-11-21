@@ -6,6 +6,11 @@ spring:
     active: dev
   main:
     allow-circular-references: true
+  servlet:
+    multipart:
+      # 单文件上限，需与 FileUploadServiceImpl 中的 MAX_FILE_SIZE 保持一致
+      max-file-size: 5MB
+      max-request-size: 5MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${dingding.datasource.host}:${dingding.datasource.port}/${dingding.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true
@@ -74,10 +79,13 @@ dingding:
     user-ttl: ${dingding.jwt.user-ttl}
     user-token-name: ${dingding.jwt.user-token-name}
   alioss:
-    region: ${dingding.alioss.region}`
+    region: ${dingding.alioss.region}
     bucket-name: ${dingding.alioss.bucket-name}
     access-key-id: ${dingding.alioss.access-key-id}
     access-key-secret: ${dingding.alioss.access-key-secret}
   wechat:
     appid: ${dingding.wechat.appid}
     secret: ${dingding.wechat.secret}
+  websocket:
+    # WebSocket 握手允许的浏览器来源（逗号分隔），生产环境替换为正式域名；留空表示不限制
+    allowed-origins: http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080

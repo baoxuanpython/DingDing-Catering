@@ -6,14 +6,59 @@
         from setmeal
         where category_id = #{categoryId}
     </select>
-    <select id="dish" resultType="com.dingdingcatering.vo.DishItemVO">
-        SELECT sd.copies,
-               d.name,
-               d.image,
-               d.description
+    <resultMap id="setmealDishResultMap" type="com.dingdingcatering.entity.SetMealDish">
+        <id property="id" column="id"/>
+        <result property="setmealId" column="setmeal_id"/>
+        <result property="dishId" column="dish_id"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="copies" column="copies"/>
+        <collection property="setmealDishFlavors" ofType="com.dingdingcatering.entity.SetMealDishFlavor">
+            <id property="id" column="sdf_id"/>
+            <result property="setmealDishId" column="setmeal_dish_id"/>
+            <result property="flavorId" column="flavor_id"/>
+            <result property="flavorName" column="flavor_name"/>
+            <result property="flavorValue" column="flavor_value"/>
+            <result property="valueList" column="value_list"/>
+        </collection>
+    </resultMap>
+    <select id="dish" resultMap="setmealDishResultMap">
+        SELECT sd.id,
+               sd.setmeal_id,
+               sd.dish_id,
+               sd.name,
+               sd.price,
+               sd.copies,
+               sdf.id          AS sdf_id,
+               sdf.setmeal_dish_id,
+               sdf.flavor_id,
+               sdf.flavor_name,
+               sdf.flavor_value,
+               sdf.value_list
         FROM setmeal_dish sd
-                 INNER JOIN dish d ON sd.dish_id = d.id
+                 LEFT JOIN setmeal_dish_flavor sdf ON sd.id = sdf.setmeal_dish_id
         WHERE sd.setmeal_id = #{id}
+    </select>
+
+    <select id="queryDishesBySetmealIds" resultMap="setmealDishResultMap">
+        SELECT sd.id,
+               sd.setmeal_id,
+               sd.dish_id,
+               sd.name,
+               sd.price,
+               sd.copies,
+               sdf.id          AS sdf_id,
+               sdf.setmeal_dish_id,
+               sdf.flavor_id,
+               sdf.flavor_name,
+               sdf.flavor_value,
+               sdf.value_list
+        FROM setmeal_dish sd
+                 LEFT JOIN setmeal_dish_flavor sdf ON sd.id = sdf.setmeal_dish_id
+        WHERE sd.setmeal_id IN
+        <foreach collection="setmealIds" item="setmealId" open="(" separator="," close=")">
+            #{setmealId}
+        </foreach>
     </select>
 
     <select id="getById" resultType="com.dingdingcatering.entity.Setmeal">

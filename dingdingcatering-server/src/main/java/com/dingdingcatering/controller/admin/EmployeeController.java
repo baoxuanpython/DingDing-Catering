@@ -4,6 +4,7 @@ import com.dingdingcatering.dto.EmployeeDTO;
 import com.dingdingcatering.dto.EmployeeLoginDTO;
 import com.dingdingcatering.dto.EmployeePageQueryDTO;
 import com.dingdingcatering.dto.PasswordEditDTO;
+import com.dingdingcatering.dto.PasswordSetDTO;
 import com.dingdingcatering.entity.Employee;
 import com.dingdingcatering.result.PageResult;
 import com.dingdingcatering.result.Result;
@@ -114,16 +115,37 @@ public class EmployeeController {
     }
 
     /**
-     * 员工修改密码接口。
+     * 员工修改本人密码接口。
+     * <p>
+     * 仅允许修改当前登录员工自己的密码，且必须提供正确的旧密码。
      *
      * @param passwordEditDTO 含旧密码与新密码的传输对象
      * @return 修改成功提示
      */
-    @PutMapping("editPassword")
-    public Result<Void> editPassword(@RequestBody PasswordEditDTO passwordEditDTO) {
+    @PutMapping("/password")
+    public Result<Void> editPassword(@RequestBody @Valid PasswordEditDTO passwordEditDTO) {
         employeeService.editPassword(passwordEditDTO);
         return Result.success();
     }
+
+    /**
+     * 管理员修改指定员工密码接口。
+     * <p>
+     * 仅管理员可调用，无需提供旧密码；新密码由管理员在页面输入，
+     * 服务端加密后落库，接口不返回任何密码内容。
+     * 管理员不能通过该接口修改本人密码，需走修改本人密码接口。
+     *
+     * @param id             目标员工ID
+     * @param passwordSetDTO 含管理员指定的新密码
+     * @return 修改成功提示
+     */
+    @PutMapping("/{id}/password")
+    public Result<Void> updatePassword(@PathVariable Long id,
+                                       @RequestBody @Valid PasswordSetDTO passwordSetDTO) {
+        employeeService.updatePassword(id, passwordSetDTO);
+        return Result.success();
+    }
+
     @DeleteMapping("/batch")
     public Result<Void> deleteEmployee(@RequestParam String ids) {
         employeeService.deleteEmployee(ids);

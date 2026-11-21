@@ -11,5 +11,9 @@ public interface UserMapper {
 
     User getById(Long id, String openid);
 
+    User selectById(Long id);
+
     String getUserName(Long id);
+
+    void updateInfo(User user);
 }

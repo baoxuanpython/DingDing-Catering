@@ -156,9 +156,17 @@ public class OrderDetailEnrichUtil {
             // 替换 setmealDishes 为用户实际点的菜品列表
             setmealVO.setSetmealDishes(orderedDishes);
 
+            // 套餐份数：取该套餐各明细中的最大份数（每条明细的 setmeal_copies 相同）
+            Integer setmealCopies = details.stream()
+                    .map(OrderDetail::getSetmealCopies)
+                    .filter(Objects::nonNull)
+                    .max(Integer::compareTo)
+                    .orElse(null);
+
             // 更新代表记录
             representative.setName(setmealVO.getName());
             representative.setDishId(null);
+            representative.setSetmealCopies(setmealCopies);
             representative.setSetmealVO(setmealVO);
 
             aggregatedSetmealDetails.add(representative);

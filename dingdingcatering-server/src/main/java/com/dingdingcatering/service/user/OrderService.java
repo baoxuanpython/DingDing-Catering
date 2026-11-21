@@ -1,11 +1,12 @@
 package com.dingdingcatering.service.user;
 
+import com.dingdingcatering.dto.OrdersCancelDTO;
 import com.dingdingcatering.dto.OrdersPaymentDTO;
 import com.dingdingcatering.dto.OrdersSubmitDTO;
 import com.dingdingcatering.result.PageResult;
+import com.dingdingcatering.vo.OrderPaymentVO;
 import com.dingdingcatering.vo.OrderSubmitVO;
 import com.dingdingcatering.vo.OrderVO;
-import com.dingdingcatering.vo.PaymentSuccessVO;
 
 /**
  * C端订单服务接口
@@ -32,7 +33,7 @@ public interface OrderService {
      * @param ordersPaymentDTO 订单号及付款方式
      * @return 支付成功结果
      */
-    PaymentSuccessVO payment(OrdersPaymentDTO ordersPaymentDTO);
+    OrderPaymentVO payment(OrdersPaymentDTO ordersPaymentDTO);
 
     /**
      * 查询历史订单（分页）。
@@ -62,7 +63,8 @@ public interface OrderService {
     /**
      * 用户取消订单。
      *
-     * @param id 订单ID
+     * @param id              订单ID
+     * @param ordersCancelDTO 取消原因
      */
-    void cancel(Long id);
+    void cancel(Long id, OrdersCancelDTO ordersCancelDTO);
 }

@@ -28,22 +28,22 @@
 
 ## 🚀 技术亮点 (Technical Highlights)
 
-| 技术 | 用途 |
-|------|------|
-| **Spring Boot 3.2.5 + JDK 17** | 项目基础框架，使用最新 LTS 版本 |
-| **MyBatis + PageHelper** | 数据持久化 + 物理分页，驼峰映射自动开启 |
-| **Redis + JSON 序列化** | 菜品/套餐/店铺状态缓存，使用 `JacksonObjectMapper` 统一序列化配置，解决中文乱码 |
-| **JWT + HandlerInterceptor** | 管理端/用户端双通道无状态认证，Token 过期/无效分类处理 |
-| **Spring AOP — AutoFill** | 拦截 `@AutoFill` 注解，反射填充 `createTime/updateTime/createUser/updateUser`，缺失 setter 时优雅跳过 |
-| **Spring AOP — AutoClearCache** | 拦截 `@AutoClearCache` 注解，方法成功返回后按 `CacheType` 精准清除对应缓存，失败不抛异常 |
-| **阿里云 OSS** | 图片文件云端存储，集成 `alibabacloud-oss-v2` SDK |
-| **Druid 连接池** | 数据库连接池 + 监控面板（`/druid/*`），配置慢 SQL 阈值 5s |
-| **WebSocket** | 管理端实时接收新订单提醒和用户催单提醒 |
-| **@Scheduled 定时任务** | 超时未支付订单自动取消（`OrderTask`） |
-| **Knife4j (Swagger)** | 接口文档自动生成，支持在线调试 |
-| **FastJSON2 + Jackson** | JSON 处理双引擎，Redis 序列化使用统一 Jackson 配置 |
-| **@Transactional** | 关键业务方法声明 `rollbackFor = Exception.class`，保证异常回滚 |
-| **Maven 多模块** | `common`（工具/常量/异常/注解）/ `pojo`（DTO/VO/Entity）/ `server`（Controller/Service/Mapper）三层分离 |
+| 技术                            | 用途                                                                                                    |
+|---------------------------------|---------------------------------------------------------------------------------------------------------|
+| **Spring Boot 3.2.5 + JDK 17**  | 项目基础框架，使用最新 LTS 版本                                                                         |
+| **MyBatis + PageHelper**        | 数据持久化 + 物理分页，驼峰映射自动开启                                                                 |
+| **Redis + JSON 序列化**         | 菜品/套餐/店铺状态缓存，使用 `JacksonObjectMapper` 统一序列化配置，解决中文乱码                         |
+| **JWT + HandlerInterceptor**    | 管理端/用户端双通道无状态认证，Token 过期/无效分类处理                                                  |
+| **Spring AOP — AutoFill**       | 拦截 `@AutoFill` 注解，反射填充 `createTime/updateTime/createUser/updateUser`，缺失 setter 时优雅跳过   |
+| **Spring AOP — AutoClearCache** | 拦截 `@AutoClearCache` 注解，方法成功返回后按 `CacheType` 精准清除对应缓存，失败不抛异常                |
+| **阿里云 OSS**                  | 图片文件云端存储，集成 `alibabacloud-oss-v2` SDK                                                        |
+| **Druid 连接池**                | 数据库连接池 + 监控面板（`/druid/*`），配置慢 SQL 阈值 5s                                               |
+| **WebSocket**                   | 管理端实时接收新订单提醒和用户催单提醒                                                                  |
+| **@Scheduled 定时任务**         | 超时未支付订单自动取消（`OrderTask`）                                                                   |
+| **Knife4j (Swagger)**           | 接口文档自动生成，支持在线调试                                                                          |
+| **FastJSON2 + Jackson**         | JSON 处理双引擎，Redis 序列化使用统一 Jackson 配置                                                      |
+| **@Transactional**              | 关键业务方法声明 `rollbackFor = Exception.class`，保证异常回滚                                          |
+| **Maven 多模块**                | `common`（工具/常量/异常/注解）/ `pojo`（DTO/VO/Entity）/ `server`（Controller/Service/Mapper）三层分离 |
 
 ## 🔧 重构与优化 (Refactor)
 
@@ -79,11 +79,11 @@
 4. 访问 `http://localhost:8080/doc.html` 查看 Knife4j 接口文档。
 
 ### 环境变量清单
-| 变量 | 说明 |
-|------|------|
-| `dingding.datasource.host/port/database/username/password` | 数据库连接 |
-| `dingding.redis.host/port` | Redis 连接 |
-| `dingding.jwt.admin-secret-key/admin-ttl/admin-token-name` | 管理端 JWT |
-| `dingding.jwt.user-secret-key/user-ttl/user-token-name` | 用户端 JWT |
+| 变量                                                                 | 说明       |
+|----------------------------------------------------------------------|------------|
+| `dingding.datasource.host/port/database/username/password`           | 数据库连接 |
+| `dingding.redis.host/port`                                           | Redis 连接 |
+| `dingding.jwt.admin-secret-key/admin-ttl/admin-token-name`           | 管理端 JWT |
+| `dingding.jwt.user-secret-key/user-ttl/user-token-name`              | 用户端 JWT |
 | `dingding.alioss.region/bucket-name/access-key-id/access-key-secret` | 阿里云 OSS |
-| `dingding.wechat.appid/secret` | 微信小程序 |
+| `dingding.wechat.appid/secret`                                       | 微信小程序 |

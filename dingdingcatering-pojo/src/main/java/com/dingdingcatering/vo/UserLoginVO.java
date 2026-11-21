@@ -22,6 +22,12 @@ public class UserLoginVO implements Serializable {
     /** 微信OpenID */
     private String openid;
 
+    /** 昵称 */
+    private String name;
+
+    /** 头像URL */
+    private String avatar;
+
     /** JWT令牌 */
     private String token;
 

@@ -1,11 +1,11 @@
 package com.dingdingcatering.mapper.user;
 
+import com.dingdingcatering.entity.SetMealDish;
 import com.dingdingcatering.entity.Setmeal;
-import com.dingdingcatering.vo.DishItemVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -13,8 +13,10 @@ import java.util.List;
 public interface SetMealMapper {
     List<Setmeal> list(Long categoryId);
 
-    List<DishItemVO> dish(Long id);
+    List<SetMealDish> dish(Long id);
 
     Setmeal getById(Long id);
+
+    List<SetMealDish> queryDishesBySetmealIds(@Param("setmealIds") List<Long> setmealIds);
 
 }

@@ -60,15 +60,29 @@
             status=2
         where number = #{orderNumber}
     </update>
-    <delete id="cancelOrder">
+    <select id="getIdByNumber" resultType="java.lang.Long">
+        select id
+        from orders
+        where number = #{number}
+        limit 1
+    </select>
+    <update id="cancelOrderWithRefund">
         update orders
         set status        = 7,
             cancel_time   = now(),
-            cancel_reason = '用户取消',
+            cancel_reason = #{cancelReason},
             pay_status    = 2
         where id = #{id}
           and user_id = #{userId}
-    </delete>
+    </update>
+    <update id="cancelOrderWithoutRefund">
+        update orders
+        set status        = 6,
+            cancel_time   = now(),
+            cancel_reason = #{cancelReason}
+        where id = #{id}
+          and user_id = #{userId}
+    </update>
     <select id="getHistoryOrders" resultType="com.dingdingcatering.vo.OrderVO">
         select *
         from orders
@@ -86,7 +100,7 @@
                od.dish_id,
                od.setmeal_id,
                od.flavor_id,
-               (SELECT GROUP_CONCAT(f.flavor_name)
+               (SELECT GROUP_CONCAT(f.flavor_name ORDER BY FIND_IN_SET(f.id, od.flavor_id))
                 FROM flavor f
                 WHERE FIND_IN_SET(f.id, od.flavor_id)) AS flavor_name,
                od.flavor_val,
@@ -98,6 +112,7 @@
         <foreach collection="orderIds" item="orderId" open="(" separator="," close=")">
             #{orderId}
         </foreach>
+        order by od.id
     </select>
     <select id="getOrdersById" resultType="com.dingdingcatering.entity.Orders">
         select *

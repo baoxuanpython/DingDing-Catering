@@ -14,7 +14,8 @@ public interface ShoppingCartMapper {
                                        @Param("flavorId") String flavorId);
 
     ShoppingCart findByUserIdAndSetmealId(@Param("userId") Long userId,
-                                          @Param("setmealId") Long setmealId);
+                                          @Param("setmealId") Long setmealId,
+                                          @Param("flavorId") String flavorId);
 
     void updateNumber(@Param("id") Long id,
                       @Param("number") Integer number);

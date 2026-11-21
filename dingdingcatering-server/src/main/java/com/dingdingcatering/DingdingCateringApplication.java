@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableTransactionManagement
+@EnableScheduling
 @Slf4j
 public class DingdingCateringApplication {
     public static void main(String[] args) {

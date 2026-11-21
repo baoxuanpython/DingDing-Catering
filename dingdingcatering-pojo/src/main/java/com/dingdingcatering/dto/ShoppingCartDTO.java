@@ -22,4 +22,7 @@ public class ShoppingCartDTO implements Serializable {
     /** 指定口味值列表（前端传数组，后端拼接为逗号分隔字符串） */
     private List<String> flavorVal;
 
+    /** 套餐内各菜品的口味选择（仅套餐使用，与 flavorId/flavorVal 互斥） */
+    private List<SetmealFlavorDTO> setmealFlavors;
+
 }

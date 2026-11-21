@@ -1,9 +1,9 @@
 package com.dingdingcatering.controller.user;
 
+import com.dingdingcatering.entity.SetMealDish;
 import com.dingdingcatering.entity.Setmeal;
 import com.dingdingcatering.result.Result;
 import com.dingdingcatering.service.user.SetmealService;
-import com.dingdingcatering.vo.DishItemVO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,13 +33,13 @@ public class SetmealController {
     }
 
     /**
-     * 查询套餐内菜品列表接口。
+     * 查询套餐内菜品列表接口（含口味选项）。
      *
      * @param id 用于查询套餐的主键标识
-     * @return 套餐包含的菜品项列表
+     * @return 套餐包含的菜品及口味列表
      */
     @GetMapping("/dish/{id}")
-    public Result<List<DishItemVO>> dish(@PathVariable Long id) {
+    public Result<List<SetMealDish>> dish(@PathVariable Long id) {
         return Result.success(setmealService.dish(id));
     }
 }

@@ -31,6 +31,12 @@
         FROM shopping_cart
         WHERE user_id = #{userId}
           AND setmeal_id = #{setmealId}
+        <if test="flavorId != null">
+            AND flavor_id = #{flavorId}
+        </if>
+        <if test="flavorId == null">
+            AND flavor_id IS NULL
+        </if>
         LIMIT 1
     </select>
     <select id="listByUserId" resultType="com.dingdingcatering.entity.ShoppingCart">

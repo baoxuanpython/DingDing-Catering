@@ -22,13 +22,14 @@ public class AddressBookServiceImpl implements AddressBookService {
     }
 
     @Override
-    public void save(AddressBook addressBook) {
+    public AddressBook save(AddressBook addressBook) {
         Long currentUserId = BaseContext.getCurrentId();
         addressBook.setUserId(currentUserId);
         log.info("新增地址: userId={}", currentUserId);
         validateUserIdOwnership(addressBook.getUserId(), currentUserId);
         addressBookMapper.insert(addressBook);
         log.info("新增地址成功: id={}, userId={}", addressBook.getId(), currentUserId);
+        return addressBook;
     }
 
     @Override
@@ -58,12 +59,13 @@ public class AddressBookServiceImpl implements AddressBookService {
     }
 
     @Override
-    public void updateAddressBook(AddressBook addressBook) {
+    public AddressBook updateAddressBook(AddressBook addressBook) {
         Long currentUserId = BaseContext.getCurrentId();
         log.info("更新地址: id={}, userId={}", addressBook.getId(), currentUserId);
         validateUserIdOwnership(addressBook.getUserId(), currentUserId);
         addressBookMapper.updateAddressBook(addressBook);
         log.info("更新地址成功: id={}", addressBook.getId());
+        return addressBook;
     }
 
     @Override

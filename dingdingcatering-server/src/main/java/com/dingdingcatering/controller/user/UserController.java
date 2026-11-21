@@ -1,15 +1,14 @@
 package com.dingdingcatering.controller.user;
 
+import com.dingdingcatering.dto.UserEditDTO;
 import com.dingdingcatering.dto.UserLoginDTO;
+import com.dingdingcatering.entity.User;
 import com.dingdingcatering.result.Result;
 import com.dingdingcatering.service.user.UserService;
 
 import com.dingdingcatering.vo.UserLoginVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * C端用户控制器
@@ -49,5 +48,26 @@ public class UserController {
     @PostMapping("/logout")
     public Result<Void> logout() {
         return Result.success();
+    }
+
+    /**
+     * 查询当前用户信息接口。
+     *
+     * @return 用户信息
+     */
+    @GetMapping("/info")
+    public Result<User> info() {
+        return Result.success(userService.info());
+    }
+
+    /**
+     * 修改当前用户信息接口。
+     *
+     * @param userEditDTO 需修改的字段
+     * @return 修改后的完整用户信息
+     */
+    @PutMapping("/info")
+    public Result<User> updateInfo(@RequestBody UserEditDTO userEditDTO) {
+        return Result.success(userService.updateInfo(userEditDTO));
     }
 }

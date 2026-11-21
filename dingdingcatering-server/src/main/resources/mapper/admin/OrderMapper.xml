@@ -106,7 +106,7 @@
                od.dish_id,
                od.setmeal_id,
                od.flavor_id,
-               (SELECT GROUP_CONCAT(f.flavor_name)
+               (SELECT GROUP_CONCAT(f.flavor_name ORDER BY FIND_IN_SET(f.id, od.flavor_id))
                 FROM flavor f
                 WHERE FIND_IN_SET(f.id, od.flavor_id)) AS flavor_name,
                od.flavor_val,

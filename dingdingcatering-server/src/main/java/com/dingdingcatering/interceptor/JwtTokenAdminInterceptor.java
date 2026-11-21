@@ -12,6 +12,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -70,6 +71,7 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             BaseContext.setCurrentId(empId);
             BaseContext.setCurrentName(empName);
             BaseContext.setCurrentUserName(userName);
+            BaseContext.setCurrentRole(resolveRole(claims.get(JwtClaimsConstant.ROLE), userName));
 
             return true;
         } catch (ExpiredJwtException ex) {
@@ -77,6 +79,23 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
         } catch (Exception ex) {
             throw new TokenInvalidException(ErrorCode.TOKEN_INVALID);
         }
+    }
+
+    /**
+     * 解析令牌中的角色标识
+     * <p>
+     * 老版本令牌未携带 role 声明，此时按登录用户名兜底判定，
+     * 保证历史令牌不会因为缺少声明而全部被降级为普通员工。
+     *
+     * @param roleClaim 令牌中的角色声明，可能为 null
+     * @param userName  登录用户名
+     * @return 角色标识（admin / user）
+     */
+    private String resolveRole(Object roleClaim, String userName) {
+        if (roleClaim != null && !roleClaim.toString().isBlank()) {
+            return roleClaim.toString();
+        }
+        return JwtClaimsConstant.ADMIN.equals(userName) ? JwtClaimsConstant.ADMIN : JwtClaimsConstant.USER;
     }
 
     /**
@@ -91,7 +110,7 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
     public void afterCompletion(@NonNull HttpServletRequest request,
                                 @NonNull HttpServletResponse response,
                                 @NonNull Object handler,
-                                Exception ex) {
+                                @Nullable Exception ex) {
         BaseContext.removeCurrentId();
     }
 }

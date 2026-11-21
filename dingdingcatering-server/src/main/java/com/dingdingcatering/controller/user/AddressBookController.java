@@ -1,9 +1,12 @@
 package com.dingdingcatering.controller.user;
 
+import com.dingdingcatering.dto.AddressBookDTO;
+import com.dingdingcatering.dto.SetDefaultDTO;
 import com.dingdingcatering.entity.AddressBook;
 import com.dingdingcatering.result.Result;
 import com.dingdingcatering.service.user.AddressBookService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,13 +27,14 @@ public class AddressBookController {
     /**
      * 新增地址接口。
      *
-     * @param addressBook 地址信息
-     * @return 添加成功提示
+     * @param dto 地址信息
+     * @return 保存后的完整地址信息
      */
     @PostMapping
-    public Result<Void> save(@RequestBody AddressBook addressBook) {
-        addressBookService.save(addressBook);
-        return Result.success();
+    public Result<AddressBook> save(@RequestBody AddressBookDTO dto) {
+        AddressBook addressBook = new AddressBook();
+        BeanUtils.copyProperties(dto, addressBook);
+        return Result.success(addressBookService.save(addressBook));
     }
 
     /**
@@ -56,13 +60,14 @@ public class AddressBookController {
     /**
      * 更新地址信息接口。
      *
-     * @param addressBook 待更新的地址信息
-     * @return 更新成功提示
+     * @param dto 待更新的地址信息
+     * @return 更新后的完整地址信息
      */
     @PutMapping
-    public Result<Void> updateAddressBook(@RequestBody AddressBook addressBook) {
-        addressBookService.updateAddressBook(addressBook);
-        return Result.success();
+    public Result<AddressBook> updateAddressBook(@RequestBody AddressBookDTO dto) {
+        AddressBook addressBook = new AddressBook();
+        BeanUtils.copyProperties(dto, addressBook);
+        return Result.success(addressBookService.updateAddressBook(addressBook));
     }
 
     /**
@@ -91,12 +96,12 @@ public class AddressBookController {
     /**
      * 设置默认地址接口。
      *
-     * @param addressBook 含目标地址ID
+     * @param dto 含目标地址ID
      * @return 设置成功提示
      */
     @PutMapping("/default")
-    public Result<Void> setDefaultAddressBook(@RequestBody AddressBook addressBook) {
-        addressBookService.setDefaultAddressBook(addressBook.getId());
+    public Result<Void> setDefaultAddressBook(@RequestBody SetDefaultDTO dto) {
+        addressBookService.setDefaultAddressBook(dto.getId());
         return Result.success();
     }
 }

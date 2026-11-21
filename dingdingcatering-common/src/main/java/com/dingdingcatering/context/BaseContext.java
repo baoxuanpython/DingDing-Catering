@@ -16,6 +16,7 @@ public class BaseContext {
     private static final ThreadLocal<Long> threadLocal = new ThreadLocal<>();
     private static final ThreadLocal<String> nameThreadLocal = new ThreadLocal<>();
     private static final ThreadLocal<String> userNameThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<String> roleThreadLocal = new ThreadLocal<>();
 
     /**
      * 将当前用户 ID 存入 ThreadLocal
@@ -72,6 +73,24 @@ public class BaseContext {
     }
 
     /**
+     * 将当前登录员工的角色存入 ThreadLocal
+     *
+     * @param role 角色标识（admin / user）
+     */
+    public static void setCurrentRole(String role) {
+        roleThreadLocal.set(role);
+    }
+
+    /**
+     * 获取当前登录员工的角色
+     *
+     * @return 角色标识（admin / user），若未设置则返回 null
+     */
+    public static String getCurrentRole() {
+        return roleThreadLocal.get();
+    }
+
+    /**
      * 移除当前线程中存储的用户 ID
      * 必须在请求结束时调用，防止 ThreadLocal 内存泄漏
      */
@@ -79,6 +98,7 @@ public class BaseContext {
         threadLocal.remove();
         nameThreadLocal.remove();
         userNameThreadLocal.remove();
+        roleThreadLocal.remove();
     }
 
 }

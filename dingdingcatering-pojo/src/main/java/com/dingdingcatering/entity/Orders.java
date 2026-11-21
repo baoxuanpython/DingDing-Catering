@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class Orders implements Serializable {
 
     /**
-     * 订单状态：1-待付款，2-待确认，3-已确认，4-派送中，5-已完成，6-已取消，7-已退款
+     * 订单状态：1-待付款，2-待接单，3-已接单，4-派送中，5-已完成，6-已取消，7-已退款
      */
     public static final Integer PENDING_PAYMENT = 1;
     public static final Integer TO_BE_CONFIRMED = 2;
@@ -46,7 +46,7 @@ public class Orders implements Serializable {
     /** 订单号 */
     private String number;
 
-    /** 订单状态：1-待付款，2-待确认，3-已确认，4-派送中，5-已完成，6-已取消，7-已退款 */
+    /** 订单状态：1-待付款，2-待接单，3-待派送，4-派送中，5-已完成，6-已取消，7-已退款 */
     private Integer status;
 
     /** 下单用户ID */

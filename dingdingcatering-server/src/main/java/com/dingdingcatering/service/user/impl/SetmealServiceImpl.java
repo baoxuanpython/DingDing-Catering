@@ -1,9 +1,9 @@
 package com.dingdingcatering.service.user.impl;
 
+import com.dingdingcatering.entity.SetMealDish;
 import com.dingdingcatering.entity.Setmeal;
 import com.dingdingcatering.mapper.user.SetMealMapper;
 import com.dingdingcatering.service.user.SetmealService;
-import com.dingdingcatering.vo.DishItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,9 +31,9 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Override
     @Cacheable(value = "setmeal:dish", key = "#id", unless = "#result == null ||# result.isEmpty()")
-    public List<DishItemVO> dish(Long id) {
+    public List<SetMealDish> dish(Long id) {
         log.debug("缓存未命中，查询套餐菜品: setmealId={}", id);
-        List<DishItemVO> result = setmealMapper.dish(id);
+        List<SetMealDish> result = setmealMapper.dish(id);
         log.debug("查询套餐菜品完成: setmealId={}, count={}", id, result.size());
         return result;
     }

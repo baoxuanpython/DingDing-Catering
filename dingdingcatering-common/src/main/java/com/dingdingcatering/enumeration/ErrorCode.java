@@ -60,6 +60,7 @@ public enum ErrorCode {
     ORDER_STATUS_ERROR(6001, "订单状态错误"),
     ORDER_NOT_FOUND(6002, "订单不存在"),
     ORDER_BUSINESS_ERROR(6003, "订单业务异常"),
+    ORDER_REMINDER_TOO_FREQUENT(6004, "催单过于频繁，请稍后再试"),
 
     // ========== 购物车模块 7xxx ==========
     SHOPPING_CART_IS_NULL(7001, "购物车数据为空，不能下单"),
@@ -67,7 +68,6 @@ public enum ErrorCode {
 
     // ========== 地址簿模块 8xxx ==========
     ADDRESS_BOOK_IS_NULL(8001, "用户地址为空，不能下单"),
-    ADDRESS_BOOK_ERROR(8002, "地址业务异常"),
     // ========== 口味类型模块 9xxx ==========
     FLAVOR_NAME_EXIST(9001, "口味类型名称已存在"),
     FLAVOR_DELETE_FAILED(9006, "口味类型关联了菜品，不能删除"),
@@ -76,7 +76,6 @@ public enum ErrorCode {
     DATA_EXIST(99002, "数据已存在"),
     UPLOAD_FAILED(99003, "文件上传失败"),
     JSON_PROCESSING_ERROR(99004, "JSON 序列化/反序列化异常"),
-    DELETION_NOT_ALLOWED(99005, "不允许删除"),
     UNKNOWN_ERROR(99999, "未知错误");
 
 

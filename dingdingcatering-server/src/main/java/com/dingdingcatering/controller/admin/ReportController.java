@@ -29,14 +29,16 @@ public class ReportController {
 
     /**
      * 导出运营报表接口。
-     * <p>
-     * 生成Excel文件并返回给前端下载。
      *
+     * @param begin    开始日期（格式：yyyy-MM-dd）
+     * @param end      结束日期（格式：yyyy-MM-dd）
      * @param response HTTP响应对象（用于写入Excel文件流）
      */
     @GetMapping("/export")
-    public void exportReport(HttpServletResponse response) {
-        reportService.exportReport(response);
+    public void exportReport(@RequestParam String begin, @RequestParam String end,
+                             HttpServletResponse response) {
+        DataOverViewQueryDTO queryDTO = DataOverViewQueryDTO.addTime(begin, end);
+        reportService.exportReport(queryDTO, response);
     }
 
     /**

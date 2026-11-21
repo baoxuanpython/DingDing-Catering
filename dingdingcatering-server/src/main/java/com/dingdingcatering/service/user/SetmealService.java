@@ -1,7 +1,7 @@
 package com.dingdingcatering.service.user;
 
+import com.dingdingcatering.entity.SetMealDish;
 import com.dingdingcatering.entity.Setmeal;
-import com.dingdingcatering.vo.DishItemVO;
 
 import java.util.List;
 
@@ -18,10 +18,10 @@ public interface SetmealService {
     List<Setmeal> list(Long categoryId);
 
     /**
-     * 查询套餐内菜品列表。
+     * 查询套餐内菜品列表（含口味选项）。
      *
      * @param id 套餐ID
-     * @return 套餐包含的菜品项列表
+     * @return 套餐包含的菜品及口味列表
      */
-    List<DishItemVO> dish(Long id);
+    List<SetMealDish> dish(Long id);
 }

@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -16,7 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderVO extends Orders implements Serializable {
+public class OrderVO extends Orders {
 
     /** 订单菜品信息（字符串展示格式） */
     private String orderDishes;

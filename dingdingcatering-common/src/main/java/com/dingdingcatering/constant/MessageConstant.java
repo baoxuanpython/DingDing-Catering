@@ -32,4 +32,10 @@ public class MessageConstant {
     public static final String JWT_INVALID = "JWT令牌无效";
     public static final String SECURITY_ERROR = "无权为其他用户操作数据";
     public static final String JSON_PROCESSING_ERROR = "JSON 序列化/反序列化异常";
+
+    /** 消息内容：新订单待接单 */
+    public static final String MESSAGE_NEW_ORDER = "新订单待接单";
+
+    /** 消息内容：订单催单提醒 */
+    public static final String MESSAGE_REMINDER = "订单催单提醒";
 }

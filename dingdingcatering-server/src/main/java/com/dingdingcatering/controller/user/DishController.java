@@ -1,8 +1,8 @@
 package com.dingdingcatering.controller.user;
 
-import com.dingdingcatering.entity.Dish;
 import com.dingdingcatering.result.Result;
 import com.dingdingcatering.service.user.DishService;
+import com.dingdingcatering.vo.DishVO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +28,7 @@ public class DishController {
      * @return 该分类下已起售的菜品列表
      */
     @GetMapping("/list")
-    public Result<List<Dish>> list(@RequestParam Long categoryId) {
+    public Result<List<DishVO>> list(@RequestParam Long categoryId) {
         return Result.success(dishService.list(categoryId));
     }
 }

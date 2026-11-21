@@ -1,7 +1,6 @@
 package com.dingdingcatering.entity;
 
 import com.dingdingcatering.annotation.AutoFill;
-import com.dingdingcatering.enumeration.OperationType;
 import io.github.vipxieliang.validx.annotations.ChineseIdCard;
 import io.github.vipxieliang.validx.annotations.ChinesePhone;
 import lombok.AllArgsConstructor;

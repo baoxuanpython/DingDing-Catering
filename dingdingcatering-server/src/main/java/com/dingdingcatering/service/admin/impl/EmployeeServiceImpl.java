@@ -8,6 +8,7 @@ import com.dingdingcatering.dto.EmployeeDTO;
 import com.dingdingcatering.dto.EmployeeLoginDTO;
 import com.dingdingcatering.dto.EmployeePageQueryDTO;
 import com.dingdingcatering.dto.PasswordEditDTO;
+import com.dingdingcatering.dto.PasswordSetDTO;
 import com.dingdingcatering.entity.Employee;
 import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.exception.*;
@@ -26,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.*;
-import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -72,7 +72,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         claims.put(JwtClaimsConstant.EMPID, employee.getId());
         claims.put(JwtClaimsConstant.USERNAME, employee.getUsername());
         claims.put(JwtClaimsConstant.EMPNAME, employee.getName());
-        claims.put(JwtClaimsConstant.ROLE, employee.getUsername().equals(JwtClaimsConstant.ADMIN) ? JwtClaimsConstant.ADMIN : JwtClaimsConstant.USER);
+        String role = Objects.equals(employee.getUsername(), JwtClaimsConstant.ADMIN)
+                ? JwtClaimsConstant.ADMIN : JwtClaimsConstant.USER;
+        claims.put(JwtClaimsConstant.ROLE, role);
         String token = JwtUtil.createJWT(
                 jwtProperties.getAdminSecretKey(),
                 jwtProperties.getAdminTtl(),
@@ -84,15 +86,14 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .id(employee.getId())
                 .userName(employee.getUsername())
                 .name(employee.getName())
+                .role(role)
                 .token(token)
                 .build();
     }
 
     @Override
     public void addEmployee(EmployeeDTO employeeDTO) {
-        if (!Objects.equals(BaseContext.getCurrentUserName(), JwtClaimsConstant.ADMIN)) {
-            throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR);
-        }
+        requireAdmin();
         log.info("新增员工: username={}, name={}", employeeDTO.getUsername(), employeeDTO.getName());
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
@@ -111,10 +112,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employeePageQueryDTO.getPageSize())) {
 
             List<Employee> list = employeeMapper.list(employeePageQueryDTO);
+            boolean admin = isAdmin();
             list.forEach(employee -> {
-                if (!Objects.equals(BaseContext.getCurrentUserName(), JwtClaimsConstant.ADMIN)) {
-                    employee.setPhone(employee.getPhone().substring(0, 3) + "****" + employee.getPhone().substring(7));
-                    employee.setIdNumber(employee.getIdNumber().substring(0, 4) + "****" + employee.getIdNumber().substring(14));
+                if (!admin) {
+                    employee.setPhone(maskPhone(employee.getPhone()));
+                    employee.setIdNumber(maskIdNumber(employee.getIdNumber()));
                 }
             });
             log.debug("分页查询员工完成: total={}", employeePage.getTotal());
@@ -124,9 +126,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void updateStatus(Integer status, Long id) {
-        if (!Objects.equals(BaseContext.getCurrentName(), JwtClaimsConstant.ADMIN)) {
-            throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR);
-        }
+        requireAdmin();
         log.info("更新员工状态: id={}, status={}", id, status);
         Employee employee = Employee.builder()
                 .id(id)
@@ -153,9 +153,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee getEmployee(Long id) {
         Employee employee = employeeMapper.getById(id);
-        if (!Objects.equals(BaseContext.getCurrentUserName(), JwtClaimsConstant.ADMIN)) {
-            employee.setPhone(employee.getPhone().substring(0, 3) + "****" + employee.getPhone().substring(7));
-            employee.setIdNumber(employee.getIdNumber().substring(0, 4) + "****" + employee.getIdNumber().substring(14));
+        if (!isAdmin()) {
+            employee.setPhone(maskPhone(employee.getPhone()));
+            employee.setIdNumber(maskIdNumber(employee.getIdNumber()));
         }
         log.debug("查询员工详情: id={}", id);
         return employee;
@@ -165,33 +165,55 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void editPassword(PasswordEditDTO passwordEditDTO) {
-        if (!Objects.equals(BaseContext.getCurrentId(), passwordEditDTO.getEmpId())) {
-            throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR);
-        }
-        log.info("修改密码: empId={}", BaseContext.getCurrentId());
-        Function<String, String> toMD5 = password -> DigestUtils.md5DigestAsHex(password.getBytes());
-
-        passwordEditDTO.setEmpId(BaseContext.getCurrentId());
-        Employee employee = employeeMapper.getById(passwordEditDTO.getEmpId());
-        if (employee == null) {
-            log.warn("修改密码失败: 账号不存在, empId={}", passwordEditDTO.getEmpId());
+        Long empId = BaseContext.getCurrentId();
+        log.info("修改密码: empId={}", empId);
+        // getById 出于脱敏目的不查询 password 字段，此处必须单独查询密码密文
+        String currentPassword = employeeMapper.getPasswordById(empId);
+        if (currentPassword == null) {
+            log.warn("修改密码失败: 账号不存在, empId={}", empId);
             throw new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND);
         }
-        String newPassword = toMD5.apply(passwordEditDTO.getNewPassword());
-        if (newPassword.equals(employee.getPassword())) {
-            log.warn("修改密码失败: 新旧密码相同, empId={}", passwordEditDTO.getEmpId());
+        String oldPassword = toMD5(passwordEditDTO.getOldPassword());
+        if (!oldPassword.equals(currentPassword)) {
+            log.warn("修改密码失败: 旧密码错误, empId={}", empId);
+            throw new PasswordEditFailedException(ErrorCode.PASSWORD_EDIT_FAILED, "旧密码错误");
+        }
+        String newPassword = toMD5(passwordEditDTO.getNewPassword());
+        if (newPassword.equals(currentPassword)) {
+            log.warn("修改密码失败: 新旧密码相同, empId={}", empId);
             throw new PasswordEditFailedException(ErrorCode.PASSWORD_EDIT_FAILED, "新旧密码不能相同");
         }
-        employee.setPassword(toMD5.apply(passwordEditDTO.getNewPassword()));
-        employeeMapper.updateEmployee(employee);
-        log.info("修改密码成功: empId={}", passwordEditDTO.getEmpId());
+        employeeMapper.updateEmployee(Employee.builder()
+                .id(empId)
+                .password(newPassword)
+                .build());
+        log.info("修改密码成功: empId={}", empId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updatePassword(Long empId, PasswordSetDTO passwordSetDTO) {
+        requireAdmin();
+        if (Objects.equals(BaseContext.getCurrentId(), empId)) {
+            throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR, "请通过修改密码接口修改本人密码");
+        }
+        Employee employee = employeeMapper.getById(empId);
+        if (employee == null) {
+            log.warn("修改员工密码失败: 账号不存在, empId={}", empId);
+            throw new AccountNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND);
+        }
+        employeeMapper.updateEmployee(Employee.builder()
+                .id(empId)
+                .password(toMD5(passwordSetDTO.getNewPassword()))
+                .build());
+        log.warn("[密码修改审计] 操作人={}(id={}), 目标={}(username={}, id={})",
+                BaseContext.getCurrentUserName(), BaseContext.getCurrentId(),
+                employee.getName(), employee.getUsername(), empId);
     }
 
     @Override
     public void deleteEmployee(String ids) {
-        if (!Objects.equals(BaseContext.getCurrentUserName(), JwtClaimsConstant.ADMIN)) {
-            throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR);
-        }
+        requireAdmin();
         List<Long> idList = Arrays.stream(ids.split(",")).map(Long::valueOf).toList();
         if (idList.contains(BaseContext.getCurrentId())) {
             throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR, "不能删除当前登录用户");
@@ -199,5 +221,59 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.info("删除员工: ids={}", idList);
         employeeMapper.deleteBatch(idList);
         log.info("删除员工成功: ids={}", idList);
+    }
+
+    /**
+     * 判断当前登录人是否为管理员
+     *
+     * @return true-管理员，false-普通员工
+     */
+    private boolean isAdmin() {
+        return Objects.equals(BaseContext.getCurrentRole(), JwtClaimsConstant.ADMIN);
+    }
+
+    /**
+     * 要求当前登录人必须是管理员，否则抛出权限异常
+     */
+    private void requireAdmin() {
+        if (!isAdmin()) {
+            throw new UnauthorizedOperationException(ErrorCode.SECURITY_ERROR);
+        }
+    }
+
+    /**
+     * 计算字符串的 MD5 摘要
+     *
+     * @param raw 原始字符串
+     * @return 十六进制 MD5 摘要
+     */
+    private String toMD5(String raw) {
+        return DigestUtils.md5DigestAsHex(raw.getBytes());
+    }
+
+    /**
+     * 手机号脱敏，非 11 位或为空时原样返回
+     *
+     * @param phone 手机号
+     * @return 脱敏后的手机号
+     */
+    private String maskPhone(String phone) {
+        if (phone == null || phone.length() < 11) {
+            return phone;
+        }
+        return phone.substring(0, 3) + "****" + phone.substring(7);
+    }
+
+    /**
+     * 身份证号脱敏，保留前 6 位与后 4 位，长度不足时原样返回
+     *
+     * @param idNumber 身份证号
+     * @return 脱敏后的身份证号
+     */
+    private String maskIdNumber(String idNumber) {
+        if (idNumber == null || idNumber.length() < 11) {
+            return idNumber;
+        }
+        return idNumber.substring(0, 6) + "********" + idNumber.substring(idNumber.length() - 4);
     }
 }

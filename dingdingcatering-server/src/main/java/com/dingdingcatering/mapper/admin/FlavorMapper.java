@@ -4,7 +4,6 @@ import com.dingdingcatering.annotation.AutoFill;
 import com.dingdingcatering.enumeration.OperationType;
 import com.dingdingcatering.dto.FlavorDTO;
 import com.dingdingcatering.dto.FlavorPageQueryDTO;
-import com.dingdingcatering.entity.Flavor;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 

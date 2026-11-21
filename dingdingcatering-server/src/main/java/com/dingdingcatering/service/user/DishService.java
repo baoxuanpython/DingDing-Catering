@@ -1,6 +1,6 @@
 package com.dingdingcatering.service.user;
 
-import com.dingdingcatering.entity.Dish;
+import com.dingdingcatering.vo.DishVO;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public interface DishService {
      * 根据分类ID查询起售菜品列表。
      *
      * @param categoryId 分类ID
-     * @return 已起售的菜品列表
+     * @return 已起售的菜品列表（含分类名和口味）
      */
-    List<Dish> list(Long categoryId);
+    List<DishVO> list(Long categoryId);
 }

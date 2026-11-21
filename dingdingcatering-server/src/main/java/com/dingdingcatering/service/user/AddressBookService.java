@@ -12,8 +12,9 @@ public interface AddressBookService {
      * 新增地址。
      *
      * @param addressBook 地址信息
+     * @return 保存后的地址信息（含自增ID）
      */
-    void save(AddressBook addressBook);
+    AddressBook save(AddressBook addressBook);
 
     /**
      * 查询当前用户地址簿列表。
@@ -33,8 +34,9 @@ public interface AddressBookService {
      * 更新地址信息。
      *
      * @param addressBook 待更新的地址信息
+     * @return 更新后的地址信息
      */
-    void updateAddressBook(AddressBook addressBook);
+    AddressBook updateAddressBook(AddressBook addressBook);
 
     /**
      * 删除地址。

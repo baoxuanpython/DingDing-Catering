@@ -46,7 +46,8 @@ public interface ReportService {
     /**
      * 导出运营报表（Excel）。
      *
+     * @param queryDTO 时间范围
      * @param response HTTP响应对象
      */
-    void exportReport(HttpServletResponse response);
+    void exportReport(DataOverViewQueryDTO queryDTO, HttpServletResponse response);
 }

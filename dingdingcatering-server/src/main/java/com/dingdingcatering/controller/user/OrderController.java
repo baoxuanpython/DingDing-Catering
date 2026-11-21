@@ -1,13 +1,14 @@
 package com.dingdingcatering.controller.user;
 
+import com.dingdingcatering.dto.OrdersCancelDTO;
 import com.dingdingcatering.dto.OrdersPaymentDTO;
 import com.dingdingcatering.dto.OrdersSubmitDTO;
 import com.dingdingcatering.result.PageResult;
 import com.dingdingcatering.result.Result;
 import com.dingdingcatering.service.user.OrderService;
+import com.dingdingcatering.vo.OrderPaymentVO;
 import com.dingdingcatering.vo.OrderSubmitVO;
 import com.dingdingcatering.vo.OrderVO;
-import com.dingdingcatering.vo.PaymentSuccessVO;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -54,7 +55,7 @@ public class OrderController {
      * @return 支付成功结果（含预计送达时间）
      */
     @PutMapping("/payment")
-    public Result<PaymentSuccessVO> payment(@RequestBody OrdersPaymentDTO ordersPaymentDTO) {
+    public Result<OrderPaymentVO> payment(@RequestBody OrdersPaymentDTO ordersPaymentDTO) {
         return Result.success(orderService.payment(ordersPaymentDTO));
     }
 
@@ -99,12 +100,13 @@ public class OrderController {
     /**
      * 用户取消订单接口。
      *
-     * @param id 用于定位目标订单的主键标识
+     * @param id              用于定位目标订单的主键标识
+     * @param ordersCancelDTO 取消原因
      * @return 取消成功提示
      */
     @PutMapping("/cancel/{id}")
-    public Result<Void> cancel(@PathVariable Long id) {
-        orderService.cancel(id);
+    public Result<Void> cancel(@PathVariable Long id, @RequestBody OrdersCancelDTO ordersCancelDTO) {
+        orderService.cancel(id, ordersCancelDTO);
         return Result.success();
     }
 }

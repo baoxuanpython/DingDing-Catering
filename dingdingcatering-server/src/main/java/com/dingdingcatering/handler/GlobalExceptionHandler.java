@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Objects;
@@ -296,6 +297,39 @@ public class GlobalExceptionHandler {
         return Result.error(ex.getErrorCode(), ex.getMessage());
     }
 
+    // ==================== 上传模块（HTTP 400） ====================
+
+    /**
+     * 处理上传文件校验失败异常。
+     * <p>
+     * 空文件、格式不支持、体积超限都属于客户端传参问题，返回 HTTP 400，
+     * 与「服务端上传 OSS 失败」（HTTP 500）区分开。
+     *
+     * @param ex 上传文件校验失败异常
+     * @return 错误响应（HTTP 400）
+     */
+    @ExceptionHandler(UploadFileInvalidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<String> handleUploadFileInvalidException(UploadFileInvalidException ex) {
+        log.warn("上传文件校验未通过：{}", ex.getMessage());
+        return Result.error(ex.getErrorCode(), ex.getMessage());
+    }
+
+    /**
+     * 处理请求体超过 multipart 上限的异常。
+     * <p>
+     * Spring 在进入 Controller 之前就会拒绝超大请求，若不单独处理会返回 HTTP 500。
+     *
+     * @param ex 上传体积超限异常
+     * @return 错误响应（HTTP 400）
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<String> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
+        log.warn("上传文件体积超过限制：{}", ex.getMessage());
+        return Result.error(ErrorCode.UPLOAD_FAILED, ErrorCode.UPLOAD_FAILED.getMessage() + " 文件大小不能超过 5MB");
+    }
+
     // ==================== 服务器错误（HTTP 500） ====================
 
     /**
@@ -350,6 +384,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<String> handleException(Exception ex) {
         log.error("系统异常", ex);
-        return Result.error(ErrorCode.UNKNOWN_ERROR, "");
+        return Result.error(ErrorCode.UNKNOWN_ERROR, ErrorCode.UNKNOWN_ERROR.getMessage());
     }
 }

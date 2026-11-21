@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -50,7 +51,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
      * @param registry 拦截器注册器
      */
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
+    public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(jwtTokenAdminInterceptor)
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns("/admin/employee/login");
@@ -70,7 +71,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
      * @param registry 格式化注册器
      */
     @Override
-    public void addFormatters(FormatterRegistry registry) {
+    public void addFormatters(@NonNull FormatterRegistry registry) {
         registry.addConverter(String.class, LocalDate.class,
                 source -> LocalDate.parse(source, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         registry.addConverter(String.class, LocalTime.class,
@@ -93,7 +94,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
      * @param converters 消息转换器列表
      */
     @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+    public void extendMessageConverters(@NonNull List<HttpMessageConverter<?>> converters) {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(objectMapper);
         converters.add(0, converter);

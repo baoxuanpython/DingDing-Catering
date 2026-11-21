@@ -4,6 +4,7 @@ import com.dingdingcatering.dto.EmployeeDTO;
 import com.dingdingcatering.dto.EmployeeLoginDTO;
 import com.dingdingcatering.dto.EmployeePageQueryDTO;
 import com.dingdingcatering.dto.PasswordEditDTO;
+import com.dingdingcatering.dto.PasswordSetDTO;
 import com.dingdingcatering.entity.Employee;
 import com.dingdingcatering.result.PageResult;
 
@@ -62,11 +63,22 @@ public interface EmployeeService {
     Employee getEmployee(Long id);
 
     /**
-     * 修改密码。
+     * 修改密码（仅限修改本人密码，必须校验旧密码）。
      *
      * @param passwordEditDTO 含旧密码与新密码
      */
     void editPassword(@Valid PasswordEditDTO passwordEditDTO);
+
+    /**
+     * 修改指定员工的密码（仅管理员可用，无需校验旧密码）。
+     * <p>
+     * 新密码由管理员在页面输入，服务端加密后落库，不回显任何密码内容。
+     * 管理员不能通过该方法修改本人密码。
+     *
+     * @param empId            目标员工ID
+     * @param passwordSetDTO   含管理员指定的新密码
+     */
+    void updatePassword(Long empId, @Valid PasswordSetDTO passwordSetDTO);
 
     void deleteEmployee(String ids);
 }

@@ -3,6 +3,8 @@ package com.dingdingcatering.service.user.impl;
 import com.alibaba.fastjson2.JSONObject;
 import com.dingdingcatering.enumeration.ErrorCode;
 import com.dingdingcatering.constant.WechatApiConstant;
+import com.dingdingcatering.context.BaseContext;
+import com.dingdingcatering.dto.UserEditDTO;
 import com.dingdingcatering.dto.UserLoginDTO;
 import com.dingdingcatering.entity.User;
 import com.dingdingcatering.exception.LoginFailedException;
@@ -58,6 +60,8 @@ public class UserServiceImpl implements UserService {
                 .id(user.getId())
                 .token(token)
                 .openid(openid)
+                .name(user.getName())
+                .avatar(user.getAvatar())
                 .build();
     }
 
@@ -79,5 +83,32 @@ public class UserServiceImpl implements UserService {
             log.debug("获取openid成功: openid={}", openid);
         }
         return openid;
+    }
+
+    @Override
+    public User info() {
+        Long userId = BaseContext.getCurrentId();
+        log.debug("查询用户信息: userId={}", userId);
+        User user = userMapper.selectById(userId);
+        log.debug("查询用户信息成功: userId={}, name={}", userId, user != null ? user.getName() : null);
+        return user;
+    }
+
+    @Override
+    public User updateInfo(UserEditDTO userEditDTO) {
+        Long userId = BaseContext.getCurrentId();
+        log.info("修改用户信息: userId={}", userId);
+        User user = User.builder()
+                .id(userId)
+                .name(userEditDTO.getName())
+                .avatar(userEditDTO.getAvatar())
+                .phone(userEditDTO.getPhone())
+                .sex(userEditDTO.getSex())
+                .idNumber(userEditDTO.getIdNumber())
+                .build();
+        userMapper.updateInfo(user);
+        User updated = userMapper.selectById(userId);
+        log.info("修改用户信息成功: userId={}", userId);
+        return updated;
     }
 }
