@@ -113,7 +113,8 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public TurnoverReportVO turnoverStatistics(DataOverViewQueryDTO queryDTO) {
-        log.debug("查询营业额统计: begin={}, end={}, sameDay={}", queryDTO.getBegin(), queryDTO.getEnd(), queryDTO.isSameDay());
+        log.debug("查询营业额统计: begin={}, end={}, sameDay={}", queryDTO.getBegin(), queryDTO.getEnd(),
+                queryDTO.isSameDay());
 
         if (queryDTO.isSameDay()) {
             return buildHourlyTurnoverReport(queryDTO);
@@ -183,8 +184,8 @@ public class ReportServiceImpl implements ReportService {
         long validOrderCount = statisticsList.stream()
                 .mapToLong(HourlyStatisticsDTO::getValidCnt)
                 .sum();
-        double orderCompletionRate = totalOrderCount == 0 ? 0 :
-                Math.round((double) validOrderCount / totalOrderCount * 100.0) / 100.0;
+        double orderCompletionRate = totalOrderCount == 0 ? 0
+                : Math.round((double) validOrderCount / totalOrderCount * 100.0) / 100.0;
 
         return OrderReportVO.builder()
                 .hourList(hourList)
@@ -216,8 +217,8 @@ public class ReportServiceImpl implements ReportService {
         long validOrderCount = statisticsList.stream()
                 .mapToLong(DailyStatisticsDTO::getValidCnt)
                 .sum();
-        double orderCompletionRate = totalOrderCount == 0 ? 0 :
-                Math.round((double) validOrderCount / totalOrderCount * 100.0) / 100.0;
+        double orderCompletionRate = totalOrderCount == 0 ? 0
+                : Math.round((double) validOrderCount / totalOrderCount * 100.0) / 100.0;
 
         return OrderReportVO.builder()
                 .dateList(dateList)
@@ -263,7 +264,8 @@ public class ReportServiceImpl implements ReportService {
             }
             List<DishSalesDTO> top10 = reportMapper.top10Dish(queryDTO);
 
-            rowIndex = writeTurnoverBlock(sheet, rowIndex, turnoverDaily, turnoverHourly, titleStyle, headerStyle, dataStyle, amountStyle);
+            rowIndex = writeTurnoverBlock(sheet, rowIndex, turnoverDaily, turnoverHourly, titleStyle, headerStyle,
+                    dataStyle, amountStyle);
             rowIndex = writeOrderBlock(sheet, rowIndex, orderDaily, orderHourly, titleStyle, headerStyle, dataStyle);
             rowIndex = writeUserBlock(sheet, rowIndex, userDaily, userHourly, titleStyle, headerStyle, dataStyle);
             writeTop10Block(sheet, rowIndex, top10, titleStyle, headerStyle, dataStyle);
@@ -288,16 +290,17 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private int writeTurnoverBlock(XSSFSheet sheet, int rowIndex,
-                                   List<DailyStatisticsDTO> dailyData, @NonNull    List<HourlyStatisticsDTO> hourlyData,
-                                   XSSFCellStyle titleStyle, XSSFCellStyle headerStyle,
-                                   XSSFCellStyle dataStyle, XSSFCellStyle amountStyle) {
+            List<DailyStatisticsDTO> dailyData, @NonNull List<HourlyStatisticsDTO> hourlyData,
+            XSSFCellStyle titleStyle, XSSFCellStyle headerStyle,
+            XSSFCellStyle dataStyle, XSSFCellStyle amountStyle) {
         rowIndex = addBlockTitle(sheet, rowIndex, "营业额统计", titleStyle, 2);
 
         XSSFRow headerRow = sheet.createRow(rowIndex++);
         boolean isHourly = hourlyData != null;
         headerRow.createCell(0).setCellValue(isHourly ? "小时" : "日期");
         headerRow.createCell(1).setCellValue("营业额（元）");
-        for (int i = 0; i < 2; i++) headerRow.getCell(i).setCellStyle(headerStyle);
+        for (int i = 0; i < 2; i++)
+            headerRow.getCell(i).setCellStyle(headerStyle);
 
         if (isHourly) {
             for (HourlyStatisticsDTO dto : hourlyData) {
@@ -318,8 +321,8 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private int writeOrderBlock(XSSFSheet sheet, int rowIndex,
-                                List<DailyStatisticsDTO> dailyData, @NonNull List<HourlyStatisticsDTO> hourlyData,
-                                XSSFCellStyle titleStyle, XSSFCellStyle headerStyle, XSSFCellStyle dataStyle) {
+            List<DailyStatisticsDTO> dailyData, List<HourlyStatisticsDTO> hourlyData,
+            XSSFCellStyle titleStyle, XSSFCellStyle headerStyle, XSSFCellStyle dataStyle) {
         rowIndex = addBlockTitle(sheet, rowIndex, "订单统计", titleStyle, 4);
 
         XSSFRow headerRow = sheet.createRow(rowIndex++);
@@ -328,7 +331,8 @@ public class ReportServiceImpl implements ReportService {
         headerRow.createCell(1).setCellValue("订单总数");
         headerRow.createCell(2).setCellValue("有效订单数");
         headerRow.createCell(3).setCellValue("完成率");
-        for (int i = 0; i < 4; i++) headerRow.getCell(i).setCellStyle(headerStyle);
+        for (int i = 0; i < 4; i++)
+            headerRow.getCell(i).setCellStyle(headerStyle);
 
         if (isHourly) {
             for (HourlyStatisticsDTO dto : hourlyData) {
@@ -336,8 +340,8 @@ public class ReportServiceImpl implements ReportService {
                 row.createCell(0).setCellValue(dto.getHour() + ":00");
                 row.createCell(1).setCellValue(dto.getTotalCnt());
                 row.createCell(2).setCellValue(dto.getValidCnt());
-                double rate = dto.getTotalCnt() == 0 ? 0 :
-                        Math.round((double) dto.getValidCnt() / dto.getTotalCnt() * 10000.0) / 100.0;
+                double rate = dto.getTotalCnt() == 0 ? 0
+                        : Math.round((double) dto.getValidCnt() / dto.getTotalCnt() * 10000.0) / 100.0;
                 row.createCell(3).setCellValue(rate + "%");
             }
         } else {
@@ -346,8 +350,8 @@ public class ReportServiceImpl implements ReportService {
                 row.createCell(0).setCellValue(dto.getDate().toString());
                 row.createCell(1).setCellValue(dto.getTotalCnt());
                 row.createCell(2).setCellValue(dto.getValidCnt());
-                double rate = dto.getTotalCnt() == 0 ? 0 :
-                        Math.round((double) dto.getValidCnt() / dto.getTotalCnt() * 10000.0) / 100.0;
+                double rate = dto.getTotalCnt() == 0 ? 0
+                        : Math.round((double) dto.getValidCnt() / dto.getTotalCnt() * 10000.0) / 100.0;
                 row.createCell(3).setCellValue(rate + "%");
             }
         }
@@ -355,8 +359,8 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private int writeUserBlock(XSSFSheet sheet, int rowIndex,
-                               List<DailyStatisticsDTO> dailyData, @NonNull    List<HourlyStatisticsDTO> hourlyData,
-                               XSSFCellStyle titleStyle, XSSFCellStyle headerStyle, XSSFCellStyle dataStyle) {
+            List<DailyStatisticsDTO> dailyData, @NonNull List<HourlyStatisticsDTO> hourlyData,
+            XSSFCellStyle titleStyle, XSSFCellStyle headerStyle, XSSFCellStyle dataStyle) {
         rowIndex = addBlockTitle(sheet, rowIndex, "用户统计", titleStyle, 3);
 
         XSSFRow headerRow = sheet.createRow(rowIndex++);
@@ -364,7 +368,8 @@ public class ReportServiceImpl implements ReportService {
         headerRow.createCell(0).setCellValue(isHourly ? "小时" : "日期");
         headerRow.createCell(1).setCellValue("新增用户");
         headerRow.createCell(2).setCellValue("累计用户");
-        for (int i = 0; i < 3; i++) headerRow.getCell(i).setCellStyle(headerStyle);
+        for (int i = 0; i < 3; i++)
+            headerRow.getCell(i).setCellStyle(headerStyle);
 
         if (isHourly) {
             for (HourlyStatisticsDTO dto : hourlyData) {
@@ -385,14 +390,15 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private void writeTop10Block(XSSFSheet sheet, int rowIndex, List<DishSalesDTO> data,
-                                 XSSFCellStyle titleStyle, XSSFCellStyle headerStyle, XSSFCellStyle dataStyle) {
+            XSSFCellStyle titleStyle, XSSFCellStyle headerStyle, XSSFCellStyle dataStyle) {
         rowIndex = addBlockTitle(sheet, rowIndex, "销量Top10", titleStyle, 3);
 
         XSSFRow headerRow = sheet.createRow(rowIndex++);
         headerRow.createCell(0).setCellValue("排名");
         headerRow.createCell(1).setCellValue("菜品名称");
         headerRow.createCell(2).setCellValue("销量");
-        for (int i = 0; i < 3; i++) headerRow.getCell(i).setCellStyle(headerStyle);
+        for (int i = 0; i < 3; i++)
+            headerRow.getCell(i).setCellStyle(headerStyle);
 
         for (int i = 0; i < data.size(); i++) {
             DishSalesDTO dto = data.get(i);
@@ -450,7 +456,8 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private void autoSizeColumns(XSSFSheet sheet) {
-        if (sheet.getPhysicalNumberOfRows() == 0) return;
+        if (sheet.getPhysicalNumberOfRows() == 0)
+            return;
         for (int i = 1; i < 4; i++) {
             sheet.autoSizeColumn(i);
             int currentWidth = sheet.getColumnWidth(i);

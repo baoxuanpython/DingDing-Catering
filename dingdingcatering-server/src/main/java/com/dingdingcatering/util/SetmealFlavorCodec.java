@@ -87,7 +87,7 @@ public class SetmealFlavorCodec {
         StringBuilder flavorIdBuilder = new StringBuilder();
         StringBuilder flavorValBuilder = new StringBuilder();
         for (FlavorPair pair : pairs) {
-            if (flavorIdBuilder.length() > 0) {
+            if (!flavorIdBuilder.isEmpty()) {
                 flavorIdBuilder.append(ENTRY_SEPARATOR);
                 flavorValBuilder.append(ENTRY_SEPARATOR);
             }
@@ -95,7 +95,7 @@ public class SetmealFlavorCodec {
             flavorValBuilder.append(pair.getFlavorVal());
         }
 
-        if (flavorIdBuilder.length() == 0) {
+        if (flavorIdBuilder.isEmpty()) {
             return new EncodedFlavors(null, null);
         }
         return new EncodedFlavors(flavorIdBuilder.toString(), flavorValBuilder.toString());
