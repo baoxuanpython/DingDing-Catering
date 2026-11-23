@@ -52,4 +52,7 @@
         </where>
         order by id
     </select>
+    <select id="getByName" resultType="com.dingdingcatering.entity.Category">
+        select * from category where name = #{name}
+    </select>
 </mapper>

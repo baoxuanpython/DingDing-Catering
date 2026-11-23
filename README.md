@@ -74,7 +74,7 @@
 
 ### 启动步骤
 1. 导入 SQL 脚本到 MySQL，创建数据库和表结构。
-2. 修改 `application.yml` 中的环境变量（数据库、Redis、JWT 密钥、OSS 配置、微信 AppID/Secret）。
+2. 复制 `dingdingcatering-server/src/main/resources/application-dev.yml.example` 为 `application-dev.yml`，填入数据库、Redis、JWT 密钥、OSS 配置、微信 AppID/Secret（该文件已在 `.gitignore` 中，不会被提交）。
 3. 运行 `DingdingCateringApplication.java` 即可启动，默认端口 `8080`。
 4. 访问 `http://localhost:8080/doc.html` 查看 Knife4j 接口文档。
 

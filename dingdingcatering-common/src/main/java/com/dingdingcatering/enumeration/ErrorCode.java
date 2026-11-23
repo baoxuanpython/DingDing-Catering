@@ -44,6 +44,7 @@ public enum ErrorCode {
     // ========== 分类模块 3xxx ==========
     CATEGORY_RELATED_BY_SETMEAL(3001, "当前分类关联了套餐，不能删除"),
     CATEGORY_RELATED_BY_DISH(3002, "当前分类关联了菜品，不能删除"),
+    CATEGORY_DUPLICATE_NAME(3003, "分类名称已存在"),
 
     // ========== 菜品模块 4xxx ==========
     DISH_ON_SALE(4001, "起售中的菜品不能删除"),

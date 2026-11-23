@@ -170,6 +170,20 @@ public class GlobalExceptionHandler {
 
     // ==================== 资源冲突（HTTP 409） ====================
 
+    /*
+     * 处理分类业务异常。
+     *
+     * @param ex 分类业务异常
+     * @return 错误响应（HTTP 409）
+     * 典型场景：新增分类时分类名称已存在。
+     * */
+    @ExceptionHandler(CategoryException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)          // 409
+    public Result<String> handleCategoryException(CategoryException ex) {
+        log.warn("分类业务异常：{}", ex.getMessage());
+        return Result.error(ex.getErrorCode(), ex.getMessage());
+    }
+
     /**
      * 处理 SQL 唯一约束冲突异常。
      * <p>
@@ -357,7 +371,7 @@ public class GlobalExceptionHandler {
         log.error("JSON 序列/反序列化异常：{}", ex.getMessage());
         return Result.error(ErrorCode.JSON_PROCESSING_ERROR, "");
     }
-
+//@ExceptionHandler()
     /**
      * 处理基础业务异常（兜底业务异常）。
      * <p>

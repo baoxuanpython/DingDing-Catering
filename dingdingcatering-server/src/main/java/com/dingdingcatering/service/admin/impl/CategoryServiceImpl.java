@@ -3,6 +3,8 @@ package com.dingdingcatering.service.admin.impl;
 import com.dingdingcatering.annotation.AutoClearCache;
 import com.dingdingcatering.enumeration.CacheType;
 import com.dingdingcatering.enumeration.ErrorCode;
+import com.dingdingcatering.exception.BaseException;
+import com.dingdingcatering.exception.CategoryException;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.dingdingcatering.dto.CategoryDTO;
@@ -51,6 +53,10 @@ public class CategoryServiceImpl implements CategoryService {
     @AutoClearCache(CacheType.CATEGORY)
     public void addCategory(CategoryDTO categoryDTO) {
         log.info("新增分类: name={}, type={}", categoryDTO.getName(), categoryDTO.getType());
+        Category existing = categoryMapper.getByName(categoryDTO.getName());
+        if (existing != null) {
+            throw new CategoryException(ErrorCode.CATEGORY_DUPLICATE_NAME, categoryDTO.getName());
+        }
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
         category.setStatus(1);

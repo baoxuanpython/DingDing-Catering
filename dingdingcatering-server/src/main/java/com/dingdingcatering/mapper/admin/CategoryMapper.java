@@ -24,4 +24,6 @@ public interface CategoryMapper {
 
     @AutoFill(value = OperationType.UPDATE)
     void updateCategory(Category category);
+
+    Category getByName(String name);
 }

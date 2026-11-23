@@ -1,0 +1,27 @@
+dingding:
+  datasource:
+    host: localhost
+    port: 3306
+    database: dingding_catering
+    username: YOUR_DB_USERNAME
+    password: YOUR_DB_PASSWORD
+  alioss:
+    region: cn-beijing
+    bucket-name: YOUR_BUCKET_NAME
+    access-key-id: YOUR_OSS_ACCESS_KEY_ID
+    access-key-secret: YOUR_OSS_ACCESS_KEY_SECRET
+  redis:
+    host: localhost
+    port: 6379
+    password: YOUR_REDIS_PASSWORD
+    database: 0
+  jwt:
+    admin-secret-key: YOUR_ADMIN_JWT_SECRET
+    admin-ttl: 720000
+    admin-token-name: token
+    user-secret-key: YOUR_USER_JWT_SECRET
+    user-ttl: 720000
+    user-token-name: authentication
+  wechat:
+    appid: YOUR_WECHAT_APPID
+    secret: YOUR_WECHAT_SECRET
